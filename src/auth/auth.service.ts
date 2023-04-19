@@ -25,9 +25,13 @@ export class AuthService {
   } {
     const payload: JwtPayload = { id: currentTokenId };
     const expiresIn = 60 * 60 * 24;
-    const accessToken = sign(payload, this.configService.get('JWT_XXX'), {
-      expiresIn,
-    });
+    const accessToken = sign(
+      payload,
+      this.configService.get('JWT_ACCESS_KEY'),
+      {
+        expiresIn,
+      },
+    );
     return {
       accessToken,
       expiresIn,
@@ -85,7 +89,7 @@ export class AuthService {
       await user.save();
       res.clearCookie('jwt', {
         secure: false,
-        domain: process.env.DOMAIN,
+        domain: this.configService.get('JWT_DOMAIN'),
         httpOnly: true,
       });
       return res.json({ ok: true });
