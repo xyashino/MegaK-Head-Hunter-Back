@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { hashPwd } from '../utils/hash-pwd';
 import { Response } from 'express';
@@ -6,16 +6,26 @@ import { JwtPayload } from './jwt.strategy';
 import { sign } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import { User } from '../users/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
+  @Inject(forwardRef(() => ConfigService))
+  private configService: ConfigService;
+
   private createToken(currentTokenId: string): {
     accessToken: string;
     expiresIn: number;
   } {
     const payload: JwtPayload = { id: currentTokenId };
-    const expiresIn = 60 * 60 * 24;
-    const accessToken = sign(payload, process.env.ACCESS_KEY, { expiresIn });
+    const expiresIn = +this.configService.get('JWT_EXPIRES_SECONDS');
+    const accessToken = sign(
+      payload,
+      this.configService.get('JWT_ACCESS_KEY'),
+      {
+        expiresIn,
+      },
+    );
     return {
       accessToken,
       expiresIn,
@@ -42,28 +52,23 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        return res.status(401).json({ error: 'Invalid credentials' });
       }
 
-      if (!user.isActive) {
-        throw new HttpException('User is not registered', HttpStatus.NOT_FOUND);
-      }
-
-      if (user) {
-        const hashedPwd = hashPwd(req.pwd);
-
-        if (hashedPwd !== user.pwdHash) {
-          throw new HttpException('Password incorrect', HttpStatus.CONFLICT);
-        }
+      const hashedPwd = hashPwd(req.pwd);
+      if (hashedPwd !== user.hashedPassword) {
+        return res.status(401).json({ error: 'Invalid credentials' });
       }
 
       const token = await this.createToken(await this.generateToken(user));
 
       return res
         .cookie('jwt', token.accessToken, {
-          secure: false,
-          domain: process.env.DOMAIN,
-          httpOnly: true,
+          secure:
+            this.configService.get<string>('JWT_PROTOCOL_SECURE') === 'true',
+          domain: this.configService.get<string>('DOMAIN'),
+          httpOnly: this.configService.get('JWT_HTTP_ONLY') === 'true',
+          maxAge: +this.configService.get('JWT_EXPIRES_SECONDS'),
         })
         .json({ ok: true });
     } catch (e) {
@@ -76,9 +81,11 @@ export class AuthService {
       user.currentTokenId = null;
       await user.save();
       res.clearCookie('jwt', {
-        secure: false,
-        domain: process.env.DOMAIN,
-        httpOnly: true,
+        secure:
+          this.configService.get<string>('JWT_PROTOCOL_SECURE') === 'true',
+        domain: this.configService.get<string>('DOMAIN'),
+        httpOnly: this.configService.get('JWT_HTTP_ONLY') === 'true',
+        maxAge: +this.configService.get('JWT_EXPIRES_SECONDS'),
       });
       return res.json({ ok: true });
     } catch (e) {
