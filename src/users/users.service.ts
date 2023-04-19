@@ -1,20 +1,21 @@
-import {ConflictException, forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {User} from "./entities/user.entity";
-import {ConfigService} from "@nestjs/config";
+import { hashPwd } from '../utils/hash-pwd';
+
 @Injectable()
 export class UsersService {
-  @Inject(forwardRef(() => ConfigService))
-  public configService: ConfigService;
-
-  async create({email,password}: CreateUserDto) {
+  async create({ email, pwd }: CreateUserDto) {
     await this.checkConflictData(email);
     const newUser = new User();
     newUser.email = email;
 
-    //@TODO hash
-    // newUser.hashedPassword =
+    newUser.hashedPassword = hashPwd(pwd);
     return await newUser.save();
   }
 
@@ -30,21 +31,20 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, {password,newPassword,email}: UpdateUserDto) {
+  async update(id: string, { pwd, newPwd, email }: UpdateUserDto) {
     const user = await this.findOne(id);
-    if(email) {
+    if (email) {
       await this.checkConflictData(email);
       user.email = email;
     }
-    if(newPassword) {
-      //@TODO compare and hash
-      // newUser.hashedPassword =
+    if (newPwd && hashPwd(pwd) === user.hashedPassword) {
+      user.hashedPassword = hashPwd(newPwd);
     }
     return user.save();
   }
 
   async remove(id: string) {
-    return await this.findOne(id)
+    return await this.findOne(id);
   }
 
   private async checkConflictData(email: string): Promise<void> {
