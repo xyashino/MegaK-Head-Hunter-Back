@@ -1,5 +1,4 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { UserRole } from '../../enums/user-role.enums';
 
 @Entity()
 export class User extends BaseEntity {
@@ -12,36 +11,11 @@ export class User extends BaseEntity {
   email: string;
 
   @Column()
-  pwdHash: string;
+  hashedPassword: string;
 
   @Column({
     nullable: true,
     default: null,
   })
   currentTokenId: string | null;
-
-  @Column({
-    nullable: false,
-    type: 'enum',
-    enum: UserRole,
-  })
-  role: string;
-
-  @Column({
-    nullable: true,
-    default: null,
-  })
-  registerToken: string | null;
-
-  @Column({
-    nullable: true,
-    default: null,
-  })
-  resetPwdToken: string | null;
-
-  @Column({
-    default: false,
-    type: 'boolean',
-  })
-  isActive: boolean;
 }
