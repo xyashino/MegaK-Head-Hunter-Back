@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { hashPwd } from '../utils/hash-pwd';
 import { Response } from 'express';
@@ -59,12 +52,12 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new UnauthorizedException('Invalid credentials');
+        return res.status(401).json({ error: 'Invalid credentials' });
       }
 
       const hashedPwd = hashPwd(req.pwd);
       if (hashedPwd !== user.hashedPassword) {
-        throw new UnauthorizedException('Invalid credentials');
+        return res.status(401).json({ error: 'Invalid credentials' });
       }
 
       const token = await this.createToken(await this.generateToken(user));
