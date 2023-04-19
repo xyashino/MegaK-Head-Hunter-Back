@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { hashPwd } from '../utils/hash-pwd';
 import { Response } from 'express';
@@ -6,16 +12,22 @@ import { JwtPayload } from './jwt.strategy';
 import { sign } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import { User } from '../users/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
+  @Inject(forwardRef(() => ConfigService))
+  private configService: ConfigService;
+
   private createToken(currentTokenId: string): {
     accessToken: string;
     expiresIn: number;
   } {
     const payload: JwtPayload = { id: currentTokenId };
     const expiresIn = 60 * 60 * 24;
-    const accessToken = sign(payload, process.env.ACCESS_KEY, { expiresIn });
+    const accessToken = sign(payload, this.configService.get('JWT_XXX'), {
+      expiresIn,
+    });
     return {
       accessToken,
       expiresIn,
@@ -45,14 +57,10 @@ export class AuthService {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
 
-      if (!user.isActive) {
-        throw new HttpException('User is not registered', HttpStatus.NOT_FOUND);
-      }
-
       if (user) {
         const hashedPwd = hashPwd(req.pwd);
 
-        if (hashedPwd !== user.pwdHash) {
+        if (hashedPwd !== user.hashedPassword) {
           throw new HttpException('Password incorrect', HttpStatus.CONFLICT);
         }
       }
@@ -62,7 +70,7 @@ export class AuthService {
       return res
         .cookie('jwt', token.accessToken, {
           secure: false,
-          domain: process.env.DOMAIN,
+          domain: this.configService.get('JWT_DOMAIN'),
           httpOnly: true,
         })
         .json({ ok: true });
