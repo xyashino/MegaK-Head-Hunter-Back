@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { hashPwd } from '../utils/hash-pwd';
@@ -24,7 +25,7 @@ export class AuthService {
     expiresIn: number;
   } {
     const payload: JwtPayload = { id: currentTokenId };
-    const expiresIn = 60 * 60 * 24;
+    const expiresIn = +this.configService.get('JWT_EXPIRES_SECONDS');
     const accessToken = sign(
       payload,
       this.configService.get('JWT_ACCESS_KEY'),
@@ -58,24 +59,23 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        throw new UnauthorizedException('Invalid credentials');
       }
 
-      if (user) {
-        const hashedPwd = hashPwd(req.pwd);
-
-        if (hashedPwd !== user.hashedPassword) {
-          throw new HttpException('Password incorrect', HttpStatus.CONFLICT);
-        }
+      const hashedPwd = hashPwd(req.pwd);
+      if (hashedPwd !== user.hashedPassword) {
+        throw new UnauthorizedException('Invalid credentials');
       }
 
       const token = await this.createToken(await this.generateToken(user));
 
       return res
         .cookie('jwt', token.accessToken, {
-          secure: false,
-          domain: this.configService.get('JWT_DOMAIN'),
-          httpOnly: true,
+          secure:
+            this.configService.get<string>('JWT_PROTOCOL_SECURE') === 'true',
+          domain: this.configService.get<string>('DOMAIN'),
+          httpOnly: this.configService.get('JWT_HTTP_ONLY') === 'true',
+          maxAge: +this.configService.get('JWT_EXPIRES_SECONDS'),
         })
         .json({ ok: true });
     } catch (e) {
@@ -88,9 +88,11 @@ export class AuthService {
       user.currentTokenId = null;
       await user.save();
       res.clearCookie('jwt', {
-        secure: false,
-        domain: this.configService.get('JWT_DOMAIN'),
-        httpOnly: true,
+        secure:
+          this.configService.get<string>('JWT_PROTOCOL_SECURE') === 'true',
+        domain: this.configService.get<string>('DOMAIN'),
+        httpOnly: this.configService.get('JWT_HTTP_ONLY') === 'true',
+        maxAge: +this.configService.get('JWT_EXPIRES_SECONDS'),
       });
       return res.json({ ok: true });
     } catch (e) {

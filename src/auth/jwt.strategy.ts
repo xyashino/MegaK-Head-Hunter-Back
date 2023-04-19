@@ -35,6 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     const user = await User.findOneBy({ currentTokenId: payload.id });
+
     if (!user) {
       return done(new UnauthorizedException(), false);
     }
