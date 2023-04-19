@@ -23,6 +23,7 @@ export class UsersService {
     return User.find();
   }
 
+
   async findOne(id: string) {
     const user = await User.findOneBy({ id });
     if (!user) {
