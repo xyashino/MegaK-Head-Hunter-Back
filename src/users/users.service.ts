@@ -10,11 +10,11 @@ import { hashPwd } from '../utils/hash-pwd';
 
 @Injectable()
 export class UsersService {
-  async create({ email, pwd }: CreateUserDto) {
+  async create({ email, pwd ,...rest}: CreateUserDto) {
     await this.checkConflictData(email);
     const newUser = new User();
+    this.applyDataToEntity(newUser,rest);
     newUser.email = email;
-
     newUser.hashedPassword = hashPwd(pwd);
     return await newUser.save();
   }
@@ -31,8 +31,11 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, { pwd, newPwd, email }: UpdateUserDto) {
+  async update(id: string, { pwd, newPwd, email ,...rest}: UpdateUserDto) {
     const user = await this.findOne(id);
+
+    this.applyDataToEntity(user,rest);
+
     if (email) {
       await this.checkConflictData(email);
       user.email = email;
@@ -50,5 +53,11 @@ export class UsersService {
   private async checkConflictData(email: string): Promise<void> {
     const userExist = await User.findOneBy({ email });
     if (userExist) throw new ConflictException('Email is taken');
+  }
+
+  private applyDataToEntity<T extends {}>(entity: T, data: Partial<T>) {
+    for (const [key, value] of Object.entries(data)) {
+      entity[key] = value;
+    }
   }
 }
