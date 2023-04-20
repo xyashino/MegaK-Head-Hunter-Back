@@ -14,18 +14,17 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsString()
   @IsNotEmpty()
   @Contains('@')
-  email: string;
+  email?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
-  newPwd: string;
+  newPwd?: string;
 
-  @ValidateIf((obj) => obj.newPassword !== undefined)
+  @ValidateIf((obj) => obj.newPwd !== undefined)
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
-  @IsOptional()
   pwd: string;
 }
