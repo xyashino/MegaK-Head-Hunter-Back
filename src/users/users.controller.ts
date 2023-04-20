@@ -13,8 +13,11 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import {Serialize} from "../interceptors/serialization.interceptor";
+import {ResponseUserDto} from "./dto/response-user.dto";
 
 @Controller('users')
+@Serialize(ResponseUserDto)
 export class UsersController {
   @Inject(forwardRef(() => UsersService))
   private readonly usersService: UsersService;
