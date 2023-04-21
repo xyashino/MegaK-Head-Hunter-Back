@@ -1,5 +1,5 @@
 
-export interface HrResponse {
+export interface HrResponseData {
     id: string;
     email: string;
     fullName: string;

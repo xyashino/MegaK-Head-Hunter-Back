@@ -1,5 +1,5 @@
 
-export interface CreateHrRequest {
+export interface CreateHrRequestBody {
     email: string;
     fullName: string;
     company: string;

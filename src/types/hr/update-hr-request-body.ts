@@ -15,4 +15,4 @@ interface UpdateHrWithoutNewPwd {
     pwd?: never;
 }
 
-export type UpdateHrRequest = UpdateHrBase & (UpdateHrWithNewPwd | UpdateHrWithoutNewPwd);
+export type UpdateHrRequestBody = UpdateHrBase & (UpdateHrWithNewPwd | UpdateHrWithoutNewPwd);
