@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,16 +8,31 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { hashPwd } from '../utils/hash-pwd';
+import { UserRole } from '../enums/user-role.enums';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UsersService {
-  async create({ email, pwd ,...rest}: CreateUserDto) {
+  constructor(@Inject(MailService) private mailService: MailService) {}
+
+  async create({ email, pwd, ...rest }: CreateUserDto) {
     await this.checkConflictData(email);
     const newUser = new User();
-    this.applyDataToEntity(newUser,rest);
+    this.applyDataToEntity(newUser, rest);
     newUser.email = email;
     newUser.hashedPassword = hashPwd(pwd);
-    return await newUser.save();
+    newUser.role = UserRole.HR;
+    await newUser.save();
+    // SEND EMAIL TO TEST
+    // await this.mailService.sendMail(
+    //   email,
+    //   'Rejestracja w HeadHunter',
+    //   './register',
+    //   {
+    //     registrationLink: `http://localhost:3000/register/${newUser.id}/`,
+    //   },
+    // );
+    return newUser;
   }
 
   findAll() {
@@ -31,10 +47,10 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, { pwd, newPwd, email ,...rest}: UpdateUserDto) {
+  async update(id: string, { pwd, newPwd, email, ...rest }: UpdateUserDto) {
     const user = await this.findOne(id);
 
-    this.applyDataToEntity(user,rest);
+    this.applyDataToEntity(user, rest);
 
     if (email) {
       await this.checkConflictData(email);
