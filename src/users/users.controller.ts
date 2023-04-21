@@ -1,26 +1,27 @@
 import {
   Body,
   Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  forwardRef,
-  Inject,
-  ParseUUIDPipe,
   Delete,
+  forwardRef,
+  Get,
+  Inject,
+  Param,
+  ParseUUIDPipe,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
-import {UsersService} from './users.service';
-import {CreateUserDto} from './dto/create-user.dto';
-import {UpdateUserDto} from './dto/update-user.dto';
-import {Serialize} from "../interceptors/serialization.interceptor";
-import {ResponseUserDto} from "./dto/response-user.dto";
-import {AuthGuard} from "@nestjs/passport";
-import {UserObj} from "../decorators/user-obj.decorator";
-import {User} from "./entities/user.entity";
-
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Serialize } from '../interceptors/serialization.interceptor';
+import { ResponseUserDto } from './dto/response-user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { UserObj } from '../decorators/user-obj.decorator';
+import { User } from './entities/user.entity';
+import { RolesGuard } from '../guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { UserRole } from '../enums/user-role.enums';
 
 @Controller('users')
 @Serialize(ResponseUserDto)
@@ -34,15 +35,15 @@ export class UsersController {
   }
 
   @Get()
+  @Roles(UserRole.HR)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   findAll() {
     return this.usersService.findAll();
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('current')
-  getCurrentUser(
-      @UserObj() user: User
-  ) {
+  getCurrentUser(@UserObj() user: User) {
     return this.usersService.findOne(user.id);
   }
 
