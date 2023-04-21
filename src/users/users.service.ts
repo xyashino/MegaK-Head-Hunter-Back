@@ -1,21 +1,18 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { hashPwd } from '../utils/hash-pwd';
+import {ConflictException, forwardRef, Inject, Injectable, NotFoundException,} from '@nestjs/common';
+import {CreateUserDto} from './dto/create-user.dto';
+import {User} from './entities/user.entity';
+import {UpdateUserDto} from './dto/update-user.dto';
+import {hashPwd} from '../utils/hash-pwd';
 
 @Injectable()
 export class UsersService {
-  async create({ email, pwd ,...rest}: CreateUserDto) {
+
+  async create({ email, pwd ,role}: CreateUserDto) {
     await this.checkConflictData(email);
     const newUser = new User();
-    this.applyDataToEntity(newUser,rest);
     newUser.email = email;
     newUser.hashedPassword = hashPwd(pwd);
+    newUser.role = role;
     return await newUser.save();
   }
 
@@ -31,11 +28,8 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, { pwd, newPwd, email ,...rest}: UpdateUserDto) {
+  async update(id: string, { pwd, newPwd, email , role}: UpdateUserDto) {
     const user = await this.findOne(id);
-
-    this.applyDataToEntity(user,rest);
-
     if (email) {
       await this.checkConflictData(email);
       user.email = email;
@@ -43,6 +37,9 @@ export class UsersService {
     if (newPwd && hashPwd(pwd) === user.hashedPassword) {
       user.hashedPassword = hashPwd(newPwd);
     }
+
+    user.role = role ?? user.role;
+
     return user.save();
   }
 
@@ -50,14 +47,12 @@ export class UsersService {
     return await this.findOne(id);
   }
 
-  private async checkConflictData(email: string): Promise<void> {
+  async checkConflictData(email: string): Promise<void> {
     const userExist = await User.findOneBy({ email });
     if (userExist) throw new ConflictException('Email is taken');
   }
 
-  private applyDataToEntity<T extends {}>(entity: T, data: Partial<T>) {
-    for (const [key, value] of Object.entries(data)) {
-      entity[key] = value;
-    }
+  getCurrentUser(user: User) {
+    return this.findOne(user.id);
   }
 }
