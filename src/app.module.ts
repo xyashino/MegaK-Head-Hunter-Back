@@ -7,7 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeormConfigAsync } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { HrModule } from './hr/hr.module';
-
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -18,6 +18,7 @@ import { HrModule } from './hr/hr.module';
     HrModule,
     UsersModule,
     AuthModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

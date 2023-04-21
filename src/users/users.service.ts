@@ -14,6 +14,7 @@ export class UsersService {
     newUser.hashedPassword = hashPwd(pwd);
     newUser.role = role;
     return await newUser.save();
+
   }
 
   findAll() {
@@ -28,8 +29,11 @@ export class UsersService {
     return user;
   }
 
+
   async update(id: string, { pwd, newPwd, email , role}: UpdateUserDto) {
     const user = await this.findOne(id);
+
+
     if (email) {
       await this.checkConflictData(email);
       user.email = email;
