@@ -1,5 +1,10 @@
+
+import {BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {UserRole} from "../../enums/user-role.enums";
+import {Hr} from "../../hr/entities/hr.entity";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRole } from '../../enums/user-role.enums';
+
 
 @Entity()
 export class User extends BaseEntity {
@@ -26,4 +31,7 @@ export class User extends BaseEntity {
     default: null,
   })
   currentTokenId: string | null;
+
+  @OneToOne(() => Hr, hr => hr.user)
+  hr: Hr;
 }
