@@ -1,20 +1,25 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
-  forwardRef,
-  Inject,
-  ParseUUIDPipe,
+  Controller,
   Delete,
+  forwardRef,
+  Get,
+  Inject,
+  Param,
+  ParseUUIDPipe,
   Patch,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {UsersService} from './users.service';
+import {CreateUserDto} from './dto/create-user.dto';
+import {UpdateUserDto} from './dto/update-user.dto';
 import {Serialize} from "../interceptors/serialization.interceptor";
 import {ResponseUserDto} from "./dto/response-user.dto";
+import {AuthGuard} from "@nestjs/passport";
+import {UserObj} from "../decorators/user-obj.decorator";
+import {User} from "./entities/user.entity";
+
 
 @Controller('users')
 @Serialize(ResponseUserDto)
@@ -27,11 +32,23 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  // Uncomment for test only (only admin permission)
+  // @Roles(UserRole.ADMIN)
+  // @UseGuards(AuthGuard('jwt'),RolesGuard)
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('current')
+  getCurrentUser(
+      @UserObj() user: User
+  ) {
+    return this.usersService.findOne(user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
@@ -39,12 +56,13 @@ export class UsersController {
 
   @Patch(':id')
   update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateUserDto: UpdateUserDto,
+      @Param('id', ParseUUIDPipe) id: string,
+      @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(id, updateUserDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
