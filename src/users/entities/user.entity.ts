@@ -21,8 +21,16 @@ export class User extends BaseEntity {
   })
   role: string;
 
-  @Column()
+  @Column({
+    nullable:true
+  })
   hashedPassword: string;
+
+  @Column({
+    type:"boolean",
+    default:false
+  })
+  isActive: boolean;
 
   @Column({
     nullable: true,
