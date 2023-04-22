@@ -1,16 +1,22 @@
-import { Expose } from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
+import { User } from '../../users/entities/user.entity';
+import { Hr } from '../entities/hr.entity';
 
-export class ResponseHrDto {
+export class ResponseHrDto implements Partial<Hr> {
+  @Exclude()
+  user: User;
   @Expose()
-  id:string;
+  get email() {
+    return this.user.email;
+  }
   @Expose()
-  email:string;
+  get isActive() {
+    return this.user.isActive;
+  }
   @Expose()
-  fullName:string;
+  get userId() {
+    return this.user.id;
+  }
   @Expose()
-  company:string;
-  @Expose()
-  isActive:boolean;
-  @Expose()
-  maxReservedStudents:number;
+  company: string;
 }
