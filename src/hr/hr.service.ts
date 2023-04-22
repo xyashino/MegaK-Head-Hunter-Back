@@ -38,7 +38,7 @@ export class HrService {
   }
 
   async register({ pwd }: RegisterHrDto, id) {
-    const { user, ...hr } = await this.findOne(id);
+    const { user } = await this.findOne(id);
     if (user.isActive)
       throw new ConflictException('The user has been registered');
     await this.usersService.update(user.id, { isActive: true, pwd });
