@@ -24,4 +24,8 @@ export class StudentsService {
     const addedStudent = await newStudent.save();
     return addedStudent;
   }
+
+  findAll() {
+    return Student.find();
+  }
 }
