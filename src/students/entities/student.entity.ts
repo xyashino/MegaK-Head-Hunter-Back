@@ -36,13 +36,13 @@ export class Student extends BaseEntity {
   githubUsername: string;
 
   @Column({
-    length: 255,
+    type: 'simple-array',
     nullable: true,
   })
   portfolioUrls: string;
 
   @Column({
-    length: 255,
+    type: 'simple-array',
     nullable: true,
   })
   projectUrls: string;
