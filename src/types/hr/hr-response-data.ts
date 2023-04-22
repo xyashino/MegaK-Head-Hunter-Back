@@ -1,9 +1,9 @@
-
-export interface HrResponseData {
-    id: string;
-    email: string;
-    fullName: string;
-    company: string;
-    isActive: boolean;
-    maxReservedStudents: number;
+interface HrResponseData {
+  id: string;
+  fullName: string;
+  company: string;
+  maxReservedStudents: number;
+  email: string;
+  isActive: boolean;
+  userId: string;
 }
