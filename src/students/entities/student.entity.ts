@@ -39,13 +39,13 @@ export class Student extends BaseEntity {
     type: 'simple-array',
     nullable: true,
   })
-  portfolioUrls: string;
+  portfolioUrls: string[];
 
   @Column({
     type: 'simple-array',
     nullable: true,
   })
-  projectUrls: string;
+  projectUrls: string[];
 
   @Column({
     length: 255,
