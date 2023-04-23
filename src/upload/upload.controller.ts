@@ -6,9 +6,8 @@ import {
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { multerStorage, storageDir } from '../utils/storage';
-import * as path from 'path';
-import { MulterDiskUploadedFiles } from '../interfaces/files';
+import { fileFilter, fileLimits } from '../utils/file-filters';
+import { MulterMemoryUploadedFiles } from '../interfaces/files';
 
 @Controller('upload')
 export class UploadController {
@@ -17,10 +16,11 @@ export class UploadController {
   @Post('/file')
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'uploadStudents', maxCount: 1 }], {
-      storage: multerStorage(path.join(storageDir(), 'students')),
+      limits: fileLimits,
+      fileFilter: fileFilter,
     }),
   )
-  uploadStudents(@UploadedFiles() files: MulterDiskUploadedFiles) {
-    return this.adminService.uploadStudents(files);
+  uploadStudents(@UploadedFiles() file: MulterMemoryUploadedFiles) {
+    return this.adminService.uploadStudents(file);
   }
 }

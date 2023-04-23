@@ -1,12 +1,12 @@
-export interface MulterDiskUploadedFiles {
+export interface MulterMemoryUploadedFiles {
   [fieldname: string]:
     | {
-        filename: string;
         size: number;
         mimetype: string;
         originalname: string;
         fieldname: string;
         encoding: string;
+        buffer: Buffer;
       }[]
     | undefined;
 }

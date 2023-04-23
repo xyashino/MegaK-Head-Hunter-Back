@@ -1,33 +1,22 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { MulterDiskUploadedFiles } from '../interfaces/files';
-import { readFileSync } from 'fs';
-import * as path from 'path';
-import { storageDir } from '../utils/storage';
 import { parse } from 'papaparse';
 import { Student } from '../students/entities/student.entity';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../enums/user-role.enums';
 import { StudentImportDto } from './dto/student-import.dto';
-import * as fs from 'fs';
+import { MulterMemoryUploadedFiles } from '../interfaces/files';
 
 @Injectable()
 export class UploadService {
-  async uploadStudents(files: MulterDiskUploadedFiles) {
-    const uploadStudents = files?.uploadStudents?.[0] ?? null;
+  async uploadStudents(file: MulterMemoryUploadedFiles) {
+    const uploadStudents = file?.uploadStudents?.[0] ?? null;
 
     if (!uploadStudents) {
       throw new HttpException('Not found file', HttpStatus.NOT_FOUND);
     }
 
-    const pathCsvFile = path.join(
-      storageDir(),
-      'students',
-      'students-import.csv',
-    );
-
     try {
-      const csvFile = readFileSync(pathCsvFile);
-      const csvData = csvFile.toString();
+      const csvData = uploadStudents.buffer.toString();
 
       const { data } = await parse(csvData, {
         header: true,
@@ -38,11 +27,7 @@ export class UploadService {
 
       return await this.importStudents(data);
     } catch (e) {
-      try {
-        fs.unlinkSync(pathCsvFile);
-      } catch (e2) {
-        throw new HttpException('Cannot remove file', HttpStatus.I_AM_A_TEAPOT);
-      }
+      console.log(e);
     }
   }
 
