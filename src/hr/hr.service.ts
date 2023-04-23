@@ -45,12 +45,11 @@ export class HrService {
     return this.findOne(id);
   }
 
-  async update(id: string, { email, pwd, ...rest }: UpdateHrDto) {
+  async update(id: string, {pwd, ...rest }: UpdateHrDto) {
     const hr = await this.findOne(id);
     const { user } = hr;
     if (!user.isActive) throw new ForbiddenException();
     await this.usersService.update(user.id, {
-      email,
       pwd,
     });
     this.applyDataToEntity(hr, rest);

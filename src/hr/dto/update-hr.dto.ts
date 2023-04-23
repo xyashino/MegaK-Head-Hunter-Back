@@ -12,9 +12,6 @@ import {
 } from 'class-validator';
 
 export class UpdateHrDto extends PartialType(CreateHrDto) {
-  @IsOptional()
-  @Contains('@')
-  email?: string;
 
   @IsOptional()
   @IsNotEmpty()
