@@ -10,6 +10,7 @@ import { HrModule } from './hr/hr.module';
 
 import { MailModule } from './mail/mail.module';
 import { StudentsModule } from './students/students.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { StudentsModule } from './students/students.module';
     AuthModule,
     MailModule,
     StudentsModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
