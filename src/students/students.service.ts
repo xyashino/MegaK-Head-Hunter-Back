@@ -1,7 +1,13 @@
-import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Injectable()
 export class StudentsService {
@@ -33,8 +39,39 @@ export class StudentsService {
     const student = await Student.findOne({
       where: { id },
     });
+    this.checkStudentExist(student);
+    return student;
+  }
+
+  async remove(id: string) {
+    const student = await this.findOne(id);
+    this.checkStudentExist(student);
+    return student.remove();
+  }
+
+  async update(id: string, { ...rest }: UpdateStudentDto) {
+    const student = await this.findOne(id);
+    this.checkStudentExist(student);
+
+    this.updateAllData(student, rest);
+    console.log(student);
+
+    const updadedStudent = await student.save();
+    return updadedStudent;
+  }
+
+  private updateAllData(
+    currStudentData: CreateStudentDto,
+    data: any,
+  ) /*poprawić typy*/ {
+    for (const [key, value] of Object.entries(data)) {
+      console.log(Object.entries(data));
+      currStudentData[key] = value;
+    }
+  }
+
+  private checkStudentExist(student) {
     if (!student)
       throw new NotFoundException('Student with given id does not exist');
-    return student;
   }
 }
