@@ -1,7 +1,15 @@
 import { StudentContactType } from 'src/enums/student-contract-type.enums';
 import { StudentStatus } from 'src/enums/student-status.enums';
 import { StudentTypeWork } from 'src/enums/students-type-work.enums';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Student extends BaseEntity {
@@ -9,9 +17,39 @@ export class Student extends BaseEntity {
   id: string;
 
   @Column({
-    unique: true,
+    type: 'decimal',
+    precision: 3,
+    scale: 2,
+    default: 0,
   })
-  email: string;
+  courseCompletion: number;
+
+  @Column({
+    type: 'decimal',
+    precision: 3,
+    scale: 2,
+    default: 0,
+  })
+  courseEngagement: number;
+
+  @Column({
+    type: 'decimal',
+    precision: 3,
+    scale: 2,
+    default: 0,
+  })
+  projectDegree: number;
+
+  @Column({
+    type: 'decimal',
+    precision: 3,
+    scale: 2,
+    default: 0,
+  })
+  teamProjectDegree: number;
+
+  @Column('simple-array')
+  bonusProjectUrls: string[];
 
   @Column({
     length: 20,
@@ -22,30 +60,23 @@ export class Student extends BaseEntity {
   @Column({
     length: 255,
   })
-  firstname: string;
+  firstName: string;
 
   @Column({
     length: 255,
   })
-  lastname: string;
+  lastName: string;
 
   @Column({
     length: 255,
-    unique: true,
   })
   githubUsername: string;
 
-  @Column({
-    length: 255,
-    nullable: true,
-  })
-  portfolioUrls: string;
+  @Column('simple-array')
+  portfolioUrls: string[];
 
-  @Column({
-    length: 255,
-    nullable: true,
-  })
-  projectUrls: string;
+  @Column('simple-array')
+  projectUrls: string[];
 
   @Column({
     length: 255,
@@ -108,13 +139,18 @@ export class Student extends BaseEntity {
   courses: string;
 
   @Column({
-    default: false,
-  })
-  isActive: boolean;
-
-  @Column({
     type: 'enum',
     enum: StudentStatus,
   })
   status: StudentStatus;
+
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
+
+  // static findByUserId(userId: string) {
+  //   return this.createQueryBuilder('student')
+  //     .where('student.userId = :userId', { userId })
+  //     .getOne();
+  // }
 }

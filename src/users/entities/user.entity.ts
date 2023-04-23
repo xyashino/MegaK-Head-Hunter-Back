@@ -1,6 +1,13 @@
-import {BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {UserRole} from "../../enums/user-role.enums";
-import {Hr} from "../../hr/entities/hr.entity";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { UserRole } from '../../enums/user-role.enums';
+import { Hr } from '../../hr/entities/hr.entity';
+import { Student } from '../../students/entities/student.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -19,8 +26,17 @@ export class User extends BaseEntity {
   })
   role: string;
 
-  @Column()
-  hashedPassword: string;
+  @Column({
+    default: false,
+    type: 'boolean',
+  })
+  isActive: boolean;
+
+  @Column({
+    nullable: true,
+    default: null,
+  })
+  hashedPassword: string | null;
 
   @Column({
     nullable: true,
@@ -28,6 +44,9 @@ export class User extends BaseEntity {
   })
   currentTokenId: string | null;
 
-  @OneToOne(() => Hr, hr => hr.user)
+  @OneToOne(() => Hr, (hr) => hr.user)
   hr: Hr;
+
+  @OneToOne(() => Student, (student) => student.user)
+  student: Student;
 }
