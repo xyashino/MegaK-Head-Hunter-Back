@@ -15,6 +15,11 @@ export class StudentsService {
   usersService: UsersService;
   async create({
     email,
+    courseCompletion,
+    courseEngagment,
+    projectDegree,
+    teamProjectDegree,
+    bonusProjectUrls,
     firstname,
     lastname,
     githubUsername,
@@ -23,6 +28,11 @@ export class StudentsService {
   }: CreateStudentDto) {
     const newStudent = new Student();
     newStudent.email = email;
+    newStudent.courseCompletion = courseCompletion;
+    newStudent.courseEngagment = courseEngagment;
+    newStudent.projectDegree = projectDegree;
+    newStudent.teamProjectDegree = teamProjectDegree;
+    newStudent.bonusProjectUrls = bonusProjectUrls;
     newStudent.firstname = firstname;
     newStudent.lastname = lastname;
     newStudent.githubUsername = githubUsername;

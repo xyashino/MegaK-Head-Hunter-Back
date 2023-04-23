@@ -6,6 +6,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsString,
+  Max,
   Min,
 } from 'class-validator';
 import { StudentContactType } from 'src/enums/student-contract-type.enums';
@@ -17,6 +18,34 @@ export class CreateStudentDto {
   @IsNotEmpty()
   @Contains('@')
   email: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(5)
+  courseCompletion: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(5)
+  courseEngagment: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(5)
+  projectDegree: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(5)
+  teamProjectDegree: number;
+
+  @IsNotEmpty()
+  @IsArray()
+  bonusProjectUrls: string[];
 
   @IsString()
   tel: string;

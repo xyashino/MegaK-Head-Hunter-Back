@@ -14,6 +14,39 @@ export class Student extends BaseEntity {
   email: string;
 
   @Column({
+    type: 'float',
+    precision: 3,
+    scale: 2,
+  })
+  courseCompletion: number;
+
+  @Column({
+    type: 'float',
+    precision: 3,
+    scale: 2,
+  })
+  courseEngagment: number;
+
+  @Column({
+    type: 'float',
+    precision: 3,
+    scale: 2,
+  })
+  projectDegree: number;
+
+  @Column({
+    type: 'float',
+    precision: 3,
+    scale: 2,
+  })
+  teamProjectDegree: number;
+
+  @Column({
+    type: 'simple-array',
+  })
+  bonusProjectUrls: string[];
+
+  @Column({
     length: 20,
     nullable: true,
   })
