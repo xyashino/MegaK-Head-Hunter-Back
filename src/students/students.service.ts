@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -27,5 +27,14 @@ export class StudentsService {
 
   findAll() {
     return Student.find();
+  }
+
+  async findOne(id: string) {
+    const student = await Student.findOne({
+      where: { id },
+    });
+    if (!student)
+      throw new NotFoundException('Student with given id does not exist');
+    return student;
   }
 }

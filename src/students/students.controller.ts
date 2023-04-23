@@ -5,6 +5,7 @@ import {
   Inject,
   Post,
   Get,
+  Param,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -14,12 +15,17 @@ export class StudentsController {
   @Inject(forwardRef(() => StudentsService))
   private readonly StudentsService: StudentsService;
 
-  @Post()
+  @Post('/')
   create(@Body() CreateStudentDto: CreateStudentDto) {
     return this.StudentsService.create(CreateStudentDto);
   }
-  @Get()
+  @Get('/')
   findAll() {
     return this.StudentsService.findAll();
+  }
+
+  @Get('/:id')
+  findOne(@Param('id') id: string) {
+    return this.StudentsService.findOne(id);
   }
 }
