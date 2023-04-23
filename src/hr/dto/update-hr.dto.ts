@@ -1,7 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { CreateHrDto } from './create-hr.dto';
 import {
-  Contains,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -11,8 +9,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class UpdateHrDto extends PartialType(CreateHrDto) {
-
+export class UpdateHrDto implements Partial<CreateHrDto> {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
