@@ -49,13 +49,20 @@ export const filteredResults = (results) => {
     );
   }
 
-  const invalidFieldsWhereNumbersRequired = results.data.filter(
-    (item) =>
-      isNaN(Number(item.courseCompletion)) &&
-      isNaN(Number(item.courseEngagement)) &&
-      isNaN(Number(item.projectDegree)) &&
-      isNaN(Number(item.teamProjectDegree)),
-  );
+  const invalidFieldsWhereNumbersRequired = results.data.filter((item) => {
+    const {
+      courseCompletion,
+      courseEngagement,
+      projectDegree,
+      teamProjectDegree,
+    } = item;
+    return [
+      courseCompletion,
+      courseEngagement,
+      projectDegree,
+      teamProjectDegree,
+    ].some((value) => isNaN(parseInt(value)));
+  });
 
   if (invalidFieldsWhereNumbersRequired.length > 0) {
     throw new HttpException(
@@ -64,17 +71,20 @@ export const filteredResults = (results) => {
     );
   }
 
-  const invalidRangeOfNumbers = results.data.filter(
-    (item) =>
-      Number(item.courseCompletion) > 5 ||
-      Number(item.courseCompletion) < 0 ||
-      Number(item.courseEngagement) > 5 ||
-      Number(item.courseEngagement) < 0 ||
-      Number(item.projectDegree) > 5 ||
-      Number(item.projectDegree) < 0 ||
-      Number(item.teamProjectDegree) > 5 ||
-      Number(item.teamProjectDegree) < 0,
-  );
+  const invalidRangeOfNumbers = results.data.filter((item) => {
+    const {
+      courseCompletion,
+      courseEngagement,
+      projectDegree,
+      teamProjectDegree,
+    } = item;
+    return [
+      courseCompletion,
+      courseEngagement,
+      projectDegree,
+      teamProjectDegree,
+    ].some((value) => Number(value) < 0 || Number(value) > 5);
+  });
 
   if (invalidRangeOfNumbers.length > 0) {
     throw new HttpException(
@@ -93,6 +103,5 @@ export const filteredResults = (results) => {
       HttpStatus.BAD_REQUEST,
     );
   }
-
   return results;
 };

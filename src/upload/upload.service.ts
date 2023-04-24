@@ -4,33 +4,29 @@ import { Student } from '../students/entities/student.entity';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../enums/user-role.enums';
 import { StudentImportDto } from './dto/student-import.dto';
-import { MulterMemoryUploadedFiles } from '../interfaces/files';
+import { MulterMemoryUploadedFile } from '../interfaces/files';
 import { filteredResults } from '../utils/file-filters';
 
 @Injectable()
 export class UploadService {
-  async uploadStudents(file: MulterMemoryUploadedFiles) {
-    const uploadStudents = file?.uploadStudents?.[0] ?? null;
+  async uploadStudents(file: MulterMemoryUploadedFile) {
+    const uploadStudents = file ?? null;
     if (!uploadStudents) {
       throw new HttpException('Not found file', HttpStatus.NOT_FOUND);
     }
 
-    try {
-      const csvData = uploadStudents.buffer.toString();
-      const { data, errors } = await parse(csvData, {
-        header: true,
-        skipEmptyLines: true,
-        transformHeader: (header) => header.replace('#', '').trim(),
-        complete: filteredResults,
-      });
+    const csvData = uploadStudents.buffer.toString();
+    const { data, errors } = await parse(csvData, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: (header) => header.replace('#', '').trim(),
+      complete: filteredResults,
+    });
 
-      if (errors.length > 0) {
-        throw new HttpException('CSV parsing errors', HttpStatus.BAD_REQUEST);
-      }
-      return await this.importStudents(data);
-    } catch (e) {
-      return e;
+    if (errors.length > 0) {
+      throw new HttpException('CSV parsing errors', HttpStatus.BAD_REQUEST);
     }
+    return await this.importStudents(data);
   }
 
   async importStudents(students: StudentImportDto[]) {
