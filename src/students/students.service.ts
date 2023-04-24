@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -64,9 +65,8 @@ export class StudentsService {
     this.checkStudentExist(student);
 
     this.updateAllData(student, rest);
-    console.log(student);
-
     const updadedStudent = await student.save();
+
     return updadedStudent;
   }
 
@@ -75,7 +75,6 @@ export class StudentsService {
     data: any,
   ) /*poprawić typy*/ {
     for (const [key, value] of Object.entries(data)) {
-      console.log(Object.entries(data));
       currStudentData[key] = value;
     }
   }
