@@ -2,11 +2,13 @@ import {
   Contains,
   IsArray,
   IsBoolean,
+  IsDefined,
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
+  Max,
   Min,
 } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
@@ -15,12 +17,41 @@ import { StudentTypeWork } from 'src/enums/students-type-work.enums';
 import { StudentStatus } from 'src/enums/student-status.enums';
 import { StudentContactType } from 'src/enums/student-contract-type.enums';
 
-export class UpdateStudentDto extends PartialType(CreateStudentDto) {
+export class UpdateStudentDto implements Partial<CreateStudentDto> {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
   @Contains('@')
   email?: string;
+  
+
+  @IsInt()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(5)
+  courseCompletion: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(5)
+  courseEngagment: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(5)
+  projectDegree?: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(5)
+  teamProjectDegree: number;
+
+  @IsNotEmpty()
+  @IsArray()
+  bonusProjectUrls: string[];
 
   @IsOptional()
   @IsString()
