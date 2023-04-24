@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsString,
   Max,
   Min,
@@ -19,25 +20,45 @@ export class CreateStudentDto {
   @Contains('@')
   email: string;
 
-  @IsInt()
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: 'Given data must be a number and have a maximum of two decimal',
+    },
+  )
   @IsNotEmpty()
   @Min(0)
   @Max(5)
   courseCompletion: number;
 
-  @IsInt()
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: 'Given data must be a number and have a maximum of two decimal',
+    },
+  )
   @IsNotEmpty()
   @Min(0)
   @Max(5)
   courseEngagment: number;
 
-  @IsInt()
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: 'Given data must be a number and have a maximum of two decimal',
+    },
+  )
   @IsNotEmpty()
   @Min(0)
   @Max(5)
   projectDegree: number;
 
-  @IsInt()
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: 'Given data must be a number and have a maximum of two decimal',
+    },
+  )
   @IsNotEmpty()
   @Min(0)
   @Max(5)
