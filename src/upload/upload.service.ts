@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { parse } from 'papaparse';
 import { Student } from '../students/entities/student.entity';
 import { User } from '../users/entities/user.entity';
@@ -6,9 +12,12 @@ import { UserRole } from '../enums/user-role.enums';
 import { StudentImportDto } from './dto/student-import.dto';
 import { MulterMemoryUploadedFile } from '../interfaces/files';
 import { filteredResults } from '../utils/file-filters';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UploadService {
+  @Inject(forwardRef(() => MailService)) mailService: MailService;
+
   async uploadStudents(file: MulterMemoryUploadedFile) {
     const uploadStudents = file ?? null;
     if (!uploadStudents) {
@@ -49,6 +58,15 @@ export class UploadService {
         student.teamProjectDegree = studentItem.teamProjectDegree;
         student.courseEngagement = studentItem.courseEngagement;
         await student.save();
+
+        // await this.mailService.sendMail(
+        //   user.email,
+        //   'Rejestracja w Head Hunter',
+        //   './register',
+        //   {
+        //     registrationLink: `http://localhost:3000/register/${user.id}`,
+        //   },
+        // );
       }
     }
     return 'Students imported successfully';
