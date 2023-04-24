@@ -8,6 +8,8 @@ import { typeormConfigAsync } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { HrModule } from './hr/hr.module';
 import { MailModule } from './mail/mail.module';
+import { AdminCommand } from './commands/admin.command';
+import { ConsoleModule } from 'nestjs-console';
 import { StudentsModule } from './students/students.module';
 import { UploadModule } from './upload/upload.module';
 
@@ -21,10 +23,11 @@ import { UploadModule } from './upload/upload.module';
     UsersModule,
     AuthModule,
     MailModule,
+    ConsoleModule,
     StudentsModule,
     UploadModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AdminCommand],
 })
 export class AppModule {}
