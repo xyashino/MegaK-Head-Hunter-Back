@@ -14,6 +14,9 @@ import { StudentContactType } from 'src/enums/student-contract-type.enums';
 import { StudentStatus } from 'src/enums/student-status.enums';
 import { StudentTypeWork } from 'src/enums/students-type-work.enums';
 
+const decimalMessageValidation =
+  'Given data must be a number and have a maximum of two decimal';
+
 export class CreateStudentDto {
   @IsString()
   @IsNotEmpty()
@@ -23,7 +26,7 @@ export class CreateStudentDto {
   @IsNumber(
     { maxDecimalPlaces: 2 },
     {
-      message: 'Given data must be a number and have a maximum of two decimal',
+      message: decimalMessageValidation,
     },
   )
   @IsNotEmpty()
@@ -34,7 +37,7 @@ export class CreateStudentDto {
   @IsNumber(
     { maxDecimalPlaces: 2 },
     {
-      message: 'Given data must be a number and have a maximum of two decimal',
+      message: decimalMessageValidation,
     },
   )
   @IsNotEmpty()
@@ -45,7 +48,7 @@ export class CreateStudentDto {
   @IsNumber(
     { maxDecimalPlaces: 2 },
     {
-      message: 'Given data must be a number and have a maximum of two decimal',
+      message: decimalMessageValidation,
     },
   )
   @IsNotEmpty()
@@ -56,7 +59,7 @@ export class CreateStudentDto {
   @IsNumber(
     { maxDecimalPlaces: 2 },
     {
-      message: 'Given data must be a number and have a maximum of two decimal',
+      message: decimalMessageValidation,
     },
   )
   @IsNotEmpty()

@@ -1,43 +1,25 @@
 import {
-  ForbiddenException,
+  ConflictException,
   Inject,
   Injectable,
-  NotFoundException,
   forwardRef,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { applyDataToEntity } from '../utils/apply-data-to-entity';
 
 @Injectable()
 export class StudentsService {
   @Inject(forwardRef(() => UsersService))
   usersService: UsersService;
-  async create({
-    email,
-    courseCompletion,
-    courseEngagment,
-    projectDegree,
-    teamProjectDegree,
-    bonusProjectUrls,
-    firstname,
-    lastname,
-    githubUsername,
-    projectUrls,
-    ...rest
-  }: CreateStudentDto) {
+  async create({ email, ...rest }: CreateStudentDto) {
+    await this.checkConflictData(email);
     const newStudent = new Student();
+    applyDataToEntity(newStudent, rest);
+
     newStudent.email = email;
-    newStudent.courseCompletion = courseCompletion;
-    newStudent.courseEngagment = courseEngagment;
-    newStudent.projectDegree = projectDegree;
-    newStudent.teamProjectDegree = teamProjectDegree;
-    newStudent.bonusProjectUrls = bonusProjectUrls;
-    newStudent.firstname = firstname;
-    newStudent.lastname = lastname;
-    newStudent.githubUsername = githubUsername;
-    newStudent.projectUrls = projectUrls;
     const addedStudent = await newStudent.save();
     return addedStudent;
   }
@@ -47,40 +29,26 @@ export class StudentsService {
   }
 
   async findOne(id: string) {
-    const student = await Student.findOne({
-      where: { id },
-    });
-    this.checkStudentExist(student);
+    const student = await Student.findOneBy({ id });
     return student;
   }
 
   async remove(id: string) {
     const student = await this.findOne(id);
-    this.checkStudentExist(student);
     return student.remove();
   }
 
   async update(id: string, { ...rest }: UpdateStudentDto) {
     const student = await this.findOne(id);
-    this.checkStudentExist(student);
 
-    this.updateAllData(student, rest);
+    applyDataToEntity(student, rest);
     const updadedStudent = await student.save();
 
     return updadedStudent;
   }
 
-  private updateAllData(
-    currStudentData: CreateStudentDto,
-    data: any,
-  ) /*poprawić typy*/ {
-    for (const [key, value] of Object.entries(data)) {
-      currStudentData[key] = value;
-    }
-  }
-
-  private checkStudentExist(student) {
-    if (!student)
-      throw new NotFoundException('Student with given id does not exist');
+  private async checkConflictData(email: string): Promise<void> {
+    const studentExist = await Student.findOneBy({ email });
+    if (studentExist) throw new ConflictException('Email is taken');
   }
 }
