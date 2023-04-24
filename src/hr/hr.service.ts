@@ -12,84 +12,54 @@ import { RegisterHrDto } from './dto/register-hr.dto';
 import { UsersService } from '../users/users.service';
 import { Hr } from './entities/hr.entity';
 import { UserRole } from '../enums/user-role.enums';
-import { QueryHrDto } from './dto/query-hr.dto';
 
 @Injectable()
 export class HrService {
   @Inject(forwardRef(() => UsersService))
   usersService: UsersService;
   async create({ email, ...rest }: CreateHrDto) {
-    await this.checkConflictData(email);
     const newHr = new Hr();
     this.applyDataToEntity(newHr, rest);
-    newHr.email = email;
-    const addedHr = await newHr.save();
+    newHr.user = await this.usersService.create({
+      email,
+      role: UserRole.HR,
+    });
+    return newHr.save();
     //@TODO send email
-    return addedHr;
   }
 
-  findAll({ user }: QueryHrDto) {
-    if (user) return this.findOneByUserId(user);
-
-    return Hr.find();
+  findAll() {
+    return Hr.find({ relations: { user: true } });
   }
   async findOne(id: string) {
     const hr = await Hr.findOne({ where: { id }, relations: { user: true } });
-    if (!hr) throw new NotFoundException('Invalid hr id');
-    return hr;
-  }
-  async findOneByUserId(id: string) {
-    const hr = await Hr.findByUserId(id);
-    if (!hr) throw new NotFoundException('Invalid userId');
+    if (!hr) throw new NotFoundException('Invalid id');
     return hr;
   }
 
   async register({ pwd }: RegisterHrDto, id) {
-    const hr = await this.findOne(id);
-    if (hr.isActive)
+    const { user } = await this.findOne(id);
+    if (user.isActive)
       throw new ConflictException('The user has been registered');
-    const newUser = await this.usersService.create({
-      email: hr.email,
-      pwd,
-      role: UserRole.HR,
-    });
-    hr.isActive = true;
-    hr.user = newUser;
-    return hr.save();
+    await this.usersService.update(user.id, { isActive: true, pwd });
+    return this.findOne(id);
   }
 
-  async update(id: string, { email, pwd, newPwd, ...rest }: UpdateHrDto) {
+  async update(id: string, {pwd, ...rest }: UpdateHrDto) {
     const hr = await this.findOne(id);
-    if (!hr.isActive) throw new ForbiddenException();
-    if (email) await this.checkConflictData(email);
-
-    if (hr.user.id) {
-      await this.usersService.update(hr.user.id, {
-        email,
-        pwd,
-        newPwd,
-        role: UserRole.HR,
-      });
-    }
-
-    hr.email = email;
+    const { user } = hr;
+    if (!user.isActive) throw new ForbiddenException();
+    await this.usersService.update(user.id, {
+      pwd,
+    });
     this.applyDataToEntity(hr, rest);
     return hr.save();
   }
 
   async remove(id: string) {
     const hr = await this.findOne(id);
-    if (!hr.isActive) {
-      return await hr.remove();
-    }
-    await this.usersService.remove(id);
+    await this.usersService.remove(hr.user.id);
     return await hr.remove();
-  }
-
-  private async checkConflictData(email: string): Promise<void> {
-    await this.usersService.checkConflictData(email);
-    const hrExist = await Hr.findOneBy({ email });
-    if (hrExist) throw new ConflictException('Email is taken');
   }
 
   private applyDataToEntity<T extends {}>(entity: T, data: Partial<T>) {
