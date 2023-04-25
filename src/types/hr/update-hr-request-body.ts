@@ -1,18 +1,7 @@
-interface UpdateHrBase {
-    email?: string;
-    fullName?: string;
-    company?: string;
-    maxReservedStudents?: number;
+interface UpdateHrRequestBody {
+  fullName?: string;
+  company?: string;
+  maxReservedStudents?: number;
+  pwd?:string
 }
 
-interface UpdateHrWithNewPwd {
-    newPwd: string;
-    pwd: string;
-}
-
-interface UpdateHrWithoutNewPwd {
-    newPwd?: never;
-    pwd?: never;
-}
-
-export type UpdateHrRequestBody = UpdateHrBase & (UpdateHrWithNewPwd | UpdateHrWithoutNewPwd);
