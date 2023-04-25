@@ -1,5 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import {UserRole} from "../../enums/user-role.enums";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { UserRole } from '../../enums/user-role.enums';
+import { Student } from 'src/students/entities/student.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -11,12 +18,10 @@ export class User extends BaseEntity {
   })
   email: string;
 
-  @Column(
-      {
-        type:"enum",
-        enum: UserRole,
-      }
-  )
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+  })
   role: UserRole;
 
   @Column()
@@ -27,4 +32,7 @@ export class User extends BaseEntity {
     default: null,
   })
   currentTokenId: string | null;
+
+  @OneToOne(() => Student, (student) => student.user)
+  student: Student;
 }

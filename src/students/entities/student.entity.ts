@@ -1,7 +1,15 @@
 import { StudentContactType } from 'src/enums/student-contract-type.enums';
 import { StudentStatus } from 'src/enums/student-status.enums';
 import { StudentTypeWork } from 'src/enums/students-type-work.enums';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
 
 @Entity()
 export class Student extends BaseEntity {
@@ -141,4 +149,8 @@ export class Student extends BaseEntity {
     enum: StudentStatus,
   })
   status: StudentStatus;
+
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
 }
