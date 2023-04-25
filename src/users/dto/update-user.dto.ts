@@ -1,16 +1,16 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
 import {
-  Contains, IsEnum,
+  Contains, IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import {UserRole} from "../../enums/user-role.enums";
+import { UserRole } from '../../enums/user-role.enums';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
+export class UpdateUserDto implements Partial<CreateUserDto> {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
@@ -19,7 +19,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsOptional()
   @IsEnum(UserRole)
-  role:UserRole;
+  role?: UserRole;
 
   @IsOptional()
   @IsNotEmpty()
@@ -27,9 +27,15 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @MinLength(8)
   newPwd?: string;
 
-  @ValidateIf((obj) => obj.newPwd !== undefined)
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+
+  @ValidateIf((obj) => (obj.newPassword !== undefined) || obj.isActive)
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
-  pwd: string;
+  @IsOptional()
+  pwd?: string;
 }
