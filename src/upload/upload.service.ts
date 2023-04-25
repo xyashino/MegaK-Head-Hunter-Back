@@ -11,8 +11,10 @@ import { User } from '../users/entities/user.entity';
 import { UserRole } from '../enums/user-role.enums';
 import { StudentImportDto } from './dto/student-import.dto';
 import { MulterMemoryUploadedFile } from '../interfaces/files';
-import { filteredResults } from '../utils/file-filters';
+import { validateRequiredColumns } from '../utils/file-filters';
 import { MailService } from '../mail/mail.service';
+import { validate, ValidationError } from 'class-validator';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UploadService {
@@ -31,12 +33,17 @@ export class UploadService {
       header: true,
       skipEmptyLines: true,
       transformHeader: (header) => header.replace('#', '').trim(),
-      complete: filteredResults,
+      complete: (results) => validateRequiredColumns(results),
     });
 
     if (errors.length > 0) {
       throw new HttpException('CSV parsing errors', HttpStatus.BAD_REQUEST);
     }
+
+    for (const student of data) {
+      await this.validateByDto(student);
+    }
+
     return await this.importStudents(data);
   }
 
@@ -66,11 +73,28 @@ export class UploadService {
         //   'Rejestracja w Head Hunter',
         //   './register',
         //   {
-        //     registrationLink: `http://localhost:3000/register/${user.id}`,
+        //     registrationLink: `http://localhost:5173/register/${student.id}`,
         //   },
         // );
       }
     }
     return 'Students imported successfully';
+  }
+
+  async validateByDto(dto: StudentImportDto) {
+    const transformedDto = plainToClass(StudentImportDto, dto);
+    const errors = await validate(transformedDto, {
+      validationError: { target: false },
+    });
+    if (errors.length > 0) {
+      const validationErrors = errors.reduce((acc, error: ValidationError) => {
+        acc[error.property] = Object.values(error.constraints);
+        return acc;
+      }, {});
+      throw new HttpException(
+        { message: 'Validation failed', errors: validationErrors },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

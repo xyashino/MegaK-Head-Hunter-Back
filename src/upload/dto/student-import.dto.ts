@@ -1,29 +1,72 @@
-import { Contains, IsArray, IsNumber, Max, Min } from 'class-validator';
+import {
+  Contains,
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
+import { Transform } from 'class-transformer';
+
+const decimalMessageValidation =
+  'Given data must be a number and have a maximum of two decimal';
 
 export class StudentImportDto {
+  @IsString()
+  @IsNotEmpty()
   @Contains('@')
   email: string;
 
-  @IsNumber()
+  @Transform(({ value }) => parseFloat(value.replace(',', '.')))
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: decimalMessageValidation,
+    },
+  )
+  @IsNotEmpty()
   @Min(0)
   @Max(5)
   courseCompletion: number;
 
-  @IsNumber()
+  @Transform(({ value }) => parseFloat(value.replace(',', '.')))
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: decimalMessageValidation,
+    },
+  )
+  @IsNotEmpty()
   @Min(0)
   @Max(5)
   courseEngagement: number;
 
-  @IsNumber()
+  @Transform(({ value }) => parseFloat(value.replace(',', '.')))
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: decimalMessageValidation,
+    },
+  )
+  @IsNotEmpty()
   @Min(0)
   @Max(5)
   projectDegree: number;
 
-  @IsNumber()
+  @Transform(({ value }) => parseFloat(value.replace(',', '.')))
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: decimalMessageValidation,
+    },
+  )
+  @IsNotEmpty()
   @Min(0)
   @Max(5)
   teamProjectDegree: number;
 
+  @Transform(({ value }) => value.split(','))
   @IsArray()
   bonusProjectUrls: string[];
 }
