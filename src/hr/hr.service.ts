@@ -12,11 +12,16 @@ import { RegisterHrDto } from './dto/register-hr.dto';
 import { UsersService } from '../users/users.service';
 import { Hr } from './entities/hr.entity';
 import { UserRole } from '../enums/user-role.enums';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class HrService {
-  @Inject(forwardRef(() => UsersService))
-  usersService: UsersService;
+  constructor(
+    @Inject(forwardRef(() => UsersService))
+    private usersService: UsersService,
+    @Inject(forwardRef(() => MailService))
+    private mailService: MailService,
+  ) {}
   async create({ email, ...rest }: CreateHrDto) {
     const newHr = new Hr();
     this.applyDataToEntity(newHr, rest);
@@ -24,8 +29,15 @@ export class HrService {
       email,
       role: UserRole.HR,
     });
+    await this.mailService.sendMail(
+      email,
+      'Rejestracja w Head Hunter',
+      './register',
+      {
+        registrationLink: `http://localhost:5173/register/${newHr.id}`,
+      },
+    );
     return newHr.save();
-    //@TODO send email
   }
 
   findAll() {
@@ -45,7 +57,7 @@ export class HrService {
     return this.findOne(id);
   }
 
-  async update(id: string, {pwd, ...rest }: UpdateHrDto) {
+  async update(id: string, { pwd, ...rest }: UpdateHrDto) {
     const hr = await this.findOne(id);
     const { user } = hr;
     if (!user.isActive) throw new ForbiddenException();
