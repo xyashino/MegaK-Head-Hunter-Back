@@ -3,7 +3,6 @@ import {UserRole} from "../../enums/user-role.enums";
 import {Hr} from "../../hr/entities/hr.entity";
 
 
-
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -25,6 +24,12 @@ export class User extends BaseEntity {
     nullable:true
   })
   hashedPassword: string;
+  @Column(
+      {
+        nullable:true
+      }
+  )
+  hashedPassword?: string;
 
   @Column({
     type:"boolean",
