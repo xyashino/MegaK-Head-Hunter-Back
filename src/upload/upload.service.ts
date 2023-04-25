@@ -16,7 +16,9 @@ import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UploadService {
-  @Inject(forwardRef(() => MailService)) mailService: MailService;
+  constructor(
+    @Inject(forwardRef(() => MailService)) private mailService: MailService,
+  ) {}
 
   async uploadStudents(file: MulterMemoryUploadedFile) {
     const uploadStudents = file ?? null;
