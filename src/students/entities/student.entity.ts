@@ -9,11 +9,6 @@ export class Student extends BaseEntity {
   id: string;
 
   @Column({
-    unique: true,
-  })
-  email: string;
-
-  @Column({
     type: 'float',
     precision: 3,
     scale: 2,
@@ -65,6 +60,7 @@ export class Student extends BaseEntity {
   @Column({
     length: 255,
     unique: true,
+    nullable: true,
   })
   githubUsername: string;
 
@@ -139,11 +135,6 @@ export class Student extends BaseEntity {
     nullable: true,
   })
   courses: string;
-
-  @Column({
-    default: false,
-  })
-  isActive: boolean;
 
   @Column({
     type: 'enum',
