@@ -25,7 +25,7 @@ export class Student extends BaseEntity {
     precision: 3,
     scale: 2,
   })
-  courseEngagment: number;
+  courseEngagement: number;
 
   @Column({
     type: 'float',

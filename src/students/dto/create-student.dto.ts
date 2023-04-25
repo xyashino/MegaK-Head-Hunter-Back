@@ -43,7 +43,7 @@ export class CreateStudentDto {
   @IsNotEmpty()
   @Min(0)
   @Max(5)
-  courseEngagment: number;
+  courseEngagement: number;
 
   @IsNumber(
     { maxDecimalPlaces: 2 },
