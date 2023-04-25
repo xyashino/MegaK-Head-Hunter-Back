@@ -29,15 +29,16 @@ export class HrService {
       email,
       role: UserRole.HR,
     });
+    await newHr.save();
     await this.mailService.sendMail(
       email,
       'Rejestracja w Head Hunter',
       './register',
       {
-        registrationLink: `http://localhost:5173/register/${newHr.id}`,
+        registrationLink: `${process.env.REGISTRATION_URL}/${newHr.id}`,
       },
     );
-    return newHr.save();
+    return newHr;
   }
 
   findAll() {
