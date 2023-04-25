@@ -1,15 +1,7 @@
 import { StudentContactType } from 'src/enums/student-contract-type.enums';
 import { StudentStatus } from 'src/enums/student-status.enums';
 import { StudentTypeWork } from 'src/enums/students-type-work.enums';
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Student extends BaseEntity {
@@ -17,38 +9,41 @@ export class Student extends BaseEntity {
   id: string;
 
   @Column({
-    type: 'decimal',
+    unique: true,
+  })
+  email: string;
+
+  @Column({
+    type: 'float',
     precision: 3,
     scale: 2,
-    default: 0,
   })
   courseCompletion: number;
 
   @Column({
-    type: 'decimal',
+    type: 'float',
     precision: 3,
     scale: 2,
-    default: 0,
   })
-  courseEngagement: number;
+  courseEngagment: number;
 
   @Column({
-    type: 'decimal',
+    type: 'float',
     precision: 3,
     scale: 2,
-    default: 0,
   })
   projectDegree: number;
 
   @Column({
-    type: 'decimal',
+    type: 'float',
     precision: 3,
     scale: 2,
-    default: 0,
   })
   teamProjectDegree: number;
 
-  @Column('simple-array')
+  @Column({
+    type: 'simple-array',
+  })
   bonusProjectUrls: string[];
 
   @Column({
@@ -60,22 +55,29 @@ export class Student extends BaseEntity {
   @Column({
     length: 255,
   })
-  firstName: string;
+  firstname: string;
 
   @Column({
     length: 255,
   })
-  lastName: string;
+  lastname: string;
 
   @Column({
     length: 255,
+    unique: true,
   })
   githubUsername: string;
 
-  @Column('simple-array')
+  @Column({
+    type: 'simple-array',
+    nullable: true,
+  })
   portfolioUrls: string[];
 
-  @Column('simple-array')
+  @Column({
+    type: 'simple-array',
+    nullable: true,
+  })
   projectUrls: string[];
 
   @Column({
@@ -137,6 +139,11 @@ export class Student extends BaseEntity {
     nullable: true,
   })
   courses: string;
+
+  @Column({
+    default: false,
+  })
+  isActive: boolean;
 
   @Column({
     type: 'enum',
