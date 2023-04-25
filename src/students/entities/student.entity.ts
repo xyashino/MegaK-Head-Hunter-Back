@@ -1,17 +1,20 @@
 import { StudentContactType } from 'src/enums/student-contract-type.enums';
 import { StudentStatus } from 'src/enums/student-status.enums';
 import { StudentTypeWork } from 'src/enums/students-type-work.enums';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
 
 @Entity()
 export class Student extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({
-    unique: true,
-  })
-  email: string;
 
   @Column({
     type: 'float',
@@ -25,7 +28,7 @@ export class Student extends BaseEntity {
     precision: 3,
     scale: 2,
   })
-  courseEngagment: number;
+  courseEngagement: number;
 
   @Column({
     type: 'float',
@@ -65,6 +68,7 @@ export class Student extends BaseEntity {
   @Column({
     length: 255,
     unique: true,
+    nullable: true,
   })
   githubUsername: string;
 
@@ -141,11 +145,6 @@ export class Student extends BaseEntity {
   courses: string;
 
   @Column({
-    default: false,
-  })
-  isActive: boolean;
-
-  @Column({
     type: 'enum',
     enum: StudentStatus,
   })
@@ -154,10 +153,4 @@ export class Student extends BaseEntity {
   @OneToOne(() => User)
   @JoinColumn()
   user: User;
-
-  // static findByUserId(userId: string) {
-  //   return this.createQueryBuilder('student')
-  //     .where('student.userId = :userId', { userId })
-  //     .getOne();
-  // }
 }

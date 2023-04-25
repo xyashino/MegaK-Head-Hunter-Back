@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  forwardRef,
-} from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -15,21 +10,22 @@ export class StudentsService {
   @Inject(forwardRef(() => UsersService))
   usersService: UsersService;
   async create({ email, ...rest }: CreateStudentDto) {
-    await this.checkConflictData(email);
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
 
-    newStudent.email = email;
     const addedStudent = await newStudent.save();
     return addedStudent;
   }
 
   findAll() {
-    return Student.find();
+    return Student.find({ relations: { user: true } });
   }
 
   async findOne(id: string) {
-    const student = await Student.findOneBy({ id });
+    const student = await Student.findOne({
+      where: { id },
+      relations: { user: true },
+    });
     return student;
   }
 
@@ -45,10 +41,5 @@ export class StudentsService {
     const updadedStudent = await student.save();
 
     return updadedStudent;
-  }
-
-  private async checkConflictData(email: string): Promise<void> {
-    const studentExist = await Student.findOneBy({ email });
-    if (studentExist) throw new ConflictException('Email is taken');
   }
 }

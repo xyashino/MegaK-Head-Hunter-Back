@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { UserRole } from '../../enums/user-role.enums';
 import { Hr } from '../../hr/entities/hr.entity';
-import { Student } from '../../students/entities/student.entity';
+import { Student } from 'src/students/entities/student.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -27,16 +27,15 @@ export class User extends BaseEntity {
   role: string;
 
   @Column({
-    default: false,
-    type: 'boolean',
+    nullable: true,
   })
-  isActive: boolean;
+  hashedPassword?: string;
 
   @Column({
-    nullable: true,
-    default: null,
+    type: 'boolean',
+    default: false,
   })
-  hashedPassword: string | null;
+  isActive: boolean;
 
   @Column({
     nullable: true,
