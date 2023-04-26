@@ -1,20 +1,13 @@
 import {
   Contains,
   IsArray,
-  IsBoolean,
-  IsEnum,
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsString,
   Max,
   Min,
 } from 'class-validator';
-import { StudentContactType } from 'src/enums/student-contract-type.enums';
-import { StudentStatus } from 'src/enums/student-status.enums';
-import { StudentTypeWork } from 'src/enums/students-type-work.enums';
-
-const decimalMessageValidation =
+const DECIMAL_MESSAGE_VALIDATION =
   'Given data must be a number and have a maximum of two decimal';
 
 export class CreateStudentDto {
@@ -26,7 +19,7 @@ export class CreateStudentDto {
   @IsNumber(
     { maxDecimalPlaces: 2 },
     {
-      message: decimalMessageValidation,
+      message: DECIMAL_MESSAGE_VALIDATION,
     },
   )
   @IsNotEmpty()
@@ -37,7 +30,7 @@ export class CreateStudentDto {
   @IsNumber(
     { maxDecimalPlaces: 2 },
     {
-      message: decimalMessageValidation,
+      message: DECIMAL_MESSAGE_VALIDATION,
     },
   )
   @IsNotEmpty()
@@ -48,7 +41,7 @@ export class CreateStudentDto {
   @IsNumber(
     { maxDecimalPlaces: 2 },
     {
-      message: decimalMessageValidation,
+      message: DECIMAL_MESSAGE_VALIDATION,
     },
   )
   @IsNotEmpty()
@@ -59,7 +52,7 @@ export class CreateStudentDto {
   @IsNumber(
     { maxDecimalPlaces: 2 },
     {
-      message: decimalMessageValidation,
+      message: DECIMAL_MESSAGE_VALIDATION,
     },
   )
   @IsNotEmpty()
@@ -71,62 +64,62 @@ export class CreateStudentDto {
   @IsArray()
   bonusProjectUrls: string[];
 
-  @IsString()
-  tel: string;
-
-  @IsNotEmpty()
-  @IsString()
-  firstname: string;
-
-  @IsNotEmpty()
-  @IsString()
-  lastname: string;
-
-  @IsNotEmpty()
-  @IsString()
-  githubUsername: string;
-
-  @IsArray()
-  portfolioUrls: string[];
-
-  @IsNotEmpty()
-  @IsArray()
-  projectUrls: string[];
-
-  @IsString()
-  bio: string;
-
-  @IsNotEmpty()
-  @IsEnum(StudentTypeWork)
-  expectedTypeWork: StudentTypeWork;
-
-  @IsString()
-  targetWorkCity: string;
-
-  @IsNotEmpty()
-  @IsEnum(StudentContactType)
-  expectedContractType: StudentContactType;
-
-  @IsString()
-  expectedSalary: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  canTakeApprenticeship: boolean;
-
-  @IsInt()
-  @Min(0)
-  monthsOfCommercialExp: number;
-
-  @IsString()
-  education: string;
-
-  @IsString()
-  workExperience: string;
-
-  @IsString()
-  courses: string;
-
-  @IsEnum(StudentStatus)
-  status: StudentStatus;
+  // @IsString()
+  // tel: string;
+  //
+  // @IsNotEmpty()
+  // @IsString()
+  // firstname: string;
+  //
+  // @IsNotEmpty()
+  // @IsString()
+  // lastname: string;
+  //
+  // @IsNotEmpty()
+  // @IsString()
+  // githubUsername: string;
+  //
+  // @IsArray()
+  // portfolioUrls: string[];
+  //
+  // @IsNotEmpty()
+  // @IsArray()
+  // projectUrls: string[];
+  //
+  // @IsString()
+  // bio: string;
+  //
+  // @IsNotEmpty()
+  // @IsEnum(StudentTypeWork)
+  // expectedTypeWork: StudentTypeWork;
+  //
+  // @IsString()
+  // targetWorkCity: string;
+  //
+  // @IsNotEmpty()
+  // @IsEnum(StudentContactType)
+  // expectedContractType: StudentContactType;
+  //
+  // @IsString()
+  // expectedSalary: string;
+  //
+  // @IsNotEmpty()
+  // @IsBoolean()
+  // canTakeApprenticeship: boolean;
+  //
+  // @IsInt()
+  // @Min(0)
+  // monthsOfCommercialExp: number;
+  //
+  // @IsString()
+  // education: string;
+  //
+  // @IsString()
+  // workExperience: string;
+  //
+  // @IsString()
+  // courses: string;
+  //
+  // @IsEnum(StudentStatus)
+  // status: StudentStatus;
 }

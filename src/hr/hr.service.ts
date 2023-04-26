@@ -12,6 +12,7 @@ import { RegisterHrDto } from './dto/register-hr.dto';
 import { UsersService } from '../users/users.service';
 import { Hr } from './entities/hr.entity';
 import { UserRole } from '../enums/user-role.enums';
+import { applyDataToEntity } from '../utils/apply-data-to-entity';
 import { MailService } from '../mail/mail.service';
 
 @Injectable()
@@ -24,7 +25,7 @@ export class HrService {
   ) {}
   async create({ email, ...rest }: CreateHrDto) {
     const newHr = new Hr();
-    this.applyDataToEntity(newHr, rest);
+    applyDataToEntity(newHr, rest);
     newHr.user = await this.usersService.create({
       email,
       role: UserRole.HR,
@@ -54,7 +55,7 @@ export class HrService {
     const { user } = await this.findOne(id);
     if (user.isActive)
       throw new ConflictException('The user has been registered');
-    await this.usersService.update(user.id, { isActive: true, pwd });
+    await this.usersService.update(user.id, { pwd });
     return this.findOne(id);
   }
 
@@ -65,19 +66,14 @@ export class HrService {
     await this.usersService.update(user.id, {
       pwd,
     });
-    this.applyDataToEntity(hr, rest);
+    applyDataToEntity(hr, rest);
     return hr.save();
   }
 
   async remove(id: string) {
     const hr = await this.findOne(id);
+    const result = await hr.remove();
     await this.usersService.remove(hr.user.id);
-    return await hr.remove();
-  }
-
-  private applyDataToEntity<T extends {}>(entity: T, data: Partial<T>) {
-    for (const [key, value] of Object.entries(data)) {
-      entity[key] = value;
-    }
+    return result;
   }
 }
