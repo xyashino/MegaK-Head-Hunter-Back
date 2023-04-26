@@ -48,25 +48,29 @@ export class UploadService {
   }
 
   async importStudents(students: StudentImportDto[]) {
+    let count = 0;
+
     for (const studentItem of students) {
       const existUser = await User.findOneBy({ email: studentItem.email });
 
       if (!existUser) {
-        const user = await new User();
-        const student = await new Student();
-
+        const user = new User();
         user.email = studentItem.email;
         user.role = UserRole.STUDENT;
         user.isActive = false;
+
         await user.save();
 
-        student.user = user;
+        const student = new Student();
         student.bonusProjectUrls = studentItem.bonusProjectUrls;
         student.courseCompletion = studentItem.courseCompletion;
         student.projectDegree = studentItem.projectDegree;
         student.teamProjectDegree = studentItem.teamProjectDegree;
         student.courseEngagement = studentItem.courseEngagement;
+        student.user = user;
+
         await student.save();
+        count += 1;
 
         // await this.mailService.sendMail(
         //   user.email,
@@ -78,7 +82,9 @@ export class UploadService {
         // );
       }
     }
-    return 'Students imported successfully';
+    return {
+      message: `${count} new students added`,
+    };
   }
 
   async validateByDto(dto: StudentImportDto) {
