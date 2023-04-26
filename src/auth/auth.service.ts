@@ -51,7 +51,7 @@ export class AuthService {
         email: req.email,
       });
 
-      if (!user) {
+      if (!user || !user.isActive) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
 
