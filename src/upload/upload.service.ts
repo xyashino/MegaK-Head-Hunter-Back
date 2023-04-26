@@ -83,7 +83,7 @@ export class UploadService {
       }
     }
     return {
-      message: `${count} new students added`,
+      message: `New students added: ${count}`,
     };
   }
 
