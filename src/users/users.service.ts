@@ -16,6 +16,7 @@ export class UsersService {
     newUser.email = email;
     if (pwd) {
       newUser.hashedPassword = hashPwd(pwd);
+      newUser.isActive = true;
     }
     newUser.role = role;
     return await newUser.save();
