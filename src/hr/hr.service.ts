@@ -12,12 +12,17 @@ import { RegisterHrDto } from './dto/register-hr.dto';
 import { UsersService } from '../users/users.service';
 import { Hr } from './entities/hr.entity';
 import { UserRole } from '../enums/user-role.enums';
-import {applyDataToEntity} from "../utils/apply-data-to-entity";
+import { applyDataToEntity } from '../utils/apply-data-to-entity';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class HrService {
-  @Inject(forwardRef(() => UsersService))
-  usersService: UsersService;
+  constructor(
+    @Inject(forwardRef(() => UsersService))
+    private usersService: UsersService,
+    @Inject(forwardRef(() => MailService))
+    private mailService: MailService,
+  ) {}
   async create({ email, ...rest }: CreateHrDto) {
     const newHr = new Hr();
     applyDataToEntity(newHr, rest);
@@ -25,8 +30,16 @@ export class HrService {
       email,
       role: UserRole.HR,
     });
-    return newHr.save();
-    //@TODO send email
+    await newHr.save();
+    await this.mailService.sendMail(
+      email,
+      'Rejestracja w Head Hunter',
+      './register',
+      {
+        registrationLink: `${process.env.HR_REGISTRATION_URL}/${newHr.id}`,
+      },
+    );
+    return newHr;
   }
 
   findAll() {
@@ -40,12 +53,13 @@ export class HrService {
 
   async register({ pwd }: RegisterHrDto, id) {
     const { user } = await this.findOne(id);
-    if (user.isActive) throw new ConflictException('The user has been registered');
+    if (user.isActive)
+      throw new ConflictException('The user has been registered');
     await this.usersService.update(user.id, { pwd });
     return this.findOne(id);
   }
 
-  async update(id: string, {pwd, ...rest }: UpdateHrDto) {
+  async update(id: string, { pwd, ...rest }: UpdateHrDto) {
     const hr = await this.findOne(id);
     const { user } = hr;
     if (!user.isActive) throw new ForbiddenException();
@@ -60,7 +74,6 @@ export class HrService {
     const hr = await this.findOne(id);
     const result = await hr.remove();
     await this.usersService.remove(hr.user.id);
-    return result
+    return result;
   }
-
 }
