@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { UserRole } from '../../enums/user-role.enums';
 import { Hr } from '../../hr/entities/hr.entity';
+import { Student } from 'src/students/entities/student.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -44,4 +45,7 @@ export class User extends BaseEntity {
 
   @OneToOne(() => Hr, (hr) => hr.user)
   hr: Hr;
+
+  @OneToOne(() => Student, (student) => student.user)
+  student: Student;
 }

@@ -10,6 +10,7 @@ import { HrModule } from './hr/hr.module';
 import { MailModule } from './mail/mail.module';
 import { AdminCommand } from './commands/admin.command';
 import { ConsoleModule } from 'nestjs-console';
+import { StudentsModule } from './students/students.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ConsoleModule } from 'nestjs-console';
     AuthModule,
     MailModule,
     ConsoleModule,
+    StudentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, AdminCommand],
