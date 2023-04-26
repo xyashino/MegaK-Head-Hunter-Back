@@ -12,7 +12,8 @@ import { RegisterHrDto } from './dto/register-hr.dto';
 import { UsersService } from '../users/users.service';
 import { Hr } from './entities/hr.entity';
 import { UserRole } from '../enums/user-role.enums';
-import {applyDataToEntity} from "../utils/apply-data-to-entity";
+import { applyDataToEntity } from '../utils/apply-data-to-entity';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class HrService {
@@ -52,7 +53,8 @@ export class HrService {
 
   async register({ pwd }: RegisterHrDto, id) {
     const { user } = await this.findOne(id);
-    if (user.isActive) throw new ConflictException('The user has been registered');
+    if (user.isActive)
+      throw new ConflictException('The user has been registered');
     await this.usersService.update(user.id, { pwd });
     return this.findOne(id);
   }
@@ -72,7 +74,6 @@ export class HrService {
     const hr = await this.findOne(id);
     const result = await hr.remove();
     await this.usersService.remove(hr.user.id);
-    return result
+    return result;
   }
-
 }
