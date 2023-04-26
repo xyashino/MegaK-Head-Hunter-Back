@@ -6,20 +6,21 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { parse } from 'papaparse';
-import { Student } from '../students/entities/student.entity';
 import { User } from '../users/entities/user.entity';
-import { UserRole } from '../enums/user-role.enums';
 import { StudentImportDto } from './dto/student-import.dto';
 import { MulterMemoryUploadedFile } from '../interfaces/files';
 import { validateRequiredColumns } from '../utils/file-filters';
 import { MailService } from '../mail/mail.service';
 import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import { StudentsService } from '../students/students.service';
 
 @Injectable()
 export class UploadService {
   constructor(
     @Inject(forwardRef(() => MailService)) private mailService: MailService,
+    @Inject(forwardRef(() => StudentsService))
+    private studentService: StudentsService,
   ) {}
 
   async uploadStudents(file: MulterMemoryUploadedFile) {
@@ -54,32 +55,23 @@ export class UploadService {
       const existUser = await User.findOneBy({ email: studentItem.email });
 
       if (!existUser) {
-        const user = new User();
-        user.email = studentItem.email;
-        user.role = UserRole.STUDENT;
-        user.isActive = false;
-
-        await user.save();
-
-        const student = new Student();
-        student.bonusProjectUrls = studentItem.bonusProjectUrls;
-        student.courseCompletion = studentItem.courseCompletion;
-        student.projectDegree = studentItem.projectDegree;
-        student.teamProjectDegree = studentItem.teamProjectDegree;
-        student.courseEngagement = studentItem.courseEngagement;
-        student.user = user;
-
-        await student.save();
+        const student = await this.studentService.create({
+          email: studentItem.email,
+          bonusProjectUrls: studentItem.bonusProjectUrls,
+          courseCompletion: studentItem.courseCompletion,
+          projectDegree: studentItem.projectDegree,
+          teamProjectDegree: studentItem.teamProjectDegree,
+          courseEngagement: studentItem.courseEngagement,
+        });
         count += 1;
-
-        // await this.mailService.sendMail(
-        //   user.email,
-        //   'Rejestracja w Head Hunter',
-        //   './register',
-        //   {
-        //     registrationLink: `http://localhost:5173/register/${student.id}`,
-        //   },
-        // );
+        await this.mailService.sendMail(
+          studentItem.email,
+          'Rejestracja w Head Hunter',
+          './register',
+          {
+            registrationLink: `http://localhost:5173/register/${student.id}`,
+          },
+        );
       }
     }
     return {
