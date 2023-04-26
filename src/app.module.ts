@@ -10,6 +10,7 @@ import { AdminCommand } from './commands/admin.command';
 import { ConsoleModule } from 'nestjs-console';
 import { StudentsModule } from './students/students.module';
 import { UploadModule } from './upload/upload.module';
+import { FiltrationModule } from './filtration/filtration.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UploadModule } from './upload/upload.module';
     ConsoleModule,
     StudentsModule,
     UploadModule,
+    FiltrationModule,
   ],
   controllers: [],
   providers: [AdminCommand],
