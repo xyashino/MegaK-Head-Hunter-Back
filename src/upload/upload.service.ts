@@ -10,7 +10,6 @@ import { User } from '../users/entities/user.entity';
 import { StudentImportDto } from './dto/student-import.dto';
 import { MulterMemoryUploadedFile } from '../interfaces/files';
 import { validateRequiredColumns } from '../utils/file-filters';
-import { MailService } from '../mail/mail.service';
 import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { StudentsService } from '../students/students.service';
@@ -18,7 +17,6 @@ import { StudentsService } from '../students/students.service';
 @Injectable()
 export class UploadService {
   constructor(
-    @Inject(forwardRef(() => MailService)) private mailService: MailService,
     @Inject(forwardRef(() => StudentsService))
     private studentService: StudentsService,
   ) {}
@@ -55,7 +53,7 @@ export class UploadService {
       const existUser = await User.findOneBy({ email: studentItem.email });
 
       if (!existUser) {
-        const student = await this.studentService.create({
+        await this.studentService.create({
           email: studentItem.email,
           bonusProjectUrls: studentItem.bonusProjectUrls,
           courseCompletion: studentItem.courseCompletion,
@@ -64,14 +62,6 @@ export class UploadService {
           courseEngagement: studentItem.courseEngagement,
         });
         count += 1;
-        await this.mailService.sendMail(
-          studentItem.email,
-          'Rejestracja w Head Hunter',
-          './register',
-          {
-            registrationLink: `http://localhost:5173/register/${student.id}`,
-          },
-        );
       }
     }
     return {
