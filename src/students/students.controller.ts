@@ -13,7 +13,12 @@ import {
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { RegisterStudentDto } from './dto/register-student.dto';
+import {Serialize} from "../interceptors/serialization.interceptor";
+import {ResponseStudentDto} from "./dto/response-student.dto";
 
+
+@Serialize(ResponseStudentDto)
 @Controller('students')
 export class StudentsController {
   @Inject(forwardRef(() => StudentsService))
@@ -26,6 +31,14 @@ export class StudentsController {
   @Get()
   findAll() {
     return this.studentsService.findAll();
+  }
+
+  @Post('/register/:id')
+  register(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() registerStudentDto: RegisterStudentDto,
+  ) {
+    return this.studentsService.register(id, registerStudentDto);
   }
 
   @Get(':id')

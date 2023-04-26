@@ -57,17 +57,18 @@ export class Student extends BaseEntity {
 
   @Column({
     length: 255,
+    nullable:true
   })
   firstname: string;
 
   @Column({
     length: 255,
+    nullable:true
   })
   lastname: string;
 
   @Column({
     length: 255,
-    unique: true,
     nullable: true,
   })
   githubUsername: string;
