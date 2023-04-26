@@ -4,6 +4,9 @@ import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { applyDataToEntity } from '../utils/apply-data-to-entity';
+import { PageOptionsDto } from '../common/dtos/page/page-options.dto';
+import { PageDto } from '../common/dtos/page/page.dto';
+import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
 
 @Injectable()
 export class StudentsService {
@@ -17,8 +20,16 @@ export class StudentsService {
     return addedStudent;
   }
 
-  findAll() {
-    return Student.find({ relations: { user: true } });
+  async findAll(pageOptions: PageOptionsDto): Promise<PageDto<Student>> {
+    const queryBuilder = Student.createQueryBuilder('student')
+      .skip(pageOptions.skip)
+      .take(pageOptions.take);
+
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptions });
+    return new PageDto(entities, pageMetaDto);
   }
 
   async findOne(id: string) {
@@ -38,8 +49,8 @@ export class StudentsService {
     const student = await this.findOne(id);
 
     applyDataToEntity(student, rest);
-    const updadedStudent = await student.save();
+    const updatedStudent = await student.save();
 
-    return updadedStudent;
+    return updatedStudent;
   }
 }

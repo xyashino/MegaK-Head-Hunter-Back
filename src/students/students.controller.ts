@@ -9,10 +9,12 @@ import {
   Delete,
   Patch,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { PageOptionsDto } from '../common/dtos/page/page-options.dto';
 
 @Controller('students')
 export class StudentsController {
@@ -24,8 +26,8 @@ export class StudentsController {
     return this.studentsService.create(CreateStudentDto);
   }
   @Get()
-  findAll() {
-    return this.studentsService.findAll();
+  findAll(@Query() pageOptions: PageOptionsDto) {
+    return this.studentsService.findAll(pageOptions);
   }
 
   @Get(':id')
