@@ -3,5 +3,5 @@ export enum StudentTypeWork {
   MOVED = 'Gotowość do przeprowadzki',
   REMOTE = 'Wyłącznie zdalnie',
   HYBRID = 'Hybrydowo',
-  IRRELEVANT = 'Bez znaczenia ',
+  IRRELEVANT = 'Bez znaczenia',
 }

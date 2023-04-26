@@ -1,12 +1,12 @@
-import { Expose } from 'class-transformer';
-import {UserRole} from "../../enums/user-role.enums";
+import {Exclude} from 'class-transformer';
+import {User} from "../entities/user.entity";
+import {Hr} from "../../hr/entities/hr.entity";
 
-export class ResponseUserDto   {
-  @Expose()
-  id: string;
-  @Expose()
-  email: string;
-
-  @Expose()
-  role: UserRole;
+export class ResponseUserDto implements Partial<User> {
+  @Exclude()
+  hashedPassword:string;
+  @Exclude()
+  currentTokenId:string;
+  @Exclude()
+  hr:Hr
 }
