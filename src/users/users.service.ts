@@ -48,7 +48,7 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    return await this.findOne(id);
+    return (await this.findOne(id)).remove();
   }
 
   async checkConflictData(email: string): Promise<void> {
