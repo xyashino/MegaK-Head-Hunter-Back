@@ -54,10 +54,9 @@ export class StudentsService {
 
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
-    console.log(entities);
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptions });
-    // const pageDto = new PageDto(entities, pageMetaDto);
-    // return pageDto;
+    const pageDto = new PageDto(entities, pageMetaDto);
+    return pageDto;
   }
 
   async findOne(id: string) {
