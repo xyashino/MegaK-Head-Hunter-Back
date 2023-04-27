@@ -12,18 +12,11 @@ export class MailService {
     template: string,
     context: MailContext,
   ): Promise<any> {
-    try {
-      await this.mailerService.sendMail({
-        to,
-        subject,
-        template,
-        context,
-      });
-    } catch (e) {
-      throw new HttpException(
-        'Something went wrong by sending the email',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    await this.mailerService.sendMail({
+      to,
+      subject,
+      template,
+      context,
+    });
   }
 }
