@@ -1,4 +1,4 @@
-import { BaseStudentResponse } from './student-response';
+import { BaseStudentResponse } from './student-response.interface';
 
 export interface InactiveStudentResponse extends BaseStudentResponse {
   tel: null;
