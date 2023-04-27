@@ -1,21 +1,74 @@
-import { Exclude, Expose } from 'class-transformer';
-import { User } from '../../users/entities/user.entity';
+import { Exclude, Expose, Transform } from 'class-transformer';
 import { Student } from '../entities/student.entity';
+import {StudentStatus} from "../../enums/student-status.enums";
+import {StudentContactType} from "../../enums/student-contract-type.enums";
 
 export class ResponseStudentDto implements Partial<Student> {
-  @Exclude()
-  user: User;
   @Expose()
-  get email() {
-    console.log(this);
-    return this.user ? this.user.email : null;
-  }
+  id: string;
+
   @Expose()
-  get isActive() {
-    return this.user ? this.user.isActive : null;
-  }
+  @Transform(({ obj }) => obj.user.isActive)
+  isActive: boolean;
+
   @Expose()
-  get userId() {
-    return this.user ? this.user.id : null;
-  }
+  @Transform(({ obj }) => obj.user.email)
+  email: null;
+
+
+  @Expose()
+  @Transform(({ obj }) => obj.user.id)
+  userId: boolean;
+
+  @Expose()
+  courseCompletion: number;
+
+  @Expose()
+  courseEngagement: number;
+
+  @Expose()
+  projectDegree: number;
+
+  @Expose()
+  teamProjectDegree: number;
+
+  @Expose()
+  bonusProjectUrls: string[];
+
+  @Expose()
+  tel:null|string;
+
+  @Expose()
+  firstname:null|string;
+
+  @Expose()
+  lastname:null|string;
+
+  @Expose()
+  githubUsername:null|string;
+  @Expose()
+  portfolioUrls:null|string[];
+  @Expose()
+  projectUrls:null|string[];
+
+  @Expose()
+  bio:null|string;
+
+  @Expose()
+  expectedTypeWork;
+
+  @Expose()
+  targetWorkCity:string;
+
+  @Expose()
+  expectedContractType:StudentContactType;
+
+  @Expose()
+  status:StudentStatus;
+
+  @Expose()
+  canTakeApprenticeship:boolean;
+
+
+
 }

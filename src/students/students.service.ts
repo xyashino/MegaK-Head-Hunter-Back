@@ -11,12 +11,12 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { applyDataToEntity } from '../utils/apply-data-to-entity';
 import { PageOptionsDto } from '../common/dtos/page/page-options.dto';
-import { PageDto } from '../common/dtos/page/page.dto';
 import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
 import { UserRole } from '../enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '../mail/mail.service';
 import { DataSource } from 'typeorm';
+import {ResponsePaginationStudentsDto} from "./dto/response-pagination-students.dto";
 
 @Injectable()
 export class StudentsService {
@@ -51,13 +51,10 @@ export class StudentsService {
       .leftJoinAndSelect('student.user', 'user')
       .skip(pageOptions.skip)
       .take(pageOptions.take);
-
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
-    console.log(entities);
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptions });
-    // const pageDto = new PageDto(entities, pageMetaDto);
-    // return pageDto;
+    return {data:entities, pageMetaDto};
   }
 
   async findOne(id: string) {
@@ -87,7 +84,6 @@ export class StudentsService {
       throw new ConflictException('The user has been registered');
     await this.usersService.update(student.user.id, { pwd });
     applyDataToEntity(student, rest);
-    await student.save();
-    return this.findOne(id);
+    return student.save();
   }
 }

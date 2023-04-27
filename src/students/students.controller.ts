@@ -17,24 +17,26 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { Serialize } from '../interceptors/serialization.interceptor';
 import { PageOptionsDto } from '../common/dtos/page/page-options.dto';
-import { PageDto } from '../common/dtos/page/page.dto';
+import {ResponsePaginationStudentsDto} from "./dto/response-pagination-students.dto";
 
-@Serialize(PageDto)
 @Controller('students')
 export class StudentsController {
   @Inject(forwardRef(() => StudentsService))
   private readonly studentsService: StudentsService;
 
   @Post()
+  @Serialize(RegisterStudentDto)
   create(@Body() CreateStudentDto: CreateStudentDto) {
     return this.studentsService.create(CreateStudentDto);
   }
   @Get()
+  @Serialize(ResponsePaginationStudentsDto)
   findAll(@Query() pageOptions: PageOptionsDto) {
     return this.studentsService.findAll(pageOptions);
   }
 
   @Post('/register/:id')
+  @Serialize(RegisterStudentDto)
   register(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() registerStudentDto: RegisterStudentDto,
@@ -43,16 +45,19 @@ export class StudentsController {
   }
 
   @Get(':id')
+  @Serialize(RegisterStudentDto)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.findOne(id);
   }
 
   @Delete(':id')
+  @Serialize(RegisterStudentDto)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.remove(id);
   }
 
   @Patch(':id')
+  @Serialize(RegisterStudentDto)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateStudentDto: UpdateStudentDto,
