@@ -12,4 +12,4 @@ interface UserOtherResponse extends UserResponseBase {
   role: 'hr' | 'student';
 }
 
-export type UserResponseInterface = UserAdminResponse | UserOtherResponse;
+export type UserResponse = UserAdminResponse | UserOtherResponse;
