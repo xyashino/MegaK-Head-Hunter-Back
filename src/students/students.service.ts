@@ -16,6 +16,7 @@ import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
 import { UserRole } from '../enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '../mail/mail.service';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class StudentsService {
@@ -23,6 +24,7 @@ export class StudentsService {
   usersService: UsersService;
   @Inject(forwardRef(() => MailService))
   mailService: MailService;
+  @Inject(DataSource) private dataSource: DataSource;
   async create({ email, ...rest }: CreateStudentDto) {
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
@@ -42,16 +44,20 @@ export class StudentsService {
     return newStudent;
   }
 
-  async findAll(pageOptions: PageOptionsDto): Promise<PageDto<Student>> {
-    const queryBuilder = Student.createQueryBuilder('student')
+  async findAll(pageOptions: PageOptionsDto) {
+    const queryBuilder = await this.dataSource
+      .getRepository(Student)
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.user', 'user')
       .skip(pageOptions.skip)
       .take(pageOptions.take);
 
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
-
+    console.log(entities);
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptions });
-    return new PageDto(entities, pageMetaDto);
+    // const pageDto = new PageDto(entities, pageMetaDto);
+    // return pageDto;
   }
 
   async findOne(id: string) {

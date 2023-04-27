@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { MailContext } from '../interfaces/mail-context';
 
@@ -12,11 +12,18 @@ export class MailService {
     template: string,
     context: MailContext,
   ): Promise<any> {
-    await this.mailerService.sendMail({
-      to,
-      subject,
-      template,
-      context,
-    });
+    try {
+      await this.mailerService.sendMail({
+        to,
+        subject,
+        template,
+        context,
+      });
+    } catch (e) {
+      throw new HttpException(
+        'Something went wrong by sending the email',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

@@ -1,20 +1,21 @@
-import { Exclude, Expose} from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import {Student} from "../entities/student.entity";
+import { Student } from '../entities/student.entity';
 
 export class ResponseStudentDto implements Partial<Student> {
   @Exclude()
   user: User;
   @Expose()
   get email() {
-    return this.user.email;
+    console.log(this);
+    return this.user ? this.user.email : null;
   }
   @Expose()
   get isActive() {
-    return this.user.isActive;
+    return this.user ? this.user.isActive : null;
   }
   @Expose()
   get userId() {
-    return this.user.id;
+    return this.user ? this.user.id : null;
   }
 }
