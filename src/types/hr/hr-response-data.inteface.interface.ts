@@ -1,4 +1,4 @@
-interface HrResponseData {
+export interface HrResponseData {
   id: string;
   fullName: string;
   company: string;
