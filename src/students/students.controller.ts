@@ -32,7 +32,7 @@ export class StudentsController {
   @Serialize(PageDto)
   @Get()
   findAll(@Query() pageOptions: PageOptionsDto) {
-    return this.studentsService.findAll(pageOptions);
+    return this.studentsService.findAllActive(pageOptions);
   }
 
   @Post('/register/:id')

@@ -55,11 +55,13 @@ export class StudentsService {
     return newStudent;
   }
 
-  async findAll(pageOptions: PageOptionsDto) {
+  async findAllActive(pageOptions: PageOptionsDto): Promise<PageDto<Student>> {
     const queryBuilder = await this.dataSource
       .getRepository(Student)
       .createQueryBuilder('student')
-      .leftJoinAndSelect('student.user', 'user')
+      .innerJoinAndSelect('student.user', 'user', 'user.isActive = :isActive', {
+        isActive: true,
+      })
       .skip(pageOptions.skip)
       .take(pageOptions.take);
 
