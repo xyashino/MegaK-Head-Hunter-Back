@@ -15,11 +15,14 @@ import { PageDto } from '../common/dtos/page/page.dto';
 import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
 import { UserRole } from '../enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class StudentsService {
   @Inject(forwardRef(() => UsersService))
   usersService: UsersService;
+  @Inject(forwardRef(() => MailService))
+  mailService: MailService;
   async create({ email, ...rest }: CreateStudentDto) {
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
@@ -27,7 +30,16 @@ export class StudentsService {
       email,
       role: UserRole.STUDENT,
     });
-    return newStudent.save();
+    await newStudent.save();
+    await this.mailService.sendMail(
+      email,
+      'Rejestracja w Head Hunter',
+      './register',
+      {
+        registrationLink: `${process.env.STUDENT_REGISTRATION_URL}/${newStudent.id}`,
+      },
+    );
+    return newStudent;
   }
 
   async findAll(pageOptions: PageOptionsDto): Promise<PageDto<Student>> {
@@ -53,7 +65,7 @@ export class StudentsService {
 
   async remove(id: string) {
     const student = await this.findOne(id);
-    const result = student.remove();
+    const result = await student.remove();
     await this.usersService.remove(student.user.id);
     return result;
   }

@@ -9,18 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe(pipesConfig));
   app.enableCors(corsConfig);
-  app.use(cookieParser())
-  app.useGlobalPipes(
-    new ValidationPipe({
-      disableErrorMessages: false,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
-    }),
-  );
+  app.use(cookieParser());
   await app.listen(PORT);
 }
 bootstrap();

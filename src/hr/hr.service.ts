@@ -36,7 +36,7 @@ export class HrService {
       'Rejestracja w Head Hunter',
       './register',
       {
-        registrationLink: `${process.env.REGISTRATION_URL}/${newHr.id}`,
+        registrationLink: `${process.env.HR_REGISTRATION_URL}/${newHr.id}`,
       },
     );
     return newHr;
