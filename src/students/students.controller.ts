@@ -18,8 +18,8 @@ import { RegisterStudentDto } from './dto/register-student.dto';
 import { Serialize } from '../interceptors/serialization.interceptor';
 import { PageOptionsDto } from '../common/dtos/page/page-options.dto';
 import { PageDto } from '../common/dtos/page/page.dto';
+import { ResponseStudentDto } from './dto/response-student.dto';
 
-@Serialize(PageDto)
 @Controller('students')
 export class StudentsController {
   @Inject(forwardRef(() => StudentsService))
@@ -29,6 +29,7 @@ export class StudentsController {
   create(@Body() CreateStudentDto: CreateStudentDto) {
     return this.studentsService.create(CreateStudentDto);
   }
+  @Serialize(PageDto)
   @Get()
   findAll(@Query() pageOptions: PageOptionsDto) {
     return this.studentsService.findAll(pageOptions);
@@ -41,7 +42,7 @@ export class StudentsController {
   ) {
     return this.studentsService.register(id, registerStudentDto);
   }
-
+  @Serialize(ResponseStudentDto)
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.findOne(id);
