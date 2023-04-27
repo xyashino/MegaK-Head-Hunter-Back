@@ -17,6 +17,8 @@ import { UserRole } from '../enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '../mail/mail.service';
 import { DataSource } from 'typeorm';
+import { plainToClass } from 'class-transformer';
+import { ResponseStudentDto } from './dto/response-student.dto';
 
 @Injectable()
 export class StudentsService {
@@ -54,9 +56,10 @@ export class StudentsService {
 
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
+
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptions });
-    const pageDto = new PageDto(entities, pageMetaDto);
-    return pageDto;
+
+    return new PageDto(entities, pageMetaDto);
   }
 
   async findOne(id: string) {

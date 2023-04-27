@@ -10,6 +10,7 @@ import {
   JoinColumn,
   OneToOne,
 } from 'typeorm';
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity()
 export class Student extends BaseEntity {
@@ -57,13 +58,13 @@ export class Student extends BaseEntity {
 
   @Column({
     length: 255,
-    nullable:true
+    nullable: true,
   })
   firstname: string;
 
   @Column({
     length: 255,
-    nullable:true
+    nullable: true,
   })
   lastname: string;
 

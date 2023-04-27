@@ -7,15 +7,14 @@ export class ResponseStudentDto implements Partial<Student> {
   user: User;
   @Expose()
   get email() {
-    console.log(this);
-    return this.user ? this.user.email : null;
+    return this.user.email;
   }
   @Expose()
   get isActive() {
-    return this.user ? this.user.isActive : null;
+    return this.user.isActive;
   }
   @Expose()
   get userId() {
-    return this.user ? this.user.id : null;
+    return this.user.id;
   }
 }
