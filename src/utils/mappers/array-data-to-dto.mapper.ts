@@ -1,11 +1,11 @@
-import {instanceToPlain, plainToInstance} from "class-transformer";
-import {BaseEntity} from "typeorm";
+import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { BaseEntity } from 'typeorm';
 
-export const arrayDataToDto= <T extends BaseEntity>(data:T[], dto) =>{
-   return data.map((el) => {
-        const dtoInstance = plainToInstance(dto, el);
-        return instanceToPlain(dtoInstance,{
-            excludeExtraneousValues: true,
-        });
+export const arrayDataToDto = <T extends BaseEntity>(data: T[], dto) => {
+  return data.map((el) => {
+    const dtoInstance = plainToInstance(dto, el);
+    return instanceToPlain(dtoInstance, {
+      excludeExtraneousValues: true,
     });
-}
+  });
+};

@@ -17,7 +17,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { Serialize } from '../interceptors/serialization.interceptor';
 import { PageOptionsDto } from '../common/dtos/page/page-options.dto';
-import {ResponsePaginationStudentsDto} from "./dto/response-pagination-students.dto";
+import { ResponsePaginationStudentsDto } from './dto/response-pagination-students.dto';
 
 @Controller('students')
 export class StudentsController {
@@ -32,7 +32,7 @@ export class StudentsController {
   @Get()
   @Serialize(ResponsePaginationStudentsDto)
   findAll(@Query() pageOptions: PageOptionsDto) {
-    return this.studentsService.findAll(pageOptions);
+    return this.studentsService.findAllActive(pageOptions);
   }
 
   @Post('/register/:id')

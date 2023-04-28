@@ -1,6 +1,8 @@
 import {
   ConflictException,
   forwardRef,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -16,7 +18,7 @@ import { UserRole } from '../enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '../mail/mail.service';
 import { DataSource } from 'typeorm';
-import {ResponsePaginationStudentsDto} from "./dto/response-pagination-students.dto";
+import { ResponsePaginationStudentsDto } from './dto/response-pagination-students.dto';
 
 @Injectable()
 export class StudentsService {
@@ -28,33 +30,46 @@ export class StudentsService {
   async create({ email, ...rest }: CreateStudentDto) {
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
-    newStudent.user = await this.usersService.create({
-      email,
-      role: UserRole.STUDENT,
-    });
-    await newStudent.save();
-    await this.mailService.sendMail(
-      email,
-      'Rejestracja w Head Hunter',
-      './register',
-      {
-        registrationLink: `${process.env.STUDENT_REGISTRATION_URL}/${newStudent.id}`,
-      },
-    );
+    try {
+      newStudent.user = await this.usersService.create({
+        email,
+        role: UserRole.STUDENT,
+      });
+      await newStudent.save();
+      await this.mailService.sendMail(
+        email,
+        'Rejestracja w Head Hunter',
+        './register',
+        {
+          registrationLink: `${process.env.STUDENT_REGISTRATION_URL}/${newStudent.id}`,
+        },
+      );
+    } catch (e) {
+      await newStudent.remove();
+      await this.usersService.remove(newStudent.user.id);
+      throw new HttpException(
+        'Something went wrong by sending the email. User has not been added',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return newStudent;
   }
 
-  async findAll(pageOptions: PageOptionsDto) {
+  async findAllActive(
+    pageOptions: PageOptionsDto,
+  ): Promise<ResponsePaginationStudentsDto> {
     const queryBuilder = await this.dataSource
       .getRepository(Student)
       .createQueryBuilder('student')
-      .leftJoinAndSelect('student.user', 'user')
+      .innerJoinAndSelect('student.user', 'user', 'user.isActive = :isActive', {
+        isActive: true,
+      })
       .skip(pageOptions.skip)
       .take(pageOptions.take);
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
-    const pageMetaDto = new PageMetaDto({ itemCount, pageOptions });
-    return {data:entities, pageMetaDto};
+    const pageMetaDto = new PageMetaDto({ pageOptions, itemCount });
+    return { data: entities, meta: { ...pageMetaDto } };
   }
 
   async findOne(id: string) {
