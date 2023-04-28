@@ -34,14 +34,14 @@ export class HrService {
         role: UserRole.HR,
       });
       await newHr.save();
-      await this.mailService.sendMail(
-        email,
-        'Rejestracja w Head Hunter',
-        './register',
-        {
-          registrationLink: `${process.env.HR_REGISTRATION_URL}/${newHr.id}`,
-        },
-      );
+      // await this.mailService.sendMail(
+      //   email,
+      //   'Rejestracja w Head Hunter',
+      //   './register',
+      //   {
+      //     registrationLink: `${process.env.HR_REGISTRATION_URL}/${newHr.id}`,
+      //   },
+      // );
     } catch (e) {
       await newHr.remove();
       await this.usersService.remove(newHr.user.id);
@@ -59,6 +59,14 @@ export class HrService {
   async findOne(id: string) {
     const hr = await Hr.findOne({ where: { id }, relations: { user: true } });
     if (!hr) throw new NotFoundException('Invalid id');
+    return hr;
+  }
+
+  async getCurrentHr(user) {
+    const hr = await Hr.findOne({
+      where: { user },
+    });
+    if (!hr) throw new NotFoundException('Hr not found');
     return hr;
   }
 

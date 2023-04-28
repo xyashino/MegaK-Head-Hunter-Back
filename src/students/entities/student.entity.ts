@@ -9,8 +9,10 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 import { Exclude, Expose } from 'class-transformer';
+import { Interview } from '../../interview/entities/interview.entity';
 
 @Entity()
 export class Student extends BaseEntity {
@@ -155,4 +157,7 @@ export class Student extends BaseEntity {
   @OneToOne(() => User)
   @JoinColumn()
   user: User;
+
+  @OneToMany(() => Interview, (interview) => interview.student)
+  interviews: Interview[];
 }

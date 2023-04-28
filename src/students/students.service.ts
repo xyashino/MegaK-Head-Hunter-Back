@@ -36,14 +36,14 @@ export class StudentsService {
         role: UserRole.STUDENT,
       });
       await newStudent.save();
-      await this.mailService.sendMail(
-        email,
-        'Rejestracja w Head Hunter',
-        './register',
-        {
-          registrationLink: `${process.env.STUDENT_REGISTRATION_URL}/${newStudent.id}`,
-        },
-      );
+      // await this.mailService.sendMail(
+      //   email,
+      //   'Rejestracja w Head Hunter',
+      //   './register',
+      //   {
+      //     registrationLink: `${process.env.STUDENT_REGISTRATION_URL}/${newStudent.id}`,
+      //   },
+      // );
     } catch (e) {
       await newStudent.remove();
       await this.usersService.remove(newStudent.user.id);
