@@ -2,6 +2,8 @@ import {
   ConflictException,
   ForbiddenException,
   forwardRef,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -26,19 +28,28 @@ export class HrService {
   async create({ email, ...rest }: CreateHrDto) {
     const newHr = new Hr();
     applyDataToEntity(newHr, rest);
-    newHr.user = await this.usersService.create({
-      email,
-      role: UserRole.HR,
-    });
-    await newHr.save();
-    await this.mailService.sendMail(
-      email,
-      'Rejestracja w Head Hunter',
-      './register',
-      {
-        registrationLink: `${process.env.HR_REGISTRATION_URL}/${newHr.id}`,
-      },
-    );
+    try {
+      newHr.user = await this.usersService.create({
+        email,
+        role: UserRole.HR,
+      });
+      await newHr.save();
+      await this.mailService.sendMail(
+        email,
+        'Rejestracja w Head Hunter',
+        './register',
+        {
+          registrationLink: `${process.env.HR_REGISTRATION_URL}/${newHr.id}`,
+        },
+      );
+    } catch (e) {
+      await newHr.remove();
+      await this.usersService.remove(newHr.user.id);
+      throw new HttpException(
+        'Something went wrong by sending the email. User has not been added',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return newHr;
   }
 
