@@ -13,9 +13,9 @@ export class PageMetaDto {
 
   readonly hasNextPage: boolean;
 
-  constructor({ pageOptions, itemCount }: PageMetaDtoParameters) {
-    this.page = pageOptions.page;
-    this.take = pageOptions.take;
+  constructor({ searchOptions, itemCount }: PageMetaDtoParameters) {
+    this.page = searchOptions.page;
+    this.take = searchOptions.take;
     this.itemCount = itemCount;
     this.pageCount = Math.ceil(this.itemCount / this.take);
     this.hasPreviousPage = this.page > 1;
