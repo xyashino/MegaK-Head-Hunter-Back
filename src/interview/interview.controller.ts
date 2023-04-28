@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
-import { UpdateInterviewDto } from './dto/update-interview.dto';
 import { UserObj } from '../decorators/user-obj.decorator';
 import { User } from '../users/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -35,15 +34,13 @@ export class InterviewController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateInterviewDto: UpdateInterviewDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateInterviewDto) {
     return this.interviewService.update(+id, updateInterviewDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return;
+  @UseGuards(AuthGuard('jwt'))
+  @Delete()
+  remove(@Body('studentId') studentId: string, @UserObj() user: User) {
+    return this.interviewService.removeInterview(studentId, user);
   }
 }

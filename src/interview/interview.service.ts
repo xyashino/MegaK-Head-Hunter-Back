@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { UpdateInterviewDto } from './dto/update-interview.dto';
 import { Interview } from './entities/interview.entity';
 import { UsersService } from '../users/users.service';
 import { StudentsService } from '../students/students.service';
@@ -53,6 +52,13 @@ export class InterviewService {
   async removeInterview(studentId, user) {
     const hr = await this.hrService.getCurrentHr(user);
     const student = await this.studentsService.findOne(studentId);
+    const interview = await Interview.find({
+      where: {
+        hr: { id: hr.id },
+        student: { id: studentId },
+      },
+    });
+    console.log(interview);
   }
 
   async findAll() {
@@ -65,7 +71,7 @@ export class InterviewService {
     return `This action returns a #${id} interview`;
   }
 
-  update(id: number, updateInterviewDto: UpdateInterviewDto) {
+  update(id: number, updateInterviewDto) {
     return `This action updates a #${id} interview`;
   }
 }
