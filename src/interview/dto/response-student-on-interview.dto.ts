@@ -1,23 +1,11 @@
-import { Expose, Transform } from 'class-transformer';
-import { Student } from '../entities/student.entity';
-import { StudentStatus } from '../../enums/student-status.enums';
+import { Student } from '../../students/entities/student.entity';
+import { Expose } from 'class-transformer';
 import { StudentContactType } from '../../enums/student-contract-type.enums';
+import { StudentStatus } from '../../enums/student-status.enums';
 
-export class ResponseStudentDto implements Partial<Student> {
+export class ResponseStudentOnInterviewDto implements Partial<Student> {
   @Expose()
   id: string;
-
-  @Expose()
-  @Transform(({ obj }) => obj.user.isActive)
-  isActive: boolean;
-
-  @Expose()
-  @Transform(({ obj }) => obj.user.email)
-  email: null;
-
-  @Expose()
-  @Transform(({ obj }) => obj.user.id)
-  userId: boolean;
 
   @Expose()
   courseCompletion: number;

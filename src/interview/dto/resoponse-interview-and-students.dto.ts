@@ -1,15 +1,14 @@
-import { ResponseStudentDto } from './response-student.dto';
 import { PageMetaDto } from '../../common/dtos/page/page-meta.dto';
 import { Expose, Transform } from 'class-transformer';
-import { Student } from '../entities/student.entity';
 import { transformArrayDataToDtoInstance } from '../../utils/mappers/array-data-to-dto.mapper';
+import { ResponseInterviewDto } from './response-interview.dto';
 
-export class ResponsePaginationStudentsDto {
+export class ResponseInterviewAndStudentsDto {
   @Expose()
   @Transform(({ obj }) =>
-    transformArrayDataToDtoInstance(obj.data, ResponseStudentDto),
+    transformArrayDataToDtoInstance(obj.data, ResponseInterviewDto),
   )
-  data: Student[];
+  data: ResponseInterviewDto[];
 
   @Expose()
   meta: PageMetaDto;
