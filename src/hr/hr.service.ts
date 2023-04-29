@@ -47,6 +47,14 @@ export class HrService {
     return hr;
   }
 
+  async getCurrentHr(user) {
+    const hr = await Hr.findOne({
+      where: { user },
+    });
+    if (!hr) throw new NotFoundException('Hr not found');
+    return hr;
+  }
+
   async register({ pwd }: RegisterHrDto, id) {
     const { user } = await this.findOne(id);
     if (user.isActive)
