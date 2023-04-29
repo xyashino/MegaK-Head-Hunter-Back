@@ -11,13 +11,14 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { applyDataToEntity } from '../utils/apply-data-to-entity';
 import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
-import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
 import { UserRole } from '../enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '../mail/mail.service';
 import { DataSource } from 'typeorm';
-import { ResponsePaginationStudentsDto } from './dto/response-pagination-students.dto';
+import { ResponseAvailableStudentsDto } from './dto/response-available-students.dto';
 import { userRegistration } from '../utils/user-registration';
+import { StudentStatus } from '../enums/student-status.enums';
+import { searchUsersPagination } from '../utils/search-users-pagination';
 
 @Injectable()
 export class StudentsService {
@@ -40,33 +41,26 @@ export class StudentsService {
     return newStudent;
   }
 
-  async findAllActive(
+  async findAllAvailable(
     searchOptions: SearchAndPageOptionsDto,
-  ): Promise<ResponsePaginationStudentsDto> {
-    const { name, skip, take } = searchOptions;
-    const queryBuilder = await this.dataSource
-      .getRepository(Student)
-      .createQueryBuilder('student')
-      .innerJoinAndSelect('student.user', 'user', 'user.isActive = :isActive', {
-        isActive: true,
-      })
-
-      .skip(skip)
-      .take(take);
-
-    if (name) {
-      queryBuilder.where(
-        'student.firstname LIKE :name OR student.lastname LIKE :name',
-        {
-          name: `%${name}%`,
-        },
-      );
-    }
-
-    const itemCount = await queryBuilder.getCount();
-    const { entities } = await queryBuilder.getRawAndEntities();
-    const pageMetaDto = new PageMetaDto({ searchOptions, itemCount });
-    return { data: entities, meta: { ...pageMetaDto } };
+  ): Promise<ResponseAvailableStudentsDto> {
+    return await searchUsersPagination(
+      searchOptions,
+      await this.dataSource
+        .getRepository(Student)
+        .createQueryBuilder('student')
+        .innerJoinAndSelect(
+          'student.user',
+          'user',
+          'user.isActive = :isActive',
+          {
+            isActive: true,
+          },
+        )
+        .where('student.status = :status', { status: StudentStatus.AVAILABE })
+        .skip(searchOptions.skip)
+        .take(searchOptions.take),
+    );
   }
 
   async findOne(id: string) {
