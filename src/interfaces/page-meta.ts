@@ -1,6 +1,6 @@
-import { PageOptionsDto } from '../common/dtos/page/page-options.dto';
+import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
 
 export interface PageMetaDtoParameters {
-  pageOptions: PageOptionsDto;
+  searchOptions: SearchAndPageOptionsDto;
   itemCount: number;
 }

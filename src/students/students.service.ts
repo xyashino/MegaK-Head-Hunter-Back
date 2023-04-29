@@ -1,8 +1,6 @@
 import {
   ConflictException,
   forwardRef,
-  HttpException,
-  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -12,13 +10,14 @@ import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { applyDataToEntity } from '../utils/apply-data-to-entity';
-import { PageOptionsDto } from '../common/dtos/page/page-options.dto';
-import { PageDto } from '../common/dtos/page/page.dto';
+import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
 import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
 import { UserRole } from '../enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '../mail/mail.service';
 import { DataSource } from 'typeorm';
+import { ResponsePaginationStudentsDto } from './dto/response-pagination-students.dto';
+import { userRegistration } from '../utils/user-registration';
 
 @Injectable()
 export class StudentsService {
@@ -30,47 +29,44 @@ export class StudentsService {
   async create({ email, ...rest }: CreateStudentDto) {
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
-    try {
-      newStudent.user = await this.usersService.create({
-        email,
-        role: UserRole.STUDENT,
-      });
-      await newStudent.save();
-      // await this.mailService.sendMail(
-      //   email,
-      //   'Rejestracja w Head Hunter',
-      //   './register',
-      //   {
-      //     registrationLink: `${process.env.STUDENT_REGISTRATION_URL}/${newStudent.id}`,
-      //   },
-      // );
-    } catch (e) {
-      await newStudent.remove();
-      await this.usersService.remove(newStudent.user.id);
-      throw new HttpException(
-        'Something went wrong by sending the email. User has not been added',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    await userRegistration(
+      email,
+      newStudent,
+      UserRole.STUDENT,
+      process.env.STUDENT_REGISTRATION_URL,
+      this.usersService,
+      this.mailService,
+    );
     return newStudent;
   }
 
-  async findAllActive(pageOptions: PageOptionsDto): Promise<PageDto<Student>> {
+  async findAllActive(
+    searchOptions: SearchAndPageOptionsDto,
+  ): Promise<ResponsePaginationStudentsDto> {
+    const { name, skip, take } = searchOptions;
     const queryBuilder = await this.dataSource
       .getRepository(Student)
       .createQueryBuilder('student')
       .innerJoinAndSelect('student.user', 'user', 'user.isActive = :isActive', {
         isActive: true,
       })
-      .skip(pageOptions.skip)
-      .take(pageOptions.take);
+
+      .skip(skip)
+      .take(take);
+
+    if (name) {
+      queryBuilder.where(
+        'student.firstname LIKE :name OR student.lastname LIKE :name',
+        {
+          name: `%${name}%`,
+        },
+      );
+    }
 
     const itemCount = await queryBuilder.getCount();
     const { entities } = await queryBuilder.getRawAndEntities();
-
-    const pageMetaDto = new PageMetaDto({ itemCount, pageOptions });
-
-    return new PageDto(entities, pageMetaDto);
+    const pageMetaDto = new PageMetaDto({ searchOptions, itemCount });
+    return { data: entities, meta: { ...pageMetaDto } };
   }
 
   async findOne(id: string) {
@@ -100,7 +96,6 @@ export class StudentsService {
       throw new ConflictException('The user has been registered');
     await this.usersService.update(student.user.id, { pwd });
     applyDataToEntity(student, rest);
-    await student.save();
-    return this.findOne(id);
+    return student.save();
   }
 }

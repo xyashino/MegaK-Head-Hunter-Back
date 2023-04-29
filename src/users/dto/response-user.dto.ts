@@ -1,12 +1,12 @@
-import {Exclude} from 'class-transformer';
-import {User} from "../entities/user.entity";
-import {Hr} from "../../hr/entities/hr.entity";
+import { Exclude } from 'class-transformer';
+import { User } from '../entities/user.entity';
+import { UserRole } from '../../enums/user-role.enums';
 
 export class ResponseUserDto implements Partial<User> {
   @Exclude()
-  hashedPassword:string;
+  email: string;
   @Exclude()
-  currentTokenId:string;
+  isActive: boolean;
   @Exclude()
-  hr:Hr
+  role: UserRole;
 }
