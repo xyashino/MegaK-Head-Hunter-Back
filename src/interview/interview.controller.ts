@@ -7,11 +7,16 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { UserObj } from '../decorators/user-obj.decorator';
 import { User } from '../users/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
+import { Serialize } from '../interceptors/serialization.interceptor';
+import { ResponseInterviewAndStudentsDto } from './dto/resoponse-interview-and-students.dto';
+import { CreateInterviewResponseDto } from './dto/create-interview-response.dto';
 
 @Controller('interview')
 export class InterviewController {
@@ -19,6 +24,7 @@ export class InterviewController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
+  @Serialize(CreateInterviewResponseDto)
   create(@Body('studentId') studentId: string, @UserObj() user: User) {
     return this.interviewService.createInterview(studentId, user);
   }
@@ -28,19 +34,29 @@ export class InterviewController {
     return this.interviewService.findAll();
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/conversation')
+  @Serialize(ResponseInterviewAndStudentsDto)
+  findInterviewAndStudents(
+    @Query() searchOptions: SearchAndPageOptionsDto,
+    @UserObj() user: User,
+  ) {
+    return this.interviewService.findInterviewAndStudents(searchOptions, user);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.interviewService.findOne(+id);
+    return this.interviewService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateInterviewDto) {
-    return this.interviewService.update(+id, updateInterviewDto);
+  update(@Param('id') id: string) {
+    return this.interviewService.update(id);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Delete()
-  remove(@Body('studentId') studentId: string, @UserObj() user: User) {
+  @Delete(':id')
+  remove(@Param('id') studentId: string, @UserObj() user: User) {
     return this.interviewService.removeInterview(studentId, user);
   }
 }
