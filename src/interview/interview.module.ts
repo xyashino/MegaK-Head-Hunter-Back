@@ -9,5 +9,6 @@ import { HrModule } from '../hr/hr.module';
   imports: [UsersModule, StudentsModule, HrModule],
   controllers: [InterviewController],
   providers: [InterviewService],
+  exports: [InterviewService],
 })
 export class InterviewModule {}

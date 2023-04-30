@@ -11,6 +11,7 @@ import { ConsoleModule } from 'nestjs-console';
 import { StudentsModule } from './students/students.module';
 import { UploadModule } from './upload/upload.module';
 import { InterviewModule } from './interview/interview.module';
+import { CronModule } from './cron/cron.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { InterviewModule } from './interview/interview.module';
     StudentsModule,
     UploadModule,
     InterviewModule,
+    CronModule,
   ],
   controllers: [],
   providers: [AdminCommand],

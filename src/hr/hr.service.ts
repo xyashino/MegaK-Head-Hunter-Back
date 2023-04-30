@@ -2,6 +2,8 @@ import {
   ConflictException,
   ForbiddenException,
   forwardRef,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -14,7 +16,8 @@ import { Hr } from './entities/hr.entity';
 import { UserRole } from '../enums/user-role.enums';
 import { applyDataToEntity } from '../utils/apply-data-to-entity';
 import { MailService } from '../mail/mail.service';
-import { userRegistration } from '../utils/user-registration';
+import { sendLinkRegistration } from '../utils/send-link-registration';
+import { InterviewService } from '../interview/interview.service';
 
 @Injectable()
 export class HrService {
@@ -23,14 +26,22 @@ export class HrService {
     private usersService: UsersService,
     @Inject(forwardRef(() => MailService))
     private mailService: MailService,
+    @Inject(forwardRef(() => InterviewService))
+    private interviewService: InterviewService,
   ) {}
   async create({ email, ...rest }: CreateHrDto) {
     const newHr = new Hr();
     applyDataToEntity(newHr, rest);
-    await userRegistration(
+    const newUser = await this.usersService.create({
+      email,
+      role: UserRole.HR,
+      ...rest,
+    });
+    newHr.user = newUser;
+    await newHr.save();
+    await sendLinkRegistration(
       email,
       newHr,
-      UserRole.HR,
       process.env.HR_REGISTRATION_URL,
       this.usersService,
       this.mailService,
@@ -76,6 +87,14 @@ export class HrService {
 
   async remove(id: string) {
     const hr = await this.findOne(id);
+    const interviews = await this.interviewService.findInterview(id);
+
+    if (interviews.length > 0) {
+      throw new HttpException(
+        'Cannot be remove hr because he have many than one interview',
+        HttpStatus.CONFLICT,
+      );
+    }
     const result = await hr.remove();
     await this.usersService.remove(hr.user.id);
     return result;

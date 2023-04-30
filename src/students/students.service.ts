@@ -16,7 +16,7 @@ import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '../mail/mail.service';
 import { DataSource } from 'typeorm';
 import { ResponseAvailableStudentsDto } from './dto/response-available-students.dto';
-import { userRegistration } from '../utils/user-registration';
+import { sendLinkRegistration } from '../utils/send-link-registration';
 import { StudentStatus } from '../enums/student-status.enums';
 import { searchUsersPagination } from '../utils/search-users-pagination';
 
@@ -30,10 +30,16 @@ export class StudentsService {
   async create({ email, ...rest }: CreateStudentDto) {
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
-    await userRegistration(
+    const newUser = await this.usersService.create({
+      email,
+      role: UserRole.STUDENT,
+      ...rest,
+    });
+    newStudent.user = newUser;
+    await newStudent.save();
+    await sendLinkRegistration(
       email,
       newStudent,
-      UserRole.STUDENT,
       process.env.STUDENT_REGISTRATION_URL,
       this.usersService,
       this.mailService,

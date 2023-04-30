@@ -1,19 +1,13 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-export const userRegistration = async (
+export const sendLinkRegistration = async (
   email,
   newUser,
-  role,
   url,
   usersService,
   mailService,
 ) => {
   try {
-    newUser.user = await usersService.create({
-      email,
-      role,
-    });
-    await newUser.save();
     await mailService.sendMail(
       email,
       'Rejestracja w Head Hunter',
