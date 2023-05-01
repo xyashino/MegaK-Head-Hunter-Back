@@ -22,6 +22,7 @@ import { ResponseFindAllStudentsDto } from './dto/response-find-all-students.dto
 import { AuthGuard } from '@nestjs/passport';
 import { UserObj } from '../decorators/user-obj.decorator';
 import { User } from '../users/entities/user.entity';
+import {ResponseStudentDto} from "./dto/response-student.dto";
 
 @Controller('students')
 export class StudentsController {
@@ -29,7 +30,7 @@ export class StudentsController {
   private readonly studentsService: StudentsService;
 
   @Post()
-  @Serialize(RegisterStudentDto)
+  @Serialize(ResponseStudentDto)
   create(@Body() CreateStudentDto: CreateStudentDto) {
     return this.studentsService.create(CreateStudentDto);
   }
@@ -45,7 +46,7 @@ export class StudentsController {
   }
 
   @Post('/register/:id')
-  @Serialize(RegisterStudentDto)
+  @Serialize(ResponseStudentDto)
   register(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() registerStudentDto: RegisterStudentDto,
@@ -54,19 +55,19 @@ export class StudentsController {
   }
 
   @Get(':id')
-  @Serialize(RegisterStudentDto)
+  @Serialize(ResponseStudentDto)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.findOne(id);
   }
 
   @Delete(':id')
-  @Serialize(RegisterStudentDto)
+  @Serialize(ResponseStudentDto)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.remove(id);
   }
 
   @Patch(':id')
-  @Serialize(RegisterStudentDto)
+  @Serialize(ResponseStudentDto)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateStudentDto: UpdateStudentDto,
