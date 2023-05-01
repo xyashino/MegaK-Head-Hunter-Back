@@ -13,11 +13,11 @@ export class ResponseStudentDto implements Partial<Student> {
 
   @Expose()
   @Transform(({ obj }) => obj.user.email)
-  email: null;
+  email: string;
 
   @Expose()
   @Transform(({ obj }) => obj.user.id)
-  userId: boolean;
+  userId: string;
 
   @Expose()
   courseCompletion: number;
