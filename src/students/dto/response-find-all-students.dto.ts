@@ -4,7 +4,7 @@ import { Expose, Transform } from 'class-transformer';
 import { Student } from '../entities/student.entity';
 import { transformArrayDataToDtoInstance } from '../../utils/mappers/array-data-to-dto.mapper';
 
-export class ResponseAvailableStudentsDto {
+export class ResponseFindAllStudentsDto {
   @Expose()
   @Transform(({ obj }) =>
     transformArrayDataToDtoInstance(obj.data, ResponseStudentDto),

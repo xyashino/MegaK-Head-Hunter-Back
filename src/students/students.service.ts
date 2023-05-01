@@ -15,7 +15,7 @@ import { UserRole } from '../enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '../mail/mail.service';
 import { DataSource } from 'typeorm';
-import { ResponseAvailableStudentsDto } from './dto/response-available-students.dto';
+import { ResponseFindAllStudentsDto } from './dto/response-find-all-students.dto';
 import { sendLinkRegistration } from '../utils/send-link-registration';
 import { StudentStatus } from '../enums/student-status.enums';
 import { searchUsersPagination } from '../utils/search-users-pagination';
@@ -51,7 +51,7 @@ export class StudentsService {
   async findAll(
     searchOptions: SearchAndPageOptionsDto,
     user,
-  ): Promise<ResponseAvailableStudentsDto> {
+  ): Promise<ResponseFindAllStudentsDto> {
     const queryBuilder = await this.dataSource
       .getRepository(Student)
       .createQueryBuilder('student')
