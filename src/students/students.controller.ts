@@ -22,7 +22,7 @@ import { ResponseFindAllStudentsDto } from './dto/response-find-all-students.dto
 import { AuthGuard } from '@nestjs/passport';
 import { UserObj } from '../decorators/user-obj.decorator';
 import { User } from '../users/entities/user.entity';
-import {ResponseStudentDto} from "./dto/response-student.dto";
+import { ResponseStudentDto } from './dto/response-student.dto';
 
 @Controller('students')
 export class StudentsController {
