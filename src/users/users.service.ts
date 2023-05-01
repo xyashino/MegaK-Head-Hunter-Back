@@ -27,7 +27,7 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const user = await User.findOne({ relations: { hr: true }, where: { id } });
+    const user = await User.findOne({ relations: { hr: true , student:true}, where: { id } });
     if (!user) {
       throw new NotFoundException();
     }
