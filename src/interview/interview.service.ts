@@ -122,7 +122,7 @@ export class InterviewService {
 
   async update(id: string): Promise<Interview> {
     const interview = await this.findOne(id);
-    interview.booking_date = new Date();
+    interview.bookingDate = new Date();
     return interview.save();
   }
 }

@@ -18,7 +18,7 @@ export class CronService {
     const currentDate = new Date();
 
     for (const interview of interviews) {
-      if (interview.booking_date < currentDate) {
+      if (interview.bookingDate < currentDate) {
         const queryBuilder = await this.dataSource
           .getRepository(Interview)
           .createQueryBuilder('interview')

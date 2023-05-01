@@ -19,13 +19,13 @@ export class Interview extends BaseEntity {
     type: 'timestamp',
     default: null,
   })
-  created_at: Date;
+  createdAt: Date;
 
   @Column({
     type: 'timestamp',
     default: null,
   })
-  booking_date: Date;
+  bookingDate: Date;
 
   @ManyToOne(() => Hr, (hr) => hr.interviews)
   @JoinColumn()
@@ -38,7 +38,7 @@ export class Interview extends BaseEntity {
   @BeforeInsert()
   setDate() {
     const tenDaysInMs = 10 * 24 * 60 * 60 * 1000;
-    this.created_at = new Date();
-    this.booking_date = new Date(this.created_at.getTime() + tenDaysInMs);
+    this.createdAt = new Date();
+    this.bookingDate = new Date(this.createdAt.getTime() + tenDaysInMs);
   }
 }
