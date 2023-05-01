@@ -96,6 +96,6 @@ export class StudentsService {
       throw new ConflictException('The user has been registered');
     await this.usersService.update(student.user.id, { pwd });
     applyDataToEntity(student, rest);
-    return student.save();
+    await student.save();
   }
 }
