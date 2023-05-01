@@ -1,4 +1,4 @@
-import {UserResponseBase} from "./user-response";
+import { UserResponseBase } from './user-response';
 
 interface UserCurrentAdminResponse extends UserResponseBase {
   isActive: true;

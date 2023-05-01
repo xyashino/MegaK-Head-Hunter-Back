@@ -1,4 +1,4 @@
-interface UserResponseBase {
+export interface UserResponseBase {
   id: string;
   email: string;
 }
@@ -12,4 +12,4 @@ interface UserOtherResponse extends UserResponseBase {
   role: 'hr' | 'student';
 }
 
-export type UserResponse = (UserAdminResponse | UserOtherResponse)
+export type UserResponse = UserAdminResponse | UserOtherResponse;
