@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   HttpException,
   HttpStatus,
   Inject,
@@ -21,7 +22,7 @@ import { CreateInterviewResponseDto } from './dto/create-interview-response.dto'
 export class InterviewService {
   @Inject(UsersService) usersService: UsersService;
   @Inject(StudentsService) studentsService: StudentsService;
-  @Inject(HrService) hrService: HrService;
+  @Inject(forwardRef(() => HrService)) hrService: HrService;
   @Inject(DataSource) private dataSource: DataSource;
 
   async createInterview(

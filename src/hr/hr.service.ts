@@ -21,14 +21,13 @@ import { InterviewService } from '../interview/interview.service';
 
 @Injectable()
 export class HrService {
-  constructor(
-    @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
-    @Inject(forwardRef(() => MailService))
-    private mailService: MailService,
-    @Inject(forwardRef(() => InterviewService))
-    private interviewService: InterviewService,
-  ) {}
+  @Inject(forwardRef(() => UsersService))
+  usersService: UsersService;
+  @Inject(forwardRef(() => MailService))
+  mailService: MailService;
+  @Inject(forwardRef(() => InterviewService))
+  interviewService: InterviewService;
+
   async create({ email, ...rest }: CreateHrDto) {
     const newHr = new Hr();
     applyDataToEntity(newHr, rest);
