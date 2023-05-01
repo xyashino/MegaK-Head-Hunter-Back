@@ -16,7 +16,7 @@ import { RegisterHrDto } from './dto/register-hr.dto';
 import { Serialize } from '../interceptors/serialization.interceptor';
 import { ResponseHrDto } from './dto/response-hr.dto';
 
-// @Serialize(ResponseHrDto)
+@Serialize(ResponseHrDto)
 @Controller('hr')
 export class HrController {
   @Inject(forwardRef(() => HrService))
