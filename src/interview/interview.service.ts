@@ -10,7 +10,6 @@ import { Interview } from './entities/interview.entity';
 import { UsersService } from '../users/users.service';
 import { StudentsService } from '../students/students.service';
 import { StudentStatus } from '../enums/student-status.enums';
-import { HrService } from '../hr/hr.service';
 import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
 import { DataSource } from 'typeorm';
 import { searchUsersPagination } from '../utils/search-users-pagination';
@@ -22,7 +21,6 @@ import { CreateInterviewResponseDto } from './dto/create-interview-response.dto'
 export class InterviewService {
   @Inject(UsersService) usersService: UsersService;
   @Inject(StudentsService) studentsService: StudentsService;
-  @Inject(forwardRef(() => HrService)) hrService: HrService;
   @Inject(DataSource) private dataSource: DataSource;
 
   async createInterview(
@@ -30,7 +28,7 @@ export class InterviewService {
     user: User,
   ): Promise<CreateInterviewResponseDto> {
     const newInterview = new Interview();
-    const hr = await this.hrService.getCurrentHr(user);
+    const hr = (await this.usersService.findOne(user.id)).hr;
     const student = await this.studentsService.findOne(studentId);
 
     if ((await this.getCountInterview(hr)) >= hr.maxReservedStudents) {
@@ -77,7 +75,7 @@ export class InterviewService {
     searchOptions: SearchAndPageOptionsDto,
     user,
   ): Promise<ResponseInterviewAndStudentsDto> {
-    const hr = await this.hrService.getCurrentHr(user);
+    const hr = (await this.usersService.findOne(user.id)).hr;
 
     return await searchUsersPagination(
       searchOptions,
@@ -92,7 +90,7 @@ export class InterviewService {
   }
 
   async removeInterview(studentId, user) {
-    const hr = await this.hrService.getCurrentHr(user);
+    const hr = (await this.usersService.findOne(user.id)).hr;
     const student = await this.studentsService.findOne(studentId);
     const interview = await Interview.find({
       where: {
