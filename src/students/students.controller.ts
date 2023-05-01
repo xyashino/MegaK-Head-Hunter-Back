@@ -10,6 +10,7 @@ import {
   Patch,
   ParseUUIDPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -18,6 +19,9 @@ import { RegisterStudentDto } from './dto/register-student.dto';
 import { Serialize } from '../interceptors/serialization.interceptor';
 import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
 import { ResponseAvailableStudentsDto } from './dto/response-available-students.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { UserObj } from '../decorators/user-obj.decorator';
+import { User } from '../users/entities/user.entity';
 
 @Controller('students')
 export class StudentsController {
@@ -29,10 +33,15 @@ export class StudentsController {
   create(@Body() CreateStudentDto: CreateStudentDto) {
     return this.studentsService.create(CreateStudentDto);
   }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   @Serialize(ResponseAvailableStudentsDto)
-  findAll(@Query() searchOptions: SearchAndPageOptionsDto) {
-    return this.studentsService.findAllAvailable(searchOptions);
+  findAll(
+    @Query() searchOptions: SearchAndPageOptionsDto,
+    @UserObj() user: User,
+  ) {
+    return this.studentsService.findAll(searchOptions, user);
   }
 
   @Post('/register/:id')

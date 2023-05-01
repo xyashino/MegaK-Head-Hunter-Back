@@ -19,6 +19,7 @@ import { ResponseAvailableStudentsDto } from './dto/response-available-students.
 import { sendLinkRegistration } from '../utils/send-link-registration';
 import { StudentStatus } from '../enums/student-status.enums';
 import { searchUsersPagination } from '../utils/search-users-pagination';
+import { UserStatus } from '../enums/user-status.enums';
 
 @Injectable()
 export class StudentsService {
@@ -47,26 +48,27 @@ export class StudentsService {
     return newStudent;
   }
 
-  async findAllAvailable(
+  async findAll(
     searchOptions: SearchAndPageOptionsDto,
+    user,
   ): Promise<ResponseAvailableStudentsDto> {
-    return await searchUsersPagination(
-      searchOptions,
-      await this.dataSource
-        .getRepository(Student)
-        .createQueryBuilder('student')
-        .innerJoinAndSelect(
-          'student.user',
-          'user',
-          'user.isActive = :isActive',
-          {
-            isActive: true,
-          },
-        )
-        .where('student.status = :status', { status: StudentStatus.AVAILABE })
-        .skip(searchOptions.skip)
-        .take(searchOptions.take),
-    );
+    const queryBuilder = await this.dataSource
+      .getRepository(Student)
+      .createQueryBuilder('student')
+      .innerJoinAndSelect('student.user', 'user')
+      .skip(searchOptions.skip)
+      .take(searchOptions.take);
+
+    if (user.role === UserRole.HR) {
+      queryBuilder.where(
+        'user.isActive = :isActive AND student.status = :studentStatus',
+        {
+          isActive: UserStatus.ACTIVE,
+          studentStatus: StudentStatus.AVAILABE,
+        },
+      );
+    }
+    return await searchUsersPagination(searchOptions, queryBuilder);
   }
 
   async findOne(id: string) {
