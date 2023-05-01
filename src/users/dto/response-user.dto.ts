@@ -3,12 +3,13 @@ import { User } from '../entities/user.entity';
 import { UserRole } from '../../enums/user-role.enums';
 import { Hr } from '../../hr/entities/hr.entity';
 import { Student } from '../../students/entities/student.entity';
+import { UserStatus } from '../../enums/user-status.enums';
 
 export class ResponseUserDto implements Partial<User> {
   @Expose()
   email: string;
   @Expose()
-  isActive: boolean;
+  isActie: UserStatus;
   @Expose()
   role: UserRole;
 
@@ -20,7 +21,7 @@ export class ResponseUserDto implements Partial<User> {
       return {
         id: student.id,
         fullName: `${student.firstname} ${student.lastname}`,
-        githubUsername: student.githubUsername
+        githubUsername: student.githubUsername,
       };
     return null;
   })

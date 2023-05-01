@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { hashPwd } from '../utils/hash-pwd';
+import { UserStatus } from '../enums/user-status.enums';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +17,7 @@ export class UsersService {
     newUser.email = email;
     if (pwd) {
       newUser.hashedPassword = hashPwd(pwd);
-      newUser.isActive = true;
+      newUser.isActive = UserStatus.ACTIVE;
     }
     newUser.role = role;
     return await newUser.save();
@@ -27,7 +28,10 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const user = await User.findOne({ relations: { hr: true , student:true}, where: { id } });
+    const user = await User.findOne({
+      relations: { hr: true, student: true },
+      where: { id },
+    });
     if (!user) {
       throw new NotFoundException();
     }
@@ -42,7 +46,7 @@ export class UsersService {
     }
     if (pwd) {
       user.hashedPassword = hashPwd(pwd);
-      user.isActive = true;
+      user.isActive = UserStatus.ACTIVE;
     }
     user.role = role ?? user.role;
     return user.save();
