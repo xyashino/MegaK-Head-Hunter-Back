@@ -20,6 +20,7 @@ import { sendLinkRegistration } from '../utils/send-link-registration';
 import { StudentStatus } from '../enums/student-status.enums';
 import { searchUsersPagination } from '../utils/search-users-pagination';
 import { UserStatus } from '../enums/user-status.enums';
+import { InterviewService } from '../interview/interview.service';
 
 @Injectable()
 export class StudentsService {
@@ -27,7 +28,10 @@ export class StudentsService {
   usersService: UsersService;
   @Inject(forwardRef(() => MailService))
   mailService: MailService;
+  @Inject(forwardRef(() => InterviewService))
+  interviewService: InterviewService;
   @Inject(DataSource) private dataSource: DataSource;
+
   async create({ email, ...rest }: CreateStudentDto) {
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
@@ -74,7 +78,7 @@ export class StudentsService {
   async findOne(id: string) {
     const student = await Student.findOne({
       where: { id },
-      relations: { user: true },
+      relations: { user: true, interviews: true },
     });
     if (!student) throw new NotFoundException('Invalid student Id');
     return student;
@@ -89,6 +93,19 @@ export class StudentsService {
 
   async update(id: string, { email, ...rest }: UpdateStudentDto) {
     const student = await this.findOne(id);
+    if (rest.status === StudentStatus.HIRED) {
+      const user = student.user;
+      user.isActive = UserStatus.INACTIVE;
+      await user.save();
+      const interviews = student.interviews;
+      if (interviews.length > 0) {
+        for (const interview of interviews) {
+          const hr = (await this.interviewService.findOne(interview.id)).hr;
+          await this.interviewService.removeInterview(student.id, hr);
+        }
+      }
+      //@TODO dodać informacje dla admina o zatrudnieniu
+    }
     applyDataToEntity(student, rest);
     return student.save();
   }

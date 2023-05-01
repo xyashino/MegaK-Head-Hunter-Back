@@ -1,5 +1,4 @@
 import {
-  forwardRef,
   HttpException,
   HttpStatus,
   Inject,
@@ -16,6 +15,7 @@ import { searchUsersPagination } from '../utils/search-users-pagination';
 import { User } from '../users/entities/user.entity';
 import { ResponseInterviewAndStudentsDto } from './dto/resoponse-interview-and-students.dto';
 import { CreateInterviewResponseDto } from './dto/create-interview-response.dto';
+import { UserRole } from '../enums/user-role.enums';
 
 @Injectable()
 export class InterviewService {
@@ -90,7 +90,12 @@ export class InterviewService {
   }
 
   async removeInterview(studentId, user) {
-    const hr = (await this.usersService.findOne(user.id)).hr;
+    let hr;
+    if (user.role === UserRole.HR) {
+      hr = (await this.usersService.findOne(user.id)).hr;
+    } else {
+      hr = user;
+    }
     const student = await this.studentsService.findOne(studentId);
     const interview = await Interview.find({
       where: {
@@ -99,8 +104,10 @@ export class InterviewService {
       },
     });
     const data = await Interview.remove(interview);
-    student.status = StudentStatus.AVAILABE;
-    await student.save();
+    if (student.status === StudentStatus.CONVERSATION) {
+      student.status = StudentStatus.AVAILABE;
+      await student.save();
+    }
     return data;
   }
 
@@ -109,8 +116,9 @@ export class InterviewService {
   }
 
   async findOne(id: string): Promise<Interview> {
-    const interview = await Interview.findOneBy({
-      id,
+    const interview = await Interview.findOne({
+      relations: { hr: true },
+      where: { id },
     });
     if (!interview) {
       throw new NotFoundException('Invalid interview id');
