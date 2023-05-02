@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { StudentsService } from '../students/students.service';
-import { InterviewService } from '../interview/interview.service';
 import { Interview } from '../interview/entities/interview.entity';
 import { DataSource } from 'typeorm';
 import { StudentStatus } from '../enums/student-status.enums';
@@ -9,12 +8,11 @@ import { StudentStatus } from '../enums/student-status.enums';
 @Injectable()
 export class CronService {
   @Inject(StudentsService) studentsService: StudentsService;
-  @Inject(InterviewService) interviewService: InterviewService;
   @Inject(DataSource) dataSource: DataSource;
 
   @Cron('0 2 * * *') // "At 02:00"
   async removeInterview(): Promise<void> {
-    const interviews = await this.interviewService.findAll();
+    const interviews = await Interview.find();
     const currentDate = new Date();
 
     for (const interview of interviews) {
