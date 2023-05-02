@@ -11,4 +11,7 @@ export interface ActiveStudentResponse extends BaseStudentResponse {
   education: string | null;
   workExperience: string | null;
   courses: string[] | null;
+  tel:string | null;
+  firstname:string;
+  lastname:string
 }
