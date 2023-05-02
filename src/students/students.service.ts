@@ -100,7 +100,7 @@ export class StudentsService {
           await this.interviewService.removeInterview(student.id, hr);
         }
       }
-      //@TODO dodać informacje dla admina o zatrudnieniu
+      //@TODO dodać informacje dla admina o zatrudnieniu studenta
     }
     applyDataToEntity(student, rest);
     return student.save();
