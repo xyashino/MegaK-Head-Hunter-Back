@@ -6,10 +6,10 @@ export class ResponseInterviewDto {
   id: string;
 
   @Expose()
-  created_at: Date;
+  createdAt: Date;
 
   @Expose()
-  booking_date: Date;
+  bookingDate: Date;
 
   @Expose()
   @Transform((obj) => {
