@@ -1,5 +1,5 @@
 import { Expose, plainToClass, Transform } from 'class-transformer';
-import { ResponseStudentOnInterviewDto } from './response-student-on-interview.dto';
+import { ResponseBaseStudentDto } from '../../students/dto/student-base-response.dto';
 
 export class ResponseInterviewDto {
   @Expose()
@@ -13,7 +13,7 @@ export class ResponseInterviewDto {
 
   @Expose()
   @Transform((obj) => {
-    return plainToClass(ResponseStudentOnInterviewDto, obj.value);
+    return plainToClass(ResponseBaseStudentDto, obj.value);
   })
-  student: ResponseStudentOnInterviewDto;
+  student: ResponseBaseStudentDto;
 }

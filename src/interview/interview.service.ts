@@ -14,6 +14,8 @@ import { DataSource } from 'typeorm';
 import { searchUsersPagination } from '../utils/search-users-pagination';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../enums/user-role.enums';
+import { InterviewResponse } from '../types/interview/interview-response';
+import { InterviewFindResponse } from '../types/interview/interview-find-response';
 
 @Injectable()
 export class InterviewService {
@@ -21,7 +23,10 @@ export class InterviewService {
   @Inject(StudentsService) studentsService: StudentsService;
   @Inject(DataSource) private dataSource: DataSource;
 
-  async createInterview(studentId: string, user: User) {
+  async createInterview(
+    studentId: string,
+    user: User,
+  ): Promise<InterviewResponse> {
     const newInterview = new Interview();
     const hr = (await this.usersService.findOne(user.id)).hr;
     const student = await this.studentsService.findOne(studentId);
@@ -62,11 +67,14 @@ export class InterviewService {
     return interviews.length;
   }
 
-  async findInterview(hr) {
+  async findInterview(hr): Promise<InterviewResponse[]> {
     return await Interview.find({ where: { hr } });
   }
 
-  async findAllInterview(searchOptions: SearchAndPageOptionsDto, user) {
+  async findAllInterview(
+    searchOptions: SearchAndPageOptionsDto,
+    user,
+  ): Promise<InterviewFindResponse> {
     const queryBuilder = await this.dataSource
       .getRepository(Interview)
       .createQueryBuilder('interview')
@@ -82,7 +90,7 @@ export class InterviewService {
     return await searchUsersPagination(searchOptions, queryBuilder);
   }
 
-  async removeInterview(studentId, user) {
+  async removeInterview(studentId, user): Promise<InterviewResponse[]> {
     let hr;
     user.role === UserRole.HR
       ? (hr = (await this.usersService.findOne(user.id)).hr)
@@ -111,11 +119,5 @@ export class InterviewService {
       throw new NotFoundException('Invalid interview id');
     }
     return interview;
-  }
-
-  async update(id: string) {
-    const interview = await this.findOne(id);
-    interview.bookingDate = new Date();
-    return interview.save();
   }
 }
