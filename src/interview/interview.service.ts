@@ -13,8 +13,6 @@ import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-opt
 import { DataSource } from 'typeorm';
 import { searchUsersPagination } from '../utils/search-users-pagination';
 import { User } from '../users/entities/user.entity';
-import { ResponseInterviewAndStudentsDto } from './dto/resoponse-interview-and-students.dto';
-import { CreateInterviewResponseDto } from './dto/create-interview-response.dto';
 import { UserRole } from '../enums/user-role.enums';
 
 @Injectable()
@@ -23,10 +21,7 @@ export class InterviewService {
   @Inject(StudentsService) studentsService: StudentsService;
   @Inject(DataSource) private dataSource: DataSource;
 
-  async createInterview(
-    studentId: string,
-    user: User,
-  ): Promise<CreateInterviewResponseDto> {
+  async createInterview(studentId: string, user: User) {
     const newInterview = new Interview();
     const hr = (await this.usersService.findOne(user.id)).hr;
     const student = await this.studentsService.findOne(studentId);
@@ -67,35 +62,32 @@ export class InterviewService {
     return interviews.length;
   }
 
-  async findInterview(hr): Promise<Interview[]> {
+  async findInterview(hr) {
     return await Interview.find({ where: { hr } });
   }
 
-  async findInterviewAndStudents(
-    searchOptions: SearchAndPageOptionsDto,
-    user,
-  ): Promise<ResponseInterviewAndStudentsDto> {
-    const hr = (await this.usersService.findOne(user.id)).hr;
+  async findAllInterview(searchOptions: SearchAndPageOptionsDto, user) {
+    const queryBuilder = await this.dataSource
+      .getRepository(Interview)
+      .createQueryBuilder('interview')
+      .leftJoinAndSelect('interview.student', 'student')
+      .skip(searchOptions.skip)
+      .take(searchOptions.take);
 
-    return await searchUsersPagination(
-      searchOptions,
-      await this.dataSource
-        .getRepository(Interview)
-        .createQueryBuilder('interview')
-        .leftJoinAndSelect('interview.student', 'student')
-        .where('interview.hr = :hrId', { hrId: hr.id })
-        .skip(searchOptions.skip)
-        .take(searchOptions.take),
-    );
+    if (user.role === UserRole.HR) {
+      const hr = (await this.usersService.findOne(user.id)).hr;
+      queryBuilder.where('interview.hr = :hrId', { hrId: hr.id });
+    }
+
+    return await searchUsersPagination(searchOptions, queryBuilder);
   }
 
   async removeInterview(studentId, user) {
     let hr;
-    if (user.role === UserRole.HR) {
-      hr = (await this.usersService.findOne(user.id)).hr;
-    } else {
-      hr = user;
-    }
+    user.role === UserRole.HR
+      ? (hr = (await this.usersService.findOne(user.id)).hr)
+      : (hr = user);
+
     const student = await this.studentsService.findOne(studentId);
     const interview = await Interview.find({
       where: {
@@ -103,19 +95,14 @@ export class InterviewService {
         student: { id: studentId },
       },
     });
-    const data = await Interview.remove(interview);
     if (student.status === StudentStatus.CONVERSATION) {
       student.status = StudentStatus.AVAILABE;
       await student.save();
     }
-    return data;
+    return await Interview.remove(interview);
   }
 
-  async findAll(): Promise<Interview[]> {
-    return await Interview.find();
-  }
-
-  async findOne(id: string): Promise<Interview> {
+  async findOne(id: string) {
     const interview = await Interview.findOne({
       relations: { hr: true },
       where: { id },
@@ -126,7 +113,7 @@ export class InterviewService {
     return interview;
   }
 
-  async update(id: string): Promise<Interview> {
+  async update(id: string) {
     const interview = await this.findOne(id);
     interview.bookingDate = new Date();
     return interview.save();
