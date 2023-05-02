@@ -22,9 +22,9 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   email?: string;
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.tel !== null )
+  @ValidateIf(({obj})=> obj?.tel !== null )
   @IsString()
-  tel?: string;
+  tel?: string | null;
 
   @IsOptional()
   @IsNotEmpty()
@@ -39,7 +39,7 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  githubUsername?: string;
+  githubUsername?: string | null;
 
   @IsOptional()
   @IsArray()
@@ -51,9 +51,9 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   projectUrls?: string[];
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.bio !== null )
+  @ValidateIf(({obj})=> obj?.bio !== null )
   @IsString()
-  bio?: string;
+  bio?: string | null;
 
   @IsOptional()
   @IsNotEmpty()
@@ -61,9 +61,9 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   expectedTypeWork?: StudentTypeWork;
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.targetWorkCity !== null )
+  @ValidateIf(({obj})=> obj?.targetWorkCity !== null )
   @IsString()
-  targetWorkCity?: string;
+  targetWorkCity?: string | null;
 
   @IsOptional()
   @IsNotEmpty()
@@ -71,9 +71,9 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   expectedContractType?: StudentContactType;
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.expectedSalary !== null )
+  @ValidateIf(({obj})=> obj?.expectedSalary !== null )
   @IsString()
-  expectedSalary?: string;
+  expectedSalary?: string | null;
 
   @IsOptional()
   @IsNotEmpty()
@@ -86,17 +86,16 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   monthsOfCommercialExp?: number;
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.education !== null )
+  @ValidateIf(({obj})=> obj?.education !== null )
   @IsString()
-  education?: string;
+  education?: string | null;
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.workExperience !== null )
+  @ValidateIf(({obj})=> obj?.workExperience !== null )
   @IsString()
-  workExperience?: string;
-
+  workExperience?: string | null;
   @IsOptional()
-  @ValidateIf(({obj})=> obj.courses !== null )
+  @ValidateIf(({obj})=> obj?.courses !== null )
   @IsString()
   courses?: string;
 

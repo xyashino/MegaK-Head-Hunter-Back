@@ -22,9 +22,9 @@ export class RegisterStudentDto {
 
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.tel !== null )
+  @ValidateIf(({obj})=> obj?.tel !== null )
   @IsString()
-  tel: string;
+  tel: string | null;
 
   @IsNotEmpty()
   @IsString()
@@ -55,18 +55,18 @@ export class RegisterStudentDto {
   expectedTypeWork: StudentTypeWork;
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.targetWorkCity !== null )
+  @ValidateIf(({obj})=> obj?.targetWorkCity !== null )
   @IsString()
-  targetWorkCity: string;
+  targetWorkCity: string | null;
 
   @IsNotEmpty()
   @IsEnum(StudentContactType)
   expectedContractType: StudentContactType;
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.expectedSalary !== null )
+  @ValidateIf(({obj})=> obj?.expectedSalary !== null )
   @IsString()
-  expectedSalary: string;
+  expectedSalary: string | null;
 
   @IsNotEmpty()
   @IsBoolean()
@@ -79,12 +79,12 @@ export class RegisterStudentDto {
   @IsOptional()
   @ValidateIf(({obj})=> obj.education !== null )
   @IsString()
-  education: string;
+  education: string | null;
 
   @IsOptional()
   @ValidateIf(({obj})=> obj.workExperience !== null )
   @IsString()
-  workExperience: string;
+  workExperience: string | null;
 
   @IsOptional()
   @IsString()
