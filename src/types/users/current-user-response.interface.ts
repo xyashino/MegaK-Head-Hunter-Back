@@ -6,6 +6,7 @@ interface UserCurrentAdminResponse extends UserResponseBase {
   data: null;
 }
 interface UserCurrentHrResponse extends UserResponseBase {
+  role: 'hr';
   isActive: boolean;
   data: {
     id: string;
@@ -14,7 +15,7 @@ interface UserCurrentHrResponse extends UserResponseBase {
 }
 
 interface UserCurrentStudentResponse extends UserResponseBase {
-  role: 'hr';
+  role: 'student';
   isActive: boolean;
   data: {
     id: string;
