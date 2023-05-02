@@ -20,6 +20,8 @@ import { StudentStatus } from '../enums/student-status.enums';
 import { searchUsersPagination } from '../utils/search-users-pagination';
 import { UserStatus } from '../enums/user-status.enums';
 import { InterviewService } from '../interview/interview.service';
+import { Response } from 'express';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class StudentsService {
@@ -29,6 +31,8 @@ export class StudentsService {
   mailService: MailService;
   @Inject(forwardRef(() => InterviewService))
   interviewService: InterviewService;
+  @Inject(forwardRef(() => AuthService))
+  authService: AuthService;
   @Inject(DataSource) private dataSource: DataSource;
 
   async create({ email, ...rest }: CreateStudentDto) {
@@ -105,12 +109,22 @@ export class StudentsService {
     applyDataToEntity(student, rest);
     return student.save();
   }
-  async register(id: string, { pwd, ...rest }: RegisterStudentDto) {
-    const student = await this.findOne(id);
-    if (student.user.isActive)
-      throw new ConflictException('The user has been registered');
-    await this.usersService.update(student.user.id, { pwd });
-    applyDataToEntity(student, rest);
-    return student.save();
+  async register(
+    id: string,
+    { pwd, ...rest }: RegisterStudentDto,
+    res: Response,
+  ) {
+    try {
+      const student = await this.findOne(id);
+      if (student.user.isActive)
+        throw new ConflictException('The user has been registered');
+      await this.usersService.update(student.user.id, { pwd });
+      applyDataToEntity(student, rest);
+      await student.save();
+      const authLoginDto = { email: student.user.email, pwd };
+      await this.authService.login(authLoginDto, res);
+    } catch (e) {
+      return res.json({ error: e.message });
+    }
   }
 }
