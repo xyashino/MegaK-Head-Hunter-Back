@@ -1,15 +1,17 @@
+import {RoleEnum} from "../EnumTypes";
+
 export interface UserResponseBase {
   id: string;
   email: string;
 }
 interface UserAdminResponse extends UserResponseBase {
   isActive: true;
-  role: 'admin';
+  role: Exclude<RoleEnum, 'student' | 'hr'>;
 }
 
 interface UserOtherResponse extends UserResponseBase {
   isActive: boolean;
-  role: 'hr' | 'student';
+  role: Exclude<RoleEnum, 'admin'>;
 }
 
 export type UserResponse = UserAdminResponse | UserOtherResponse;

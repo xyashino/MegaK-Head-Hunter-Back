@@ -12,8 +12,8 @@ export interface BaseStudentResponse {
   expectedContractType: string;
   canTakeApprenticeship: boolean;
   monthsOfCommercialExp: number;
-  email?: string;
-  userId?: string;
+  email: string;
+  userId: string;
 }
 
 export type StudentResponse = ActiveStudentResponse | InactiveStudentResponse;

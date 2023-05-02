@@ -1,3 +1,9 @@
+import {
+  ExpectedContractTypeEnum,
+  ExpectedTypeWorkEnum,
+  StatusTypeEnum,
+} from '../EnumTypes';
+
 export interface StudentRegisterRequest {
   pwd: string;
   tel?: string;
@@ -7,24 +13,14 @@ export interface StudentRegisterRequest {
   portfolioUrls: string[];
   projectUrls: string[];
   bio?: string;
-  expectedTypeWork:
-    | 'Na miejscu'
-    | 'Gotowość do przeprowadzki'
-    | 'Wyłącznie zdalnie'
-    | 'Hybrydowo'
-    | 'Bez znaczenia';
+  expectedTypeWork: ExpectedTypeWorkEnum;
   targetWorkCity?: string;
-  expectedContractType:
-    | 'Tylko UoP'
-    | 'Możliwe B2B'
-    | 'Możliwe UZ/UoD'
-    | 'Hybrydowo'
-    | 'Brak preferencji';
+  expectedContractType: ExpectedContractTypeEnum;
   expectedSalary?: string;
   canTakeApprenticeship: boolean;
   monthsOfCommercialExp: number;
   education?: string;
   workExperience?: string;
   courses?: string;
-  status?: 'Dostępny' | 'W trakcie rozmowy' | 'Zatrudniony';
+  status?: StatusTypeEnum;
 }
