@@ -31,7 +31,7 @@ export class InterviewController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   @Serialize(ResponseFindInterviewDto)
-  findInterviewAndStudents(
+  findAllInterview(
     @Query() searchOptions: SearchAndPageOptionsDto,
     @UserObj() user: User,
   ) {

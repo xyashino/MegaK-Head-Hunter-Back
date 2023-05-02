@@ -71,14 +71,12 @@ export class InterviewService {
     return await Interview.find({ where: { hr } });
   }
 
-  async findAllInterview(
-    searchOptions: SearchAndPageOptionsDto,
-    user,
-  ): Promise<InterviewFindResponse> {
+  async findAllInterview(searchOptions: SearchAndPageOptionsDto, user) {
     const queryBuilder = await this.dataSource
       .getRepository(Interview)
       .createQueryBuilder('interview')
       .leftJoinAndSelect('interview.student', 'student')
+      .leftJoinAndSelect('interview.hr', 'hr')
       .skip(searchOptions.skip)
       .take(searchOptions.take);
 
