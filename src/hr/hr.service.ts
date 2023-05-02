@@ -18,6 +18,8 @@ import { applyDataToEntity } from '../utils/apply-data-to-entity';
 import { MailService } from '../mail/mail.service';
 import { sendLinkRegistration } from '../utils/send-link-registration';
 import { InterviewService } from '../interview/interview.service';
+import { AuthService } from '../auth/auth.service';
+import { Response } from 'express';
 
 @Injectable()
 export class HrService {
@@ -27,6 +29,8 @@ export class HrService {
   mailService: MailService;
   @Inject(forwardRef(() => InterviewService))
   interviewService: InterviewService;
+  @Inject(forwardRef(() => AuthService))
+  authService: AuthService;
 
   async create({ email, ...rest }: CreateHrDto) {
     const newHr = new Hr();
@@ -57,12 +61,17 @@ export class HrService {
     return hr;
   }
 
-  async register({ pwd }: RegisterHrDto, id) {
-    const { user } = await this.findOne(id);
-    if (user.isActive)
-      throw new ConflictException('The user has been registered');
-    await this.usersService.update(user.id, { pwd });
-    return this.findOne(id);
+  async register({ pwd }: RegisterHrDto, id, res: Response) {
+    try {
+      const { user } = await this.findOne(id);
+      if (user.isActive)
+        throw new ConflictException('The user has been registered');
+      await this.usersService.update(user.id, { pwd });
+      const authLoginDto = { email: user.email, pwd };
+      await this.authService.login(authLoginDto, res);
+    } catch (e) {
+      return res.json({ message: e.message });
+    }
   }
 
   async update(id: string, { pwd, ...rest }: UpdateHrDto) {
