@@ -70,6 +70,9 @@ export class ResponseStudentDto implements Partial<Student> {
   targetWorkCity: string;
 
   @Expose()
+  expectedSalary: string;
+
+  @Expose()
   expectedContractType: StudentContactType;
 
   @Expose()
