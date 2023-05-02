@@ -1,5 +1,5 @@
-import { ActiveStudentResponse } from './active-student-response';
-import { InactiveStudentResponse } from './inactive-student-response';
+import { ActiveStudentResponse } from './active-student-response.interface';
+import { InactiveStudentResponse } from './inactive-student-response.interface';
 
 export interface BaseStudentResponse {
   id: string;
