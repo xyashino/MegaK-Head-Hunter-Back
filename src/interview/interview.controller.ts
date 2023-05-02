@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -17,7 +16,6 @@ import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-opt
 import { Serialize } from '../interceptors/serialization.interceptor';
 import { ResponseFindInterviewDto } from './dto/resoponse-find-interview.dto';
 import { CreateInterviewResponseDto } from './dto/create-interview-response.dto';
-import { ResponseInterviewDto } from './dto/response-interview.dto';
 
 @Controller('interview')
 export class InterviewController {
@@ -41,20 +39,14 @@ export class InterviewController {
   }
 
   @Get(':id')
-  @Serialize(ResponseInterviewDto)
+  @Serialize(CreateInterviewResponseDto)
   findOne(@Param('id') id: string) {
     return this.interviewService.findOne(id);
   }
 
-  @Patch(':id')
-  @Serialize(ResponseInterviewDto)
-  update(@Param('id') id: string) {
-    return this.interviewService.update(id);
-  }
-
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  @Serialize(ResponseInterviewDto)
+  @Serialize(CreateInterviewResponseDto)
   remove(@Param('id') studentId: string, @UserObj() user: User) {
     return this.interviewService.removeInterview(studentId, user);
   }
