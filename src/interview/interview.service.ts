@@ -87,6 +87,13 @@ export class InterviewService {
       queryBuilder.where('interview.hr = :hrId', { hrId: hr.id });
     }
 
+    if (user.role === UserRole.STUDENT) {
+      const student = (await this.usersService.findOne(user.id)).student;
+      queryBuilder.where('interview.student = :studentId', {
+        studentId: student.id,
+      });
+    }
+
     return await searchUsersPagination(searchOptions, queryBuilder);
   }
 
