@@ -77,12 +77,12 @@ export class RegisterStudentDto {
   monthsOfCommercialExp: number;
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.education !== null )
+  @ValidateIf(({obj})=> obj?.education !== null )
   @IsString()
   education: string | null;
 
   @IsOptional()
-  @ValidateIf(({obj})=> obj.workExperience !== null )
+  @ValidateIf(({obj})=> obj?.workExperience !== null )
   @IsString()
   workExperience: string | null;
 
