@@ -53,6 +53,16 @@ export class ResponseStudentDto implements Partial<Student> {
   @Expose()
   bio: null | string;
 
+
+  @Expose()
+  courses:string;
+
+  @Expose()
+  education: string;
+
+  @Expose()
+  workExperience: string;
+
   @Expose()
   expectedTypeWork;
 
