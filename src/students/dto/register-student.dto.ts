@@ -1,4 +1,15 @@
-import {IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min, MinLength} from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Min,
+  MinLength,
+  ValidateIf
+} from 'class-validator';
 import {StudentTypeWork} from "../../enums/students-type-work.enums";
 import {StudentContactType} from "../../enums/student-contract-type.enums";
 import {StudentStatus} from "../../enums/student-status.enums";
@@ -11,6 +22,7 @@ export class RegisterStudentDto {
 
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.tel !== null )
   @IsString()
   tel: string;
 
@@ -43,6 +55,7 @@ export class RegisterStudentDto {
   expectedTypeWork: StudentTypeWork;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.targetWorkCity !== null )
   @IsString()
   targetWorkCity: string;
 
@@ -51,6 +64,7 @@ export class RegisterStudentDto {
   expectedContractType: StudentContactType;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.expectedSalary !== null )
   @IsString()
   expectedSalary: string;
 
@@ -63,10 +77,12 @@ export class RegisterStudentDto {
   monthsOfCommercialExp: number;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.education !== null )
   @IsString()
   education: string;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.workExperience !== null )
   @IsString()
   workExperience: string;
 

@@ -7,7 +7,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  Min,
+  Min, ValidateIf,
 } from 'class-validator';
 import { CreateStudentDto } from './create-student.dto';
 import { StudentTypeWork } from 'src/enums/students-type-work.enums';
@@ -22,6 +22,7 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   email?: string;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.tel !== null )
   @IsString()
   tel?: string;
 
@@ -50,6 +51,7 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   projectUrls?: string[];
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.bio !== null )
   @IsString()
   bio?: string;
 
@@ -59,6 +61,7 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   expectedTypeWork?: StudentTypeWork;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.targetWorkCity !== null )
   @IsString()
   targetWorkCity?: string;
 
@@ -68,6 +71,7 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   expectedContractType?: StudentContactType;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.expectedSalary !== null )
   @IsString()
   expectedSalary?: string;
 
@@ -82,14 +86,17 @@ export class UpdateStudentDto implements Partial<CreateStudentDto> {
   monthsOfCommercialExp?: number;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.education !== null )
   @IsString()
   education?: string;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.workExperience !== null )
   @IsString()
   workExperience?: string;
 
   @IsOptional()
+  @ValidateIf(({obj})=> obj.courses !== null )
   @IsString()
   courses?: string;
 
