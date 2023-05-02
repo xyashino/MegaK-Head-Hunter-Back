@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
   Query,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -23,6 +24,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserObj } from '../decorators/user-obj.decorator';
 import { User } from '../users/entities/user.entity';
 import { ResponseStudentDto } from './dto/response-student.dto';
+import { Response } from 'express';
 
 @Controller('students')
 export class StudentsController {
@@ -50,8 +52,9 @@ export class StudentsController {
   register(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() registerStudentDto: RegisterStudentDto,
+    @Res() res: Response,
   ) {
-    return this.studentsService.register(id, registerStudentDto);
+    return this.studentsService.register(id, registerStudentDto, res);
   }
 
   @Get(':id')
