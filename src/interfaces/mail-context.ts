@@ -1,4 +1,11 @@
+interface StudentInfo {
+  id: string;
+  firstname: string;
+  lastname: string;
+}
+
 export interface MailContext {
   registrationLink?: string;
-  resetPasswordToken?: string;
+  resetPasswordLink?: string;
+  studentInfo: StudentInfo;
 }

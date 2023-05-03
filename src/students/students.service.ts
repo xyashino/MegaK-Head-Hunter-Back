@@ -22,6 +22,7 @@ import { UserStatus } from '../enums/user-status.enums';
 import { InterviewService } from '../interview/interview.service';
 import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class StudentsService {
@@ -104,7 +105,25 @@ export class StudentsService {
           await this.interviewService.removeInterview(student.id, hr);
         }
       }
-      //@TODO dodać informacje dla admina o zatrudnieniu studenta
+      const admins = await User.find({ where: { role: UserRole.ADMIN } });
+      for (const admin of admins) {
+        try {
+          await this.mailService.sendMail(
+            admin.email,
+            'Powiadomienie o zatrudnieniu kursanta',
+            './admin-info',
+            {
+              studentInfo: {
+                id: student.id,
+                firstname: student.firstname,
+                lastname: student.lastname,
+              },
+            },
+          );
+        } catch (e) {
+          console.log(e);
+        }
+      }
     }
     applyDataToEntity(student, rest);
     return student.save();
