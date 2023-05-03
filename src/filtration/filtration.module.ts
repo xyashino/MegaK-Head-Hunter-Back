@@ -4,6 +4,7 @@ import { FiltrationController } from './filtration.controller';
 
 @Module({
   providers: [FiltrationService],
-  controllers: [FiltrationController]
+  controllers: [FiltrationController],
+  exports: [FiltrationService],
 })
 export class FiltrationModule {}
