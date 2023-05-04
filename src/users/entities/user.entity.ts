@@ -44,6 +44,12 @@ export class User extends BaseEntity {
   })
   currentTokenId: string | null;
 
+  @Column({
+    nullable: true,
+    default: null,
+  })
+  resetPasswordToken: string | null;
+
   @OneToOne(() => Hr, (hr) => hr.user)
   hr: Hr;
 
