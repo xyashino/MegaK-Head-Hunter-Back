@@ -105,8 +105,8 @@ export class AuthService {
     }
   }
 
-  async sendResetEmail(req): Promise<string> {
-    const user = await User.findOneBy({ email: req.email });
+  async sendResetEmail(email): Promise<string> {
+    const user = await User.findOneBy({ email });
     if (!user) {
       throw new NotFoundException('User not found');
     }
