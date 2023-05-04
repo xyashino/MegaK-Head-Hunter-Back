@@ -7,5 +7,5 @@ interface StudentInfo {
 export interface MailContext {
   registrationLink?: string;
   resetPasswordLink?: string;
-  studentInfo: StudentInfo;
+  studentInfo?: StudentInfo;
 }
