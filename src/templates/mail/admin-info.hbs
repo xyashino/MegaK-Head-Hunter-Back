@@ -1,11 +1,37 @@
 <html>
 <head>
     <title>Powiadomienie o zatrudnieniu użytkownika na platformie</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            font-family: "Catamaran", sans-serif;
+            background-color: #292a2b;
+            color: #f7f7f7;
+            line-height: 1.5;
+            text-align: center;
+            padding: 1rem;
+            border-radius: .4rem;
+            max-width: 800px;
+            height: 400px;
+
+        }
+
+        span {
+            font-size: 1rem;
+            color: #0b8bd4;
+        }
+
+    </style>
 </head>
 <body>
-<p>Szanowny Panie/Pani Adminie!</p>
-<p>Chcieliśmy poinformować, że użytkownik {{studentInfo.firstname}} {{studentInfo.lastname}}, o identyfikatorze {{studentInfo.id}}, został właśnie zatrudniony.
-    Jego status został zmieniony na nieaktywny, aby uniemożliwić mu korzystanie z platformy jako kursant.
-    Wszelkie szczegóły dotyczące jego konta znajdują się w panelu administracyjnym.</p>
+<div class="container">
+    <p>Szanowny Panie/Pani Adminie!</p>
+    <p>Chcieliśmy poinformować, że użytkownik <span> {{studentInfo.firstname}} {{studentInfo.lastname}} </span> o identyfikatorze <span> {{studentInfo.id}} </span> został właśnie zatrudniony.</p>
+    <p>W celu uniemożliwienia mu korzystania z platformy jako kursant, jego status został zmieniony na nieaktywny. Wszelkie szczegóły dotyczące jego konta znajdują się w panelu administracyjnym.</p>
+    <p>Jeśli masz jakieś pytania lub potrzebujesz dalszych informacji, prosimy o kontakt z naszym zespołem obsługi klienta.</p>
+    <p>Pozdrawiamy,</p>
+    <p>Zespół Head Hunter MegaK</p>
+</div>
 </body>
 </html>
