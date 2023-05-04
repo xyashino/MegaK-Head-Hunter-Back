@@ -106,7 +106,7 @@ export class AuthService {
   }
 
   async sendResetEmail(email): Promise<string> {
-    const user = await User.findOneBy({ email });
+    const user = await User.findOneBy({ email, isActive: UserStatus.ACTIVE });
     if (!user) {
       throw new NotFoundException('User not found');
     }
