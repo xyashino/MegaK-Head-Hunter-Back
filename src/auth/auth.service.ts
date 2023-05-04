@@ -1,4 +1,11 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { hashPwd } from '../utils/hash-pwd';
 import { Response } from 'express';
@@ -7,12 +14,17 @@ import { sign } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import { User } from '../users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
+import { MailService } from '../mail/mail.service';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UserStatus } from '../enums/user-status.enums';
 
 @Injectable()
 export class AuthService {
   @Inject(forwardRef(() => ConfigService))
   private configService: ConfigService;
-
+  @Inject(forwardRef(() => MailService))
+  private mailService: MailService;
   private createToken(currentTokenId: string): {
     accessToken: string;
     expiresIn: number;
@@ -90,6 +102,85 @@ export class AuthService {
       return res.json({ ok: true });
     } catch (e) {
       return res.json({ error: e.message });
+    }
+  }
+
+  async sendResetEmail(req): Promise<string> {
+    const user = await User.findOneBy({ email: req.email });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashToken = hashPwd(resetToken);
+    user.resetPasswordToken = hashToken;
+    await user.save();
+
+    const resetPasswordLink = `${process.env.RESET_PASSWORD_URL}?token=${resetToken}&id=${user.id}`;
+
+    try {
+      await this.mailService.sendMail(
+        user.email,
+        'Zmiana hasła w Head Hunter MegaK',
+        './pwd-reset',
+        {
+          resetPasswordLink,
+        },
+      );
+
+      return 'Email with password reset link sent successfully';
+    } catch (e) {
+      throw new HttpException(
+        'Something went wrong by sending the email. Please try again later',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async resetPassword(req: ResetPasswordDto, res) {
+    try {
+      const user = await User.findOneBy({
+        id: req.userId,
+        isActive: UserStatus.ACTIVE,
+      });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const hashedToken = hashPwd(req.resetPasswordToken);
+
+      if (hashedToken !== user.resetPasswordToken) {
+        throw new HttpException(
+          'Invalid password reset token',
+          HttpStatus.CONFLICT,
+        );
+      }
+
+      const hashedPassword = hashPwd(req.newPassword);
+      if (hashedPassword === user.hashedPassword) {
+        throw new HttpException(
+          'New password must be different',
+          HttpStatus.CONFLICT,
+        );
+      }
+      user.hashedPassword = hashedPassword;
+      user.resetPasswordToken = null;
+      await user.save();
+
+      const authLogin = {
+        email: user.email,
+        pwd: req.newPassword,
+      };
+      await this.login(authLogin, res);
+    } catch (e) {
+      if (e instanceof HttpException) {
+        res.status(e.getStatus()).send(e.getResponse());
+      } else {
+        console.error(e);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+          message: 'Something went wrong by reset password',
+        });
+      }
     }
   }
 }
