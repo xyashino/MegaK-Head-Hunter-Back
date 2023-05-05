@@ -9,7 +9,7 @@ export class FiltrationController {
   private readonly filtrationService: FiltrationService;
 
   @Get()
-  findMark(@Req() req: Request): Promise<any> {
-    return this.filtrationService.findMark(req.query);
+  filterStudentPreferences(@Req() req: Request): Promise<any> {
+    return this.filtrationService.filterStudentPreferences(req.query);
   }
 }

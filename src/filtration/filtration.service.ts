@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 export class FiltrationService {
   constructor(private readonly dataSource: DataSource) {}
 
-  async findMark(mark): Promise<any> {
+  async filterStudentPreferences(queryData): Promise<any> {
     return await this.dataSource
       .createQueryBuilder()
       .select('student')
@@ -15,47 +15,51 @@ export class FiltrationService {
       // sql queries
 
       .andWhere('student.expectedTypeWork = :expectedTypeWork ', {
-        expectedTypeWork: String(mark.expectedTypeWork || ''),
+        expectedTypeWork: String(queryData.expectedTypeWork),
       })
 
       .andWhere('student.expectedContractType = :expectedContractType', {
-        expectedContractType: '' || String(mark.expectedContractType || ''),
+        expectedContractType: String(queryData.expectedContractType || ''),
       })
 
       .andWhere('student.courseEngagement >= :courseEngagement', {
         courseEngagement:
-          mark.courseEngagement === undefined
+          queryData.courseEngagement === undefined
             ? 1
-            : Number(mark.courseEngagement),
+            : Number(queryData.courseEngagement),
       })
       .andWhere('student.courseCompletion >= :courseCompletion', {
         courseCompletion:
-          mark.projecourseCompletionctDegree === undefined
+          queryData.courseCompletion === undefined
             ? 1
-            : Number(mark.courseCompletion),
+            : Number(queryData.courseCompletion),
       })
       .andWhere('student.projectDegree >= :projectDegree', {
         projectDegree:
-          mark.projectDegree === undefined ? 1 : Number(mark.projectDegree),
+          queryData.projectDegree === undefined
+            ? 1
+            : Number(queryData.projectDegree),
       })
       .andWhere('student.teamProjectDegree >= :teamProjectDegree', {
         teamProjectDegree:
-          mark.teamProjectDegree === undefined
+          queryData.teamProjectDegree === undefined
             ? 1
-            : Number(mark.teamProjectDegree),
+            : Number(queryData.teamProjectDegree),
       })
       .andWhere('student.canTakeApprenticeship = :canTakeApprenticeship', {
-        canTakeApprenticeship: Boolean(mark.canTakeApprenticeship),
+        canTakeApprenticeship: Boolean(queryData.canTakeApprenticeship),
       })
       .andWhere('student.monthsOfCommercialExp >= :monthsOfCommercialExp', {
         monthsOfCommercialExp:
-          mark.monthsOfCommercialExp === undefined
+          queryData.monthsOfCommercialExp === undefined
             ? 0
-            : Number(mark.monthsOfCommercialExp),
+            : Number(queryData.monthsOfCommercialExp),
       })
       .andWhere('student.expectedSalary BETWEEN :minSalary AND :maxSalary', {
-        minSalary: mark.minSalary === undefined ? 0 : Number(mark.minSalary),
-        maxSalary: mark.maxSalary === undefined ? 0 : Number(mark.maxSalary),
+        minSalary:
+          queryData.minSalary === undefined ? 0 : Number(queryData.minSalary),
+        maxSalary:
+          queryData.maxSalary === undefined ? 0 : Number(queryData.maxSalary),
       })
 
       .getMany();
