@@ -13,7 +13,7 @@ import { UpdateHrDto } from './dto/update-hr.dto';
 import { RegisterHrDto } from './dto/register-hr.dto';
 import { UsersService } from '../users/users.service';
 import { Hr } from './entities/hr.entity';
-import { UserRole } from '../enums/user-role.enums';
+import { UserRole } from '../common/enums/user-role.enums';
 import { applyDataToEntity } from '../utils/apply-data-to-entity';
 import { MailService } from '../mail/mail.service';
 import { sendLinkRegistration } from '../utils/send-link-registration';

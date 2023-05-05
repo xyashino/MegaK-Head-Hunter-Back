@@ -1,6 +1,7 @@
 import { CreateUserDto } from './create-user.dto';
 import {
-  Contains, IsBoolean,
+  Contains,
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -8,7 +9,7 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { UserRole } from '../../enums/user-role.enums';
+import { UserRole } from '../../common/enums/user-role.enums';
 
 export class UpdateUserDto implements Partial<CreateUserDto> {
   @IsOptional()
@@ -31,8 +32,7 @@ export class UpdateUserDto implements Partial<CreateUserDto> {
   @IsBoolean()
   isActive?: boolean;
 
-
-  @ValidateIf((obj) => (obj.newPassword !== undefined) || obj.isActive)
+  @ValidateIf((obj) => obj.newPassword !== undefined || obj.isActive)
   @IsNotEmpty()
   @IsString()
   @MinLength(8)

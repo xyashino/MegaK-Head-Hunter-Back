@@ -8,7 +8,7 @@ import {
 import { parse } from 'papaparse';
 import { User } from '../users/entities/user.entity';
 import { StudentImportDto } from './dto/student-import.dto';
-import { MulterMemoryUploadedFile } from '../interfaces/files';
+import { MulterMemoryUploadedFile } from '../common/interfaces/files';
 import { validateRequiredColumns } from '../utils/file-filters';
 import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';

@@ -8,12 +8,12 @@ import {
 import { Interview } from './entities/interview.entity';
 import { UsersService } from '../users/users.service';
 import { StudentsService } from '../students/students.service';
-import { StudentStatus } from '../enums/student-status.enums';
+import { StudentStatus } from '../common/enums/student-status.enums';
 import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
 import { DataSource } from 'typeorm';
 import { searchUsersPagination } from '../utils/search-users-pagination';
 import { User } from '../users/entities/user.entity';
-import { UserRole } from '../enums/user-role.enums';
+import { UserRole } from '../common/enums/user-role.enums';
 import { InterviewResponse } from '../types/interview/interview-response';
 import { InterviewFindResponse } from '../types/interview/interview-find-response';
 

@@ -1,4 +1,4 @@
-import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
+import { SearchAndPageOptionsDto } from '../dtos/page/search-and-page-options.dto';
 
 export interface PageMetaDtoParameters {
   searchOptions: SearchAndPageOptionsDto;

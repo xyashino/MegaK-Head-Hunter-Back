@@ -17,7 +17,7 @@ import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { MailService } from '../mail/mail.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { UserStatus } from '../enums/user-status.enums';
+import { UserStatus } from '../common/enums/user-status.enums';
 
 @Injectable()
 export class AuthService {

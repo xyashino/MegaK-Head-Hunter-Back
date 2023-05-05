@@ -1,9 +1,9 @@
 import { Expose, Transform } from 'class-transformer';
 import { User } from '../entities/user.entity';
-import { UserRole } from '../../enums/user-role.enums';
+import { UserRole } from '../../common/enums/user-role.enums';
 import { Hr } from '../../hr/entities/hr.entity';
 import { Student } from '../../students/entities/student.entity';
-import { UserStatus } from '../../enums/user-status.enums';
+import { UserStatus } from '../../common/enums/user-status.enums';
 
 export class ResponseUserDto implements Partial<User> {
   @Expose()

@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Command, Console } from 'nestjs-console';
 import { UsersService } from '../users/users.service';
-import { UserRole } from '../enums/user-role.enums';
+import { UserRole } from '../common/enums/user-role.enums';
 import { createInterface } from 'node:readline/promises';
 import { plainToClass } from 'class-transformer';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -45,8 +45,8 @@ export class AdminCommand {
     const validationErrors = await validate(dto);
     if (validationErrors.length > 0) {
       console.log(
-          ERROR_MESSAGE,
-          validationErrors.map((err) => err.constraints),
+        ERROR_MESSAGE,
+        validationErrors.map((err) => err.constraints),
       );
       return false;
     }

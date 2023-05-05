@@ -3,7 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { StudentsService } from '../students/students.service';
 import { Interview } from '../interview/entities/interview.entity';
 import { DataSource } from 'typeorm';
-import { StudentStatus } from '../enums/student-status.enums';
+import { StudentStatus } from '../common/enums/student-status.enums';
 
 @Injectable()
 export class CronService {

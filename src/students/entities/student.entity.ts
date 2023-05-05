@@ -1,6 +1,6 @@
-import { StudentContactType } from 'src/enums/student-contract-type.enums';
-import { StudentStatus } from 'src/enums/student-status.enums';
-import { StudentTypeWork } from 'src/enums/students-type-work.enums';
+import { StudentContactType } from 'src/common/enums/student-contract-type.enums';
+import { StudentStatus } from 'src/common/enums/student-status.enums';
+import { StudentTypeWork } from 'src/common/enums/students-type-work.enums';
 import { User } from 'src/users/entities/user.entity';
 import {
   BaseEntity,

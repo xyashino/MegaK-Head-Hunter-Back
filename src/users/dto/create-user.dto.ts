@@ -1,5 +1,12 @@
-import {Contains, IsEnum, IsNotEmpty, IsString, MinLength, ValidateIf} from 'class-validator';
-import {UserRole} from "../../enums/user-role.enums";
+import {
+  Contains,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  ValidateIf,
+} from 'class-validator';
+import { UserRole } from '../../common/enums/user-role.enums';
 
 export class CreateUserDto {
   @IsString()
@@ -8,9 +15,9 @@ export class CreateUserDto {
   email: string;
 
   @IsEnum(UserRole)
-  role:UserRole;
+  role: UserRole;
 
-  @ValidateIf((obj)=> obj.role === UserRole.ADMIN)
+  @ValidateIf((obj) => obj.role === UserRole.ADMIN)
   @IsNotEmpty()
   @IsString()
   @MinLength(8)

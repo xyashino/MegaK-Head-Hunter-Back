@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
-import { StudentStatus } from '../../enums/student-status.enums';
-import { StudentContactType } from '../../enums/student-contract-type.enums';
+import { StudentStatus } from '../../common/enums/student-status.enums';
+import { StudentContactType } from '../../common/enums/student-contract-type.enums';
 import { Student } from '../entities/student.entity';
 
 export class ResponseBaseStudentDto implements Partial<Student> {
