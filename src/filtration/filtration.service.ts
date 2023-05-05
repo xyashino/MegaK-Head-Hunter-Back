@@ -7,61 +7,79 @@ export class FiltrationService {
   constructor(private readonly dataSource: DataSource) {}
 
   async filterStudentPreferences(queryData): Promise<any> {
-    return await this.dataSource
+    const queryBuilder = await this.dataSource
       .createQueryBuilder()
       .select('student')
-      .from(Student, 'student')
+      .from(Student, 'student');
 
-      // sql queries
+    // sql queries
 
-      .andWhere('student.expectedTypeWork = :expectedTypeWork ', {
+    if (queryData.courseCompletion) {
+      queryBuilder.andWhere('student.courseCompletion >= :courseCompletion', {
+        courseCompletion: Number(queryData.courseCompletion),
+      });
+    }
+
+    if (queryData.courseEngagement) {
+      queryBuilder.andWhere('student.courseEngagement >= :courseEngagement', {
+        courseEngagement: Number(queryData.courseEngagement),
+      });
+    }
+
+    if (queryData.projectDegree) {
+      queryBuilder.andWhere('student.teamProjectDegree >= :teamProjectDegree', {
+        projectDegree: Number(queryData.projectDegree),
+      });
+    }
+
+    if (queryData.teamProjectDegree) {
+      queryBuilder.andWhere('student.teamProjectDegree >= :teamProjectDegree', {
+        teamProjectDegree: Number(queryData.teamProjectDegree),
+      });
+    }
+
+    if (queryData.expectedTypeWork) {
+      queryBuilder.andWhere('student.expectedTypeWork = :expectedTypeWork ', {
         expectedTypeWork: String(queryData.expectedTypeWork),
-      })
+      });
+    }
 
-      .andWhere('student.expectedContractType = :expectedContractType', {
-        expectedContractType: String(queryData.expectedContractType || ''),
-      })
+    if (queryData.expectedContractType) {
+      queryBuilder.andWhere(
+        'student.expectedContractType = :expectedContractType',
+        {
+          expectedContractType: String(queryData.expectedContractType),
+        },
+      );
+    }
 
-      .andWhere('student.courseEngagement >= :courseEngagement', {
-        courseEngagement:
-          queryData.courseEngagement === undefined
-            ? 1
-            : Number(queryData.courseEngagement),
-      })
-      .andWhere('student.courseCompletion >= :courseCompletion', {
-        courseCompletion:
-          queryData.courseCompletion === undefined
-            ? 1
-            : Number(queryData.courseCompletion),
-      })
-      .andWhere('student.projectDegree >= :projectDegree', {
-        projectDegree:
-          queryData.projectDegree === undefined
-            ? 1
-            : Number(queryData.projectDegree),
-      })
-      .andWhere('student.teamProjectDegree >= :teamProjectDegree', {
-        teamProjectDegree:
-          queryData.teamProjectDegree === undefined
-            ? 1
-            : Number(queryData.teamProjectDegree),
-      })
-      .andWhere('student.canTakeApprenticeship = :canTakeApprenticeship', {
-        canTakeApprenticeship: Boolean(queryData.canTakeApprenticeship),
-      })
-      .andWhere('student.monthsOfCommercialExp >= :monthsOfCommercialExp', {
-        monthsOfCommercialExp:
-          queryData.monthsOfCommercialExp === undefined
-            ? 0
-            : Number(queryData.monthsOfCommercialExp),
-      })
-      .andWhere('student.expectedSalary BETWEEN :minSalary AND :maxSalary', {
-        minSalary:
-          queryData.minSalary === undefined ? 0 : Number(queryData.minSalary),
-        maxSalary:
-          queryData.maxSalary === undefined ? 0 : Number(queryData.maxSalary),
-      })
+    if (queryData.canTakeApprenticeship) {
+      queryBuilder.andWhere(
+        'student.canTakeApprenticeship = :canTakeApprenticeship',
+        {
+          canTakeApprenticeship: Boolean(queryData.canTakeApprenticeship),
+        },
+      );
+    }
 
-      .getMany();
+    if (queryData.monthsOfCommercialExp) {
+      queryBuilder.andWhere(
+        'student.monthsOfCommercialExp >= :monthsOfCommercialExp',
+        {
+          monthsOfCommercialExp: Number(queryData.monthsOfCommercialExp),
+        },
+      );
+    }
+
+    if (queryData.minSalary && queryData.maxSalary) {
+      queryBuilder.andWhere(
+        'student.expectedSalary BETWEEN :minSalary AND :maxSalary',
+        {
+          minSalary: Number(queryData.minSalary),
+          maxSalary: Number(queryData.maxSalary),
+        },
+      );
+    }
+    return queryBuilder.getMany();
   }
 }
