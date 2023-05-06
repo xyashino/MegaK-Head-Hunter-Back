@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Student } from 'src/students/entities/student.entity';
 import { DataSource } from 'typeorm';
+import { FilterStudentDto } from './dto/filter-student.dto';
 
 @Injectable()
 export class FiltrationService {
   constructor(private readonly dataSource: DataSource) {}
 
-  async filterStudentPreferences(queryData): Promise<any> {
+  async filterStudentPreferences(
+    queryData: FilterStudentDto,
+  ): Promise<Student[]> {
     const queryBuilder = await this.dataSource
       .createQueryBuilder()
       .select('student')
@@ -16,31 +19,31 @@ export class FiltrationService {
 
     if (queryData.courseCompletion) {
       queryBuilder.andWhere('student.courseCompletion >= :courseCompletion', {
-        courseCompletion: Number(queryData.courseCompletion),
+        courseCompletion: queryData.courseCompletion,
       });
     }
 
     if (queryData.courseEngagement) {
       queryBuilder.andWhere('student.courseEngagement >= :courseEngagement', {
-        courseEngagement: Number(queryData.courseEngagement),
+        courseEngagement: queryData.courseEngagement,
       });
     }
 
     if (queryData.projectDegree) {
       queryBuilder.andWhere('student.teamProjectDegree >= :teamProjectDegree', {
-        projectDegree: Number(queryData.projectDegree),
+        projectDegree: queryData.projectDegree,
       });
     }
 
     if (queryData.teamProjectDegree) {
       queryBuilder.andWhere('student.teamProjectDegree >= :teamProjectDegree', {
-        teamProjectDegree: Number(queryData.teamProjectDegree),
+        teamProjectDegree: queryData.teamProjectDegree,
       });
     }
 
     if (queryData.expectedTypeWork) {
       queryBuilder.andWhere('student.expectedTypeWork = :expectedTypeWork ', {
-        expectedTypeWork: String(queryData.expectedTypeWork),
+        expectedTypeWork: queryData.expectedTypeWork,
       });
     }
 
@@ -48,25 +51,7 @@ export class FiltrationService {
       queryBuilder.andWhere(
         'student.expectedContractType = :expectedContractType',
         {
-          expectedContractType: String(queryData.expectedContractType),
-        },
-      );
-    }
-
-    if (queryData.canTakeApprenticeship) {
-      queryBuilder.andWhere(
-        'student.canTakeApprenticeship = :canTakeApprenticeship',
-        {
-          canTakeApprenticeship: Boolean(queryData.canTakeApprenticeship),
-        },
-      );
-    }
-
-    if (queryData.monthsOfCommercialExp) {
-      queryBuilder.andWhere(
-        'student.monthsOfCommercialExp >= :monthsOfCommercialExp',
-        {
-          monthsOfCommercialExp: Number(queryData.monthsOfCommercialExp),
+          expectedContractType: queryData.expectedContractType,
         },
       );
     }
@@ -75,8 +60,26 @@ export class FiltrationService {
       queryBuilder.andWhere(
         'student.expectedSalary BETWEEN :minSalary AND :maxSalary',
         {
-          minSalary: Number(queryData.minSalary),
-          maxSalary: Number(queryData.maxSalary),
+          minSalary: queryData.minSalary,
+          maxSalary: queryData.maxSalary,
+        },
+      );
+    }
+
+    if (queryData.canTakeApprenticeship) {
+      queryBuilder.andWhere(
+        'student.canTakeApprenticeship = :canTakeApprenticeship',
+        {
+          canTakeApprenticeship: queryData.canTakeApprenticeship,
+        },
+      );
+    }
+
+    if (queryData.monthsOfCommercialExp) {
+      queryBuilder.andWhere(
+        'student.monthsOfCommercialExp >= :monthsOfCommercialExp',
+        {
+          monthsOfCommercialExp: queryData.monthsOfCommercialExp,
         },
       );
     }

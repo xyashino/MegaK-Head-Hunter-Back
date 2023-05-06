@@ -1,7 +1,14 @@
-import { Controller, Get, Inject, Req, forwardRef } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  Query,
+  Req,
+  forwardRef,
+} from '@nestjs/common';
 
 import { FiltrationService } from './filtration.service';
-import { Request } from 'express';
+import { FilterStudentDto } from './dto/filter-student.dto';
 
 @Controller('filtration')
 export class FiltrationController {
@@ -9,7 +16,9 @@ export class FiltrationController {
   private readonly filtrationService: FiltrationService;
 
   @Get()
-  filterStudentPreferences(@Req() req: Request): Promise<any> {
-    return this.filtrationService.filterStudentPreferences(req.query);
+  filterStudentPreferences(
+    @Query() filterStudentDto: FilterStudentDto,
+  ): Promise<any> {
+    return this.filtrationService.filterStudentPreferences(filterStudentDto);
   }
 }
