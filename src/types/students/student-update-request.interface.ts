@@ -1,6 +1,10 @@
-import {ExpectedContractTypeEnum, ExpectedTypeWorkEnum, StatusTypeEnum} from "../EnumTypes";
+import {
+  ExpectedContractTypeEnum,
+  ExpectedTypeWorkEnum,
+  StatusTypeEnum,
+} from '../EnumTypes';
 
-export interface StudentUpdateRequest{
+export interface StudentUpdateRequest {
   email?: string;
 
   tel?: string;

@@ -41,12 +41,12 @@ export class AdminCommand {
     }
   }
 
-  private async validateByDto<T extends {}>(dto: T): Promise<boolean> {
+  private async validateByDto<T extends object>(dto: T): Promise<boolean> {
     const validationErrors = await validate(dto);
     if (validationErrors.length > 0) {
       console.log(
-          ERROR_MESSAGE,
-          validationErrors.map((err) => err.constraints),
+        ERROR_MESSAGE,
+        validationErrors.map((err) => err.constraints),
       );
       return false;
     }

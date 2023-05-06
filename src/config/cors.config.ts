@@ -1,4 +1,4 @@
-import {CorsOptions} from "@nestjs/common/interfaces/external/cors-options.interface";
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 const { CORS } = process.env;
 export const corsConfig: CorsOptions = {

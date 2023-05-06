@@ -15,7 +15,6 @@ import { searchUsersPagination } from '../utils/search-users-pagination';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../enums/user-role.enums';
 import { InterviewResponse } from '../types/interview/interview-response';
-import { InterviewFindResponse } from '../types/interview/interview-find-response';
 
 @Injectable()
 export class InterviewService {

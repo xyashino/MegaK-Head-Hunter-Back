@@ -1,13 +1,9 @@
-import { Exclude, Expose, Transform, Type } from 'class-transformer';
-import { User } from '../../users/entities/user.entity';
+import { Expose, Transform } from 'class-transformer';
 import { Hr } from '../entities/hr.entity';
-import { ResponseUserDto } from '../../users/dto/response-user.dto';
-import { Column } from 'typeorm';
 
 export class ResponseHrDto implements Partial<Hr> {
-
   @Expose()
-  id:string;
+  id: string;
 
   @Expose()
   @Transform(({ obj }) => obj.user.isActive)
@@ -16,7 +12,6 @@ export class ResponseHrDto implements Partial<Hr> {
   @Expose()
   @Transform(({ obj }) => obj.user.email)
   email: null;
-
 
   @Expose()
   @Transform(({ obj }) => obj.user.id)

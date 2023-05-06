@@ -1,4 +1,4 @@
-import {RoleEnum} from "../EnumTypes";
+import { RoleEnum } from '../EnumTypes';
 
 export interface UserResponseBase {
   id: string;

@@ -33,8 +33,8 @@ export class StudentsController {
 
   @Post()
   @Serialize(ResponseStudentDto)
-  create(@Body() CreateStudentDto: CreateStudentDto) {
-    return this.studentsService.create(CreateStudentDto);
+  create(@Body() createStudentDto: CreateStudentDto) {
+    return this.studentsService.create(createStudentDto);
   }
 
   @UseGuards(AuthGuard('jwt'))

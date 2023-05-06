@@ -1,4 +1,4 @@
-export const applyDataToEntity = <T extends {}>(
+export const applyDataToEntity = <T extends object>(
   entity: T,
   data: Partial<T>,
 ) => {
