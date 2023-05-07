@@ -75,6 +75,24 @@ export class FiltrationService {
       );
     }
 
+    if (queryData.canTakeApprenticeship) {
+      queryBuilder.andWhere(
+        'student.canTakeApprenticeship = :canTakeApprenticeship',
+        {
+          canTakeApprenticeship: queryData.canTakeApprenticeship,
+        },
+      );
+    }
+
+    if (queryData.canTakeApprenticeship === 0) {
+      queryBuilder.andWhere(
+        'student.canTakeApprenticeship = :canTakeApprenticeship',
+        {
+          canTakeApprenticeship: false,
+        },
+      );
+    }
+
     if (queryData.monthsOfCommercialExp) {
       queryBuilder.andWhere(
         'student.monthsOfCommercialExp >= :monthsOfCommercialExp',

@@ -1,11 +1,5 @@
-import { Transform, Type } from 'class-transformer';
 import {
-  Contains,
-  IsArray,
-  IsBoolean,
   IsEnum,
-  IsIn,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -60,9 +54,9 @@ export class FilterStudentDto {
   @Min(0)
   maxSalary: number;
 
-  @IsBoolean()
   @IsOptional()
-  canTakeApprenticeship: boolean;
+  @IsNumber()
+  canTakeApprenticeship: number;
 
   @IsOptional()
   @IsNumber()
