@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Student } from 'src/students/entities/student.entity';
 import { DataSource } from 'typeorm';
 import { SearchAndPageOptionsDto } from 'src/common/dtos/page/search-and-page-options.dto';
+import { UserRole } from 'src/enums/user-role.enums';
+import { UserStatus } from 'src/enums/user-status.enums';
+import { StudentStatus } from 'src/enums/student-status.enums';
 
 @Injectable()
 export class FiltrationService {
@@ -9,13 +12,27 @@ export class FiltrationService {
 
   async filterStudentPreferences(
     queryData: SearchAndPageOptionsDto,
+    user,
   ): Promise<Student[]> {
     const queryBuilder = await this.dataSource
       .createQueryBuilder()
       .select('student')
-      .from(Student, 'student');
+      .from(Student, 'student')
+      .innerJoinAndSelect('student.user', 'user')
+      .skip(queryData.skip)
+      .take(queryData.take);
 
     // sql queries
+
+    if (user.role === UserRole.HR) {
+      queryBuilder.where(
+        'user.isActive = :isActive AND student.status = :studentStatus',
+        {
+          isActive: UserStatus.ACTIVE,
+          studentStatus: StudentStatus.AVAILABE,
+        },
+      );
+    }
 
     if (queryData.courseCompletion) {
       queryBuilder.andWhere('student.courseCompletion >= :courseCompletion', {

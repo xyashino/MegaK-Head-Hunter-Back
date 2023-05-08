@@ -23,6 +23,7 @@ import { InterviewService } from '../interview/interview.service';
 import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../users/entities/user.entity';
+import { FiltrationService } from 'src/filtration/filtration.service';
 
 @Injectable()
 export class StudentsService {
@@ -34,6 +35,8 @@ export class StudentsService {
   interviewService: InterviewService;
   @Inject(forwardRef(() => AuthService))
   authService: AuthService;
+  @Inject(forwardRef(() => FiltrationService))
+  filtrationService: FiltrationService;
   @Inject(DataSource) private dataSource: DataSource;
 
   async create({ email, ...rest }: CreateStudentDto) {
@@ -57,23 +60,16 @@ export class StudentsService {
   }
 
   async findAll(searchOptions: SearchAndPageOptionsDto, user) {
-    const queryBuilder = await this.dataSource
-      .getRepository(Student)
-      .createQueryBuilder('student')
-      .innerJoinAndSelect('student.user', 'user')
-      .skip(searchOptions.skip)
-      .take(searchOptions.take);
-
-    if (user.role === UserRole.HR) {
-      queryBuilder.where(
-        'user.isActive = :isActive AND student.status = :studentStatus',
-        {
-          isActive: UserStatus.ACTIVE,
-          studentStatus: StudentStatus.AVAILABE,
-        },
+    
+    const filterStudentsPreferences =
+      await this.filtrationService.filterStudentPreferences(
+        searchOptions,
+        user,
       );
-    }
-    return await searchUsersPagination(searchOptions, queryBuilder);
+    return await searchUsersPagination(
+      searchOptions,
+      filterStudentsPreferences,
+    );
   }
 
   async findOne(id: string) {
