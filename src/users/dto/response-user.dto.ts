@@ -7,9 +7,11 @@ import { UserStatus } from '../../enums/user-status.enums';
 
 export class ResponseUserDto implements Partial<User> {
   @Expose()
+  id:string;
+  @Expose()
   email: string;
   @Expose()
-  isActie: UserStatus;
+  isActive: UserStatus;
   @Expose()
   role: UserRole;
 
