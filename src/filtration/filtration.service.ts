@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Student } from 'src/students/entities/student.entity';
 import { DataSource } from 'typeorm';
-import { FilterStudentDto } from './dto/filter-student.dto';
+import { SearchAndPageOptionsDto } from 'src/common/dtos/page/search-and-page-options.dto';
 
 @Injectable()
 export class FiltrationService {
   constructor(private readonly dataSource: DataSource) {}
 
   async filterStudentPreferences(
-    queryData: FilterStudentDto,
+    queryData: SearchAndPageOptionsDto,
   ): Promise<Student[]> {
     const queryBuilder = await this.dataSource
       .createQueryBuilder()

@@ -6,7 +6,11 @@ import {
   Max,
   MaxLength,
   Min,
+  IsEnum,
+  IsNumber,
 } from 'class-validator';
+import { StudentContactType } from 'src/enums/student-contract-type.enums';
+import { StudentTypeWork } from 'src/enums/students-type-work.enums';
 
 export class SearchAndPageOptionsDto {
   @Type(() => Number)
@@ -30,4 +34,57 @@ export class SearchAndPageOptionsDto {
   get skip(): number {
     return (this.page - 1) * this.take;
   }
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(5)
+  courseCompletion: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(5)
+  courseEngagement: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(5)
+  projectDegree: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(5)
+  teamProjectDegree: number;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(StudentTypeWork)
+  expectedTypeWork: StudentTypeWork;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(StudentContactType)
+  expectedContractType: StudentContactType;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  minSalary: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  maxSalary: number;
+
+  @IsOptional()
+  @IsNumber()
+  canTakeApprenticeship: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  monthsOfCommercialExp: number;
 }
