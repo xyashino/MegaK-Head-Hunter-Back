@@ -1,6 +1,7 @@
 import { CreateUserDto } from './create-user.dto';
 import {
-  Contains, IsBoolean,
+  Contains,
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -31,8 +32,7 @@ export class UpdateUserDto implements Partial<CreateUserDto> {
   @IsBoolean()
   isActive?: boolean;
 
-
-  @ValidateIf((obj) => (obj.newPassword !== undefined) || obj.isActive)
+  @ValidateIf((obj) => obj.newPassword !== undefined || obj.isActive)
   @IsNotEmpty()
   @IsString()
   @MinLength(8)

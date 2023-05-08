@@ -1,4 +1,3 @@
-
 export interface RegisterHrRequestBody {
-    pwd: string;
+  pwd: string;
 }

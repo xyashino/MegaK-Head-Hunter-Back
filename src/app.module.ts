@@ -10,6 +10,8 @@ import { AdminCommand } from './commands/admin.command';
 import { ConsoleModule } from 'nestjs-console';
 import { StudentsModule } from './students/students.module';
 import { UploadModule } from './upload/upload.module';
+import { InterviewModule } from './interview/interview.module';
+import { CronModule } from './cron/cron.module';
 import { FiltrationModule } from './filtration/filtration.module';
 
 @Module({
@@ -26,6 +28,8 @@ import { FiltrationModule } from './filtration/filtration.module';
     StudentsModule,
     UploadModule,
     FiltrationModule,
+    InterviewModule,
+    CronModule,
   ],
   controllers: [],
   providers: [AdminCommand],

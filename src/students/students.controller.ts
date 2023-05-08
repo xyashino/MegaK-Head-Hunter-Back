@@ -9,49 +9,68 @@ import {
   Delete,
   Patch,
   ParseUUIDPipe,
+  Query,
+  UseGuards,
+  Res,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { RegisterStudentDto } from './dto/register-student.dto';
-import {Serialize} from "../interceptors/serialization.interceptor";
-import {ResponseStudentDto} from "./dto/response-student.dto";
+import { Serialize } from '../interceptors/serialization.interceptor';
+import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
+import { ResponseFindAllStudentsDto } from './dto/response-find-all-students.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { UserObj } from '../decorators/user-obj.decorator';
+import { User } from '../users/entities/user.entity';
+import { ResponseStudentDto } from './dto/response-student.dto';
+import { Response } from 'express';
 
-
-@Serialize(ResponseStudentDto)
 @Controller('students')
 export class StudentsController {
   @Inject(forwardRef(() => StudentsService))
   private readonly studentsService: StudentsService;
 
   @Post()
-  create(@Body() CreateStudentDto: CreateStudentDto) {
-    return this.studentsService.create(CreateStudentDto);
+  @Serialize(ResponseStudentDto)
+  create(@Body() createStudentDto: CreateStudentDto) {
+    return this.studentsService.create(createStudentDto);
   }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get()
-  findAll() {
-    return this.studentsService.findAll();
+  @Serialize(ResponseFindAllStudentsDto)
+  findAll(
+    @Query() searchOptions: SearchAndPageOptionsDto,
+    @UserObj() user: User,
+  ) {
+    return this.studentsService.findAll(searchOptions, user);
   }
 
   @Post('/register/:id')
+  @Serialize(ResponseStudentDto)
   register(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() registerStudentDto: RegisterStudentDto,
+    @Res() res: Response,
   ) {
-    return this.studentsService.register(id, registerStudentDto);
+    return this.studentsService.register(id, registerStudentDto, res);
   }
 
   @Get(':id')
+  @Serialize(ResponseStudentDto)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.findOne(id);
   }
 
   @Delete(':id')
+  @Serialize(ResponseStudentDto)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.remove(id);
   }
 
   @Patch(':id')
+  @Serialize(ResponseStudentDto)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateStudentDto: UpdateStudentDto,

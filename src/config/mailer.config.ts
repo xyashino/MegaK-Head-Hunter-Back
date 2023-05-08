@@ -4,7 +4,6 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 
 export = {
   useFactory: async (configService: ConfigService): Promise<MailerOptions> => ({
-    // transport: `smtp://admin:admin@localhost:2500`, TO LOCAL TEST IN MAILSLURPER
     transport: {
       host: configService.get('SMTP_HOST'),
       port: configService.get('SMTP_PORT'),

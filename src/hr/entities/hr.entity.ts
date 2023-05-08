@@ -3,10 +3,12 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Interview } from '../../interview/entities/interview.entity';
 
 @Entity()
 export class Hr extends BaseEntity {
@@ -25,4 +27,7 @@ export class Hr extends BaseEntity {
   @OneToOne(() => User)
   @JoinColumn()
   user: User;
+
+  @OneToMany(() => Interview, (interview) => interview.hr)
+  interviews: Interview[];
 }

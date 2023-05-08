@@ -8,6 +8,7 @@ import {
 import { UserRole } from '../../enums/user-role.enums';
 import { Hr } from '../../hr/entities/hr.entity';
 import { Student } from 'src/students/entities/student.entity';
+import { UserStatus } from '../../enums/user-status.enums';
 
 @Entity()
 export class User extends BaseEntity {
@@ -35,13 +36,19 @@ export class User extends BaseEntity {
     type: 'boolean',
     default: false,
   })
-  isActive: boolean;
+  isActive: UserStatus;
 
   @Column({
     nullable: true,
     default: null,
   })
   currentTokenId: string | null;
+
+  @Column({
+    nullable: true,
+    default: null,
+  })
+  resetPasswordToken: string | null;
 
   @OneToOne(() => Hr, (hr) => hr.user)
   hr: Hr;
