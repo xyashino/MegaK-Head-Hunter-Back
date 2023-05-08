@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -38,7 +39,7 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, { pwd, email, role }: UpdateUserDto) {
+  async update(id: string, { pwd, email, role ,oldPwd,newPwd}: UpdateUserDto) {
     const user = await this.findOne(id);
     if (email) {
       await this.checkConflictData(email);
@@ -48,6 +49,7 @@ export class UsersService {
       user.hashedPassword = hashPwd(pwd);
       user.isActive = UserStatus.ACTIVE;
     }
+    if (oldPwd && newPwd)  await this.changePassword(oldPwd, newPwd, user);
     user.role = role ?? user.role;
     return user.save();
   }
@@ -59,5 +61,11 @@ export class UsersService {
   async checkConflictData(email: string): Promise<void> {
     const userExist = await User.findOneBy({ email });
     if (userExist) throw new ConflictException('Email is taken');
+  }
+
+  async changePassword (oldPwd:string,newPwd:string, user:User){
+    if(hashPwd(oldPwd) !== user.hashedPassword) throw new BadRequestException('Invalid credentials' );
+    user.hashedPassword = hashPwd(newPwd);
+    user.isActive = UserStatus.ACTIVE;
   }
 }
