@@ -81,7 +81,7 @@ export class StudentsService {
       where: { id },
       relations: { user: true, interviews: true },
     });
-    if (!student) throw new NotFoundException('Invalid student Id');
+    if (!student) throw new NotFoundException('Invalid student id');
     return student;
   }
 

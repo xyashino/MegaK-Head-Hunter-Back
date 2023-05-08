@@ -57,15 +57,14 @@ export class HrService {
   }
   async findOne(id: string) {
     const hr = await Hr.findOne({ where: { id }, relations: { user: true } });
-    if (!hr) throw new NotFoundException('Invalid id');
+    if (!hr) throw new NotFoundException('Invalid hr id');
     return hr;
   }
 
   async register({ pwd }: RegisterHrDto, id, res: Response) {
     try {
       const { user } = await this.findOne(id);
-      if (user.isActive)
-        throw new ConflictException('The user has been registered');
+      if (user.isActive) throw new ConflictException('User already registered');
       await this.usersService.update(user.id, { pwd });
       const authLoginDto = { email: user.email, pwd };
       await this.authService.login(authLoginDto, res);

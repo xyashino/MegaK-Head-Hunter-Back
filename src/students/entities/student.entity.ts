@@ -11,7 +11,6 @@ import {
   OneToOne,
   OneToMany,
 } from 'typeorm';
-import { Exclude, Expose } from 'class-transformer';
 import { Interview } from '../../interview/entities/interview.entity';
 
 @Entity()

@@ -22,37 +22,76 @@ import { User } from './entities/user.entity';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { UserRole } from '../common/enums/user-role.enums';
+import {
+  ApiBody,
+  ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('Users')
+@ApiCookieAuth()
+@ApiUnauthorizedResponse({
+  description: 'Unauthorized',
+})
 @Controller('users')
 @Serialize(ResponseUserDto)
 export class UsersController {
   @Inject(forwardRef(() => UsersService))
   private readonly usersService: UsersService;
 
+  @ApiCreatedResponse({
+    description: 'User created successfully',
+    type: ResponseUserDto,
+  })
+  @ApiBody({ type: CreateUserDto })
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
+  @ApiOkResponse({
+    description: 'Successfully retrieved array of users',
+    type: [ResponseUserDto],
+  })
   @Get()
-  @Roles(UserRole.HR)
+  @Roles(UserRole.HR, UserRole.ADMIN)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   findAll() {
     return this.usersService.findAll();
   }
 
+  @ApiOkResponse({
+    description: 'Successfully retrieved current user',
+    type: ResponseUserDto,
+  })
   @UseGuards(AuthGuard('jwt'))
   @Get('current')
   getCurrentUser(@UserObj() user: User) {
     return this.usersService.findOne(user.id);
   }
 
+  @ApiOkResponse({
+    description: 'Successfully retrieved user by ID',
+    type: ResponseUserDto,
+  })
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
+  @ApiOkResponse({
+    description: 'Successfully updated user by ID',
+    type: ResponseUserDto,
+  })
+  @ApiBody({ type: UpdateUserDto })
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -61,7 +100,12 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @ApiOkResponse({
+    description: 'Successfully removed user',
+    type: ResponseUserDto,
+  })
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);

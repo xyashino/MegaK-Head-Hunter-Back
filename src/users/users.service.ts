@@ -58,6 +58,6 @@ export class UsersService {
 
   async checkConflictData(email: string): Promise<void> {
     const userExist = await User.findOneBy({ email });
-    if (userExist) throw new ConflictException('Email is taken');
+    if (userExist) throw new ConflictException('Email is already taken');
   }
 }

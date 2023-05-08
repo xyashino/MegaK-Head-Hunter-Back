@@ -1,17 +1,17 @@
 import {
   Body,
   Controller,
-  forwardRef,
-  Inject,
-  Post,
-  Get,
-  Param,
   Delete,
-  Patch,
+  forwardRef,
+  Get,
+  Inject,
+  Param,
   ParseUUIDPipe,
+  Patch,
+  Post,
   Query,
-  UseGuards,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -25,19 +25,51 @@ import { UserObj } from '../common/decorators/user-obj.decorator';
 import { User } from '../users/entities/user.entity';
 import { ResponseStudentDto } from './dto/response-student.dto';
 import { Response } from 'express';
+import {
+  ApiBody,
+  ApiConflictResponse,
+  ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { UserRole } from '../common/enums/user-role.enums';
 
+@ApiTags('Students')
+@ApiCookieAuth()
+@ApiUnauthorizedResponse({
+  description: 'Unauthorized',
+})
 @Controller('students')
 export class StudentsController {
   @Inject(forwardRef(() => StudentsService))
   private readonly studentsService: StudentsService;
 
+  @ApiCreatedResponse({
+    description: 'Student user created successfully',
+    type: ResponseStudentDto,
+  })
+  @ApiConflictResponse({
+    description: 'Email is already taken',
+  })
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   @Serialize(ResponseStudentDto)
   create(@Body() CreateStudentDto: CreateStudentDto) {
     return this.studentsService.create(CreateStudentDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @ApiOkResponse({
+    description: 'Successfully retrieved array of Student users and pagination',
+    type: ResponseFindAllStudentsDto,
+  })
+  @Roles(UserRole.ADMIN, UserRole.HR)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get()
   @Serialize(ResponseFindAllStudentsDto)
   findAll(
@@ -47,6 +79,15 @@ export class StudentsController {
     return this.studentsService.findAll(searchOptions, user);
   }
 
+  @ApiCreatedResponse({
+    description: 'User registration successful. The user is logged in.',
+  })
+  @ApiConflictResponse({
+    description: 'User already registered',
+  })
+  @ApiBody({
+    type: RegisterStudentDto,
+  })
   @Post('/register/:id')
   @Serialize(ResponseStudentDto)
   register(
@@ -57,18 +98,44 @@ export class StudentsController {
     return this.studentsService.register(id, registerStudentDto, res);
   }
 
+  @ApiOkResponse({
+    description: 'Successfully retrieved Student user',
+    type: ResponseStudentDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Invalid student id',
+  })
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @Serialize(ResponseStudentDto)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.findOne(id);
   }
 
+  @ApiOkResponse({
+    description: 'Successfully removed Student user',
+    type: ResponseStudentDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Invalid student id',
+  })
+  @Roles(UserRole.ADMIN, UserRole.HR)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   @Serialize(ResponseStudentDto)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.remove(id);
   }
 
+  @ApiOkResponse({
+    description: 'Successfully updated student user',
+    type: ResponseStudentDto,
+  })
+  @ApiBody({
+    type: UpdateStudentDto,
+  })
+  @Roles(UserRole.ADMIN, UserRole.STUDENT)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Patch(':id')
   @Serialize(ResponseStudentDto)
   update(
