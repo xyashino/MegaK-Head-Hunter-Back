@@ -17,7 +17,7 @@ export class FiltrationService {
     }
 
     if (queryData.projectDegree) {
-      queryBuilder.andWhere('student.teamProjectDegree >= :teamProjectDegree', {
+      queryBuilder.andWhere('student.projectDegree >= :projectDegree', {
         projectDegree: queryData.projectDegree,
       });
     }
