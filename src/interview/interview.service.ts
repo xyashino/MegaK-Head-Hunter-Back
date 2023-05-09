@@ -9,18 +9,20 @@ import { Interview } from './entities/interview.entity';
 import { UsersService } from '../users/users.service';
 import { StudentsService } from '../students/students.service';
 import { StudentStatus } from '../enums/student-status.enums';
-import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
+import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
 import { DataSource } from 'typeorm';
-import { searchUsersPagination } from '../utils/search-users-pagination';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../enums/user-role.enums';
 import { InterviewResponse } from '../types/interview/interview-response';
+import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
+import { FiltrationService } from '../filtration/filtration.service';
 
 @Injectable()
 export class InterviewService {
   @Inject(UsersService) usersService: UsersService;
   @Inject(StudentsService) studentsService: StudentsService;
   @Inject(DataSource) private dataSource: DataSource;
+  @Inject(FiltrationService) filtrationService: FiltrationService;
 
   async createInterview(
     studentId: string,
@@ -70,7 +72,7 @@ export class InterviewService {
     return await Interview.find({ where: { hr } });
   }
 
-  async findAllInterview(searchOptions: SearchAndPageOptionsDto, user) {
+  async findAllInterview(searchOptions: SearchOptionsDto, user) {
     const queryBuilder = await this.dataSource
       .getRepository(Interview)
       .createQueryBuilder('interview')
@@ -81,17 +83,26 @@ export class InterviewService {
 
     if (user.role === UserRole.HR) {
       const hr = (await this.usersService.findOne(user.id)).hr;
-      queryBuilder.where('interview.hr = :hrId', { hrId: hr.id });
+      queryBuilder.andWhere('interview.hr = :hrId', { hrId: hr.id });
     }
 
     if (user.role === UserRole.STUDENT) {
       const student = (await this.usersService.findOne(user.id)).student;
-      queryBuilder.where('interview.student = :studentId', {
+      queryBuilder.andWhere('interview.student = :studentId', {
         studentId: student.id,
       });
     }
 
-    return await searchUsersPagination(searchOptions, queryBuilder);
+    const filterQueryBuilder =
+      await this.filtrationService.filterStudentPreferences(
+        searchOptions,
+        queryBuilder,
+      );
+
+    const itemCount = await filterQueryBuilder.getCount();
+    const { entities } = await filterQueryBuilder.getRawAndEntities();
+    const pageMetaDto = new PageMetaDto({ searchOptions, itemCount });
+    return { data: entities, meta: { ...pageMetaDto } };
   }
 
   async removeInterview(studentId, user): Promise<InterviewResponse[]> {

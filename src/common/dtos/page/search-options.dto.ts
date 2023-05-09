@@ -12,7 +12,7 @@ import {
 import { StudentContactType } from 'src/enums/student-contract-type.enums';
 import { StudentTypeWork } from 'src/enums/students-type-work.enums';
 
-export class SearchAndPageOptionsDto {
+export class SearchOptionsDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)

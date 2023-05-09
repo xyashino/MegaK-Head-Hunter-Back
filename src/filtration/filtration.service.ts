@@ -1,39 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Student } from 'src/students/entities/student.entity';
-import { DataSource } from 'typeorm';
-import { SearchAndPageOptionsDto } from 'src/common/dtos/page/search-and-page-options.dto';
-import { UserRole } from 'src/enums/user-role.enums';
-import { UserStatus } from 'src/enums/user-status.enums';
-import { StudentStatus } from 'src/enums/student-status.enums';
+import { SearchOptionsDto } from 'src/common/dtos/page/search-options.dto';
 
 @Injectable()
 export class FiltrationService {
-  constructor(private readonly dataSource: DataSource) {}
-
-  async filterStudentPreferences(
-    queryData: SearchAndPageOptionsDto,
-    user,
-  ): Promise<Student[]> {
-    const queryBuilder = await this.dataSource
-      .createQueryBuilder()
-      .select('student')
-      .from(Student, 'student')
-      .innerJoinAndSelect('student.user', 'user')
-      .skip(queryData.skip)
-      .take(queryData.take);
-
-    // sql queries
-
-    if (user.role === UserRole.HR) {
-      queryBuilder.where(
-        'user.isActive = :isActive AND student.status = :studentStatus',
-        {
-          isActive: UserStatus.ACTIVE,
-          studentStatus: StudentStatus.AVAILABE,
-        },
-      );
-    }
-
+  async filterStudentPreferences(queryData: SearchOptionsDto, queryBuilder) {
     if (queryData.courseCompletion) {
       queryBuilder.andWhere('student.courseCompletion >= :courseCompletion', {
         courseCompletion: queryData.courseCompletion,
@@ -83,31 +53,22 @@ export class FiltrationService {
       );
     }
 
-    if (queryData.canTakeApprenticeship) {
-      queryBuilder.andWhere(
-        'student.canTakeApprenticeship = :canTakeApprenticeship',
-        {
-          canTakeApprenticeship: queryData.canTakeApprenticeship,
-        },
-      );
-    }
-
-    if (queryData.canTakeApprenticeship) {
-      queryBuilder.andWhere(
-        'student.canTakeApprenticeship = :canTakeApprenticeship',
-        {
-          canTakeApprenticeship: queryData.canTakeApprenticeship,
-        },
-      );
-    }
-
-    if (queryData.canTakeApprenticeship === 0) {
-      queryBuilder.andWhere(
-        'student.canTakeApprenticeship = :canTakeApprenticeship',
-        {
-          canTakeApprenticeship: false,
-        },
-      );
+    if (queryData.canTakeApprenticeship !== undefined) {
+      if (queryData.canTakeApprenticeship === 0) {
+        queryBuilder.andWhere(
+          'student.canTakeApprenticeship = :canTakeApprenticeship',
+          {
+            canTakeApprenticeship: false,
+          },
+        );
+      } else {
+        queryBuilder.andWhere(
+          'student.canTakeApprenticeship = :canTakeApprenticeship',
+          {
+            canTakeApprenticeship: queryData.canTakeApprenticeship,
+          },
+        );
+      }
     }
 
     if (queryData.monthsOfCommercialExp) {
@@ -118,6 +79,15 @@ export class FiltrationService {
         },
       );
     }
-    return queryBuilder.getMany();
+
+    if (queryData.name) {
+      queryBuilder.andWhere(
+        'student.firstname LIKE :name OR student.lastname LIKE :name',
+        {
+          name: `%${queryData.name}%`,
+        },
+      );
+    }
+    return queryBuilder;
   }
 }

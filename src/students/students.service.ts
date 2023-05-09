@@ -10,20 +10,20 @@ import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { applyDataToEntity } from '../utils/apply-data-to-entity';
-import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
+import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
 import { UserRole } from '../enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '../mail/mail.service';
 import { DataSource } from 'typeorm';
 import { sendLinkRegistration } from '../utils/send-link-registration';
 import { StudentStatus } from '../enums/student-status.enums';
-import { searchUsersPagination } from '../utils/search-users-pagination';
 import { UserStatus } from '../enums/user-status.enums';
 import { InterviewService } from '../interview/interview.service';
 import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../users/entities/user.entity';
 import { FiltrationService } from 'src/filtration/filtration.service';
+import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
 
 @Injectable()
 export class StudentsService {
@@ -59,17 +59,35 @@ export class StudentsService {
     return newStudent;
   }
 
-  async findAll(searchOptions: SearchAndPageOptionsDto, user) {
-    
-    const filterStudentsPreferences =
+  async findAll(searchOptions: SearchOptionsDto, user) {
+    const queryBuilder = await this.dataSource
+      .createQueryBuilder()
+      .select('student')
+      .from(Student, 'student')
+      .innerJoinAndSelect('student.user', 'user')
+      .skip(searchOptions.skip)
+      .take(searchOptions.take);
+
+    if (user.role === UserRole.HR) {
+      queryBuilder.andWhere(
+        'user.isActive = :isActive AND student.status = :studentStatus',
+        {
+          isActive: UserStatus.ACTIVE,
+          studentStatus: StudentStatus.AVAILABE,
+        },
+      );
+    }
+
+    const filterQueryBuilder =
       await this.filtrationService.filterStudentPreferences(
         searchOptions,
-        user,
+        queryBuilder,
       );
-    return await searchUsersPagination(
-      searchOptions,
-      filterStudentsPreferences,
-    );
+
+    const itemCount = await filterQueryBuilder.getCount();
+    const { entities } = await filterQueryBuilder.getRawAndEntities();
+    const pageMetaDto = new PageMetaDto({ searchOptions, itemCount });
+    return { data: entities, meta: { ...pageMetaDto } };
   }
 
   async findOne(id: string) {

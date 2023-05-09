@@ -18,7 +18,7 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { Serialize } from '../interceptors/serialization.interceptor';
-import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
+import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
 import { ResponseFindAllStudentsDto } from './dto/response-find-all-students.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserObj } from '../decorators/user-obj.decorator';
@@ -40,10 +40,7 @@ export class StudentsController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   @Serialize(ResponseFindAllStudentsDto)
-  findAll(
-    @Query() searchOptions: SearchAndPageOptionsDto,
-    @UserObj() user: User,
-  ) {
+  findAll(@Query() searchOptions: SearchOptionsDto, @UserObj() user: User) {
     return this.studentsService.findAll(searchOptions, user);
   }
 
