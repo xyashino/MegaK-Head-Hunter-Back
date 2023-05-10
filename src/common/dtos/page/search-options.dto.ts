@@ -60,14 +60,14 @@ export class SearchOptionsDto {
   teamProjectDegree: number;
 
   @IsOptional()
-  @IsString()
-  @IsEnum(StudentTypeWork)
-  expectedTypeWork: StudentTypeWork;
+  @IsString({ each: true })
+  @IsEnum(StudentTypeWork, { each: true })
+  expectedTypeWork: StudentTypeWork[];
 
   @IsOptional()
-  @IsString()
-  @IsEnum(StudentContactType)
-  expectedContractType: StudentContactType;
+  @IsString({ each: true })
+  @IsEnum(StudentContactType, { each: true })
+  expectedContractType: StudentContactType[];
 
   @IsOptional()
   @IsNumber()

@@ -29,29 +29,19 @@ export class FiltrationService {
     }
 
     if (queryData.expectedTypeWork) {
-      queryBuilder.andWhere('student.expectedTypeWork = :expectedTypeWork ', {
-        expectedTypeWork: queryData.expectedTypeWork,
-      });
+      queryBuilder.andWhere(
+        'student.expectedTypeWork IN (:...expectedTypeWork )',
+        {
+          expectedTypeWork: queryData.expectedTypeWork,
+        },
+      );
     }
 
-    // if (queryData.expectedContractType) {
-    //   queryBuilder.andWhere(
-    //     'student.expectedContractType = :expectedContractType',
-    //     {
-    //       expectedContractType: queryData.expectedContractType,
-    //     },
-    //   );
-    // }
-
     if (queryData.expectedContractType) {
-      const expectedContractTypes = Object.values(
-        queryData.expectedContractType,
-      );
-
       queryBuilder.andWhere(
-        'student.expectedContractType IN (:...expectedContractTypes)',
+        'student.expectedContractType IN (:...expectedContractType)',
         {
-          expectedContractTypes,
+          expectedContractType: queryData.expectedContractType,
         },
       );
     }

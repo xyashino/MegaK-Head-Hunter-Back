@@ -83,7 +83,6 @@ export class StudentsService {
         searchOptions,
         queryBuilder,
       );
-
     const itemCount = await filterQueryBuilder.getCount();
     const { entities } = await filterQueryBuilder.getRawAndEntities();
     const pageMetaDto = new PageMetaDto({ searchOptions, itemCount });
