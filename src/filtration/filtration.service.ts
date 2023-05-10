@@ -17,7 +17,7 @@ export class FiltrationService {
     }
 
     if (queryData.projectDegree) {
-      queryBuilder.andWhere('student.teamProjectDegree >= :teamProjectDegree', {
+      queryBuilder.andWhere('student.projectDegree >= :projectDegree', {
         projectDegree: queryData.projectDegree,
       });
     }
@@ -34,11 +34,24 @@ export class FiltrationService {
       });
     }
 
+    // if (queryData.expectedContractType) {
+    //   queryBuilder.andWhere(
+    //     'student.expectedContractType = :expectedContractType',
+    //     {
+    //       expectedContractType: queryData.expectedContractType,
+    //     },
+    //   );
+    // }
+
     if (queryData.expectedContractType) {
+      const expectedContractTypes = Object.values(
+        queryData.expectedContractType,
+      );
+
       queryBuilder.andWhere(
-        'student.expectedContractType = :expectedContractType',
+        'student.expectedContractType IN (:...expectedContractTypes)',
         {
-          expectedContractType: queryData.expectedContractType,
+          expectedContractTypes,
         },
       );
     }
