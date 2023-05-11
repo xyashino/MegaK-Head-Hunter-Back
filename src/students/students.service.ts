@@ -39,12 +39,11 @@ export class StudentsService {
   async create({ email, ...rest }: CreateStudentDto) {
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
-    const newUser = await this.usersService.create({
+    newStudent.user =  await this.usersService.create({
       email,
       role: UserRole.STUDENT,
       ...rest,
     });
-    newStudent.user = newUser;
     await newStudent.save();
     await sendLinkRegistration(
       email,
@@ -92,9 +91,9 @@ export class StudentsService {
     return result;
   }
 
-  async update(id: string, { email, ...rest }: UpdateStudentDto) {
+  async update(id: string, { email, status , ...rest }: UpdateStudentDto) {
     const student = await this.findOne(id);
-    if (rest.status === StudentStatus.HIRED) {
+    if (status === StudentStatus.HIRED) {
       const user = student.user;
       user.isActive = UserStatus.INACTIVE;
       await user.save();
@@ -135,8 +134,7 @@ export class StudentsService {
   ) {
     try {
       const student = await this.findOne(id);
-      if (student.user.isActive)
-        throw new ConflictException('The user has been registered');
+      if (student.user.isActive) throw new ConflictException('The user has been registered');
       await this.usersService.update(student.user.id, { pwd });
       applyDataToEntity(student, rest);
       await student.save();

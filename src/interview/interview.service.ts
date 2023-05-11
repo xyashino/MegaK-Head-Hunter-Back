@@ -14,7 +14,7 @@ import { DataSource } from 'typeorm';
 import { searchUsersPagination } from '../utils/search-users-pagination';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../enums/user-role.enums';
-import { InterviewResponse } from '../types/interview/interview-response';
+import { InterviewResponse } from '../types';
 
 @Injectable()
 export class InterviewService {
