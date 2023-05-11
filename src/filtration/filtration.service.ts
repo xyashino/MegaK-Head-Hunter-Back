@@ -29,21 +29,33 @@ export class FiltrationService {
     }
 
     if (queryData.expectedTypeWork) {
-      queryBuilder.andWhere(
-        'student.expectedTypeWork IN (:...expectedTypeWork )',
-        {
+      if (Array.isArray(queryData.expectedTypeWork)) {
+        queryBuilder.andWhere(
+          'student.expectedTypeWork IN (:...expectedTypeWork )',
+          {
+            expectedTypeWork: queryData.expectedTypeWork,
+          },
+        );
+      } else {
+        queryBuilder.andWhere('student.expectedTypeWork =:expectedTypeWork', {
           expectedTypeWork: queryData.expectedTypeWork,
-        },
-      );
+        });
+      }
     }
 
     if (queryData.expectedContractType) {
-      queryBuilder.andWhere(
-        'student.expectedContractType IN (:...expectedContractType)',
-        {
-          expectedContractType: queryData.expectedContractType,
-        },
-      );
+      if (Array.isArray(queryData.expectedContractType)) {
+        queryBuilder.andWhere(
+          'student.expectedTypeWork IN (:...expectedTypeWork )',
+          {
+            expectedTypeWork: queryData.expectedContractType,
+          },
+        );
+      } else {
+        queryBuilder.andWhere('student.expectedTypeWork =:expectedTypeWork', {
+          expectedTypeWork: queryData.expectedTypeWork,
+        });
+      }
     }
 
     if (queryData.minSalary && queryData.maxSalary) {
