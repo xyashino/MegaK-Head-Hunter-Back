@@ -1,7 +1,7 @@
 import { StudentTypeWork } from '../../enums/students-type-work.enums';
 import { StudentContactType } from '../../enums/student-contract-type.enums';
 
-export interface Filtration {
+export interface FiltrationInterface {
   courseCompletion: number | string;
   courseEngagement: number | string;
   projectDegree: number | string;
