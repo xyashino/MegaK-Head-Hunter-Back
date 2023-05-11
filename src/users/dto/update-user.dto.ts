@@ -23,19 +23,30 @@ export class UpdateUserDto implements Partial<CreateUserDto> {
   role?: UserRole;
 
   @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(8)
-  newPwd?: string;
-
-  @IsOptional()
   @IsBoolean()
   isActive?: boolean;
 
-  @ValidateIf((obj) => obj.newPassword !== undefined || obj.isActive)
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
   @IsOptional()
   pwd?: string;
+
+  @ValidateIf((o) => o.newPwd !== undefined)
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(8)
+  @IsNotEmpty({
+    message: 'Old password is required when new password is present',
+  })
+  oldPwd?: string;
+
+  @ValidateIf((o) => o.oldPwd !== undefined)
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(8)
+  @IsNotEmpty({
+    message: 'New password is required when old password is present',
+  })
+  newPwd?: string;
 }
