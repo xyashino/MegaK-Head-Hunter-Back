@@ -61,13 +61,11 @@ export class SearchOptionsDto {
 
   @IsOptional()
   @IsString({ each: true })
-  @IsEnum(StudentTypeWork, { each: true })
-  expectedTypeWork: StudentTypeWork[];
+  expectedTypeWork: string | string[];
 
   @IsOptional()
   @IsString({ each: true })
-  @IsEnum(StudentContactType, { each: true })
-  expectedContractType: StudentContactType[];
+  expectedContractType: string | string[];
 
   @IsOptional()
   @IsNumber()

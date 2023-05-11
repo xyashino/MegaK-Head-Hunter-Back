@@ -31,13 +31,13 @@ export class FiltrationService {
     if (queryData.expectedTypeWork) {
       if (Array.isArray(queryData.expectedTypeWork)) {
         queryBuilder.andWhere(
-          'student.expectedTypeWork IN (:...expectedTypeWork )',
+          'student.expectedTypeWork IN (:...expectedTypeWork)',
           {
             expectedTypeWork: queryData.expectedTypeWork,
           },
         );
-      } else {
-        queryBuilder.andWhere('student.expectedTypeWork =:expectedTypeWork', {
+      } else if (typeof queryData.expectedTypeWork === 'string') {
+        queryBuilder.andWhere('student.expectedTypeWork = :expectedTypeWork', {
           expectedTypeWork: queryData.expectedTypeWork,
         });
       }
@@ -46,14 +46,14 @@ export class FiltrationService {
     if (queryData.expectedContractType) {
       if (Array.isArray(queryData.expectedContractType)) {
         queryBuilder.andWhere(
-          'student.expectedTypeWork IN (:...expectedTypeWork )',
+          'student.expectedTypeWork IN (:...expectedTypeWork)',
           {
             expectedTypeWork: queryData.expectedContractType,
           },
         );
-      } else {
-        queryBuilder.andWhere('student.expectedTypeWork =:expectedTypeWork', {
-          expectedTypeWork: queryData.expectedTypeWork,
+      } else if (typeof queryData.expectedContractType === 'string') {
+        queryBuilder.andWhere('student.expectedTypeWork = :expectedTypeWork', {
+          expectedTypeWork: queryData.expectedContractType,
         });
       }
     }
