@@ -68,9 +68,12 @@ export class FiltrationService {
     }
 
     if (queryData.maxSalary) {
-      queryBuilder.andWhere('student.expectedSalary <= :maxSalary', {
-        maxSalary: queryData.maxSalary,
-      });
+      queryBuilder.andWhere(
+        'student.expectedSalary <= :maxSalary OR student.expectedSalary IS NULL',
+        {
+          maxSalary: queryData.maxSalary,
+        },
+      );
     }
 
     if (queryData.minSalary && queryData.maxSalary) {
