@@ -9,11 +9,11 @@ import { Interview } from './entities/interview.entity';
 import { UsersService } from '../users/users.service';
 import { StudentsService } from '../students/students.service';
 import { StudentStatus } from '../enums/student-status.enums';
-import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
 import { DataSource } from 'typeorm';
+import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../enums/user-role.enums';
-import { InterviewResponse } from '../types/interview/interview-response';
+import { InterviewResponse } from '../types';
 import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
 import { FiltrationService } from '../filtration/filtration.service';
 
@@ -23,6 +23,7 @@ export class InterviewService {
   @Inject(StudentsService) studentsService: StudentsService;
   @Inject(DataSource) private dataSource: DataSource;
   @Inject(FiltrationService) filtrationService: FiltrationService;
+
 
   async createInterview(
     studentId: string,
