@@ -41,6 +41,7 @@ export class StudentsController {
   @Get()
   @Serialize(ResponseFindAllStudentsDto)
   findAll(@Query() searchOptions: SearchOptionsDto, @UserObj() user: User) {
+    console.log(searchOptions);
     return this.studentsService.findAll(searchOptions, user);
   }
 

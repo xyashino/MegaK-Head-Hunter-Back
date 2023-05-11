@@ -46,15 +46,18 @@ export class FiltrationService {
     if (queryData.expectedContractType) {
       if (Array.isArray(queryData.expectedContractType)) {
         queryBuilder.andWhere(
-          'student.expectedTypeWork IN (:...expectedTypeWork)',
+          'student.expectedContractType IN (:...expectedContractType)',
           {
-            expectedTypeWork: queryData.expectedContractType,
+            expectedContractType: queryData.expectedContractType,
           },
         );
       } else if (typeof queryData.expectedContractType === 'string') {
-        queryBuilder.andWhere('student.expectedTypeWork = :expectedTypeWork', {
-          expectedTypeWork: queryData.expectedContractType,
-        });
+        queryBuilder.andWhere(
+          'student.expectedContractType = :expectedContractType',
+          {
+            expectedContractType: queryData.expectedContractType,
+          },
+        );
       }
     }
 
