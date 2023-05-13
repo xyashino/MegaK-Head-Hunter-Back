@@ -114,26 +114,11 @@ export class AuthService {
     const resetToken = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken = hashPwd(resetToken);
     await user.save();
-
     const resetPasswordLink = `${process.env.RESET_PASSWORD_URL}?token=${resetToken}&id=${user.id}`;
-
-    try {
-      await this.mailService.sendMail(
-        user.email,
-        'Zmiana hasła w Head Hunter MegaK',
-        './pwd-reset',
-        {
-          resetPasswordLink,
-        },
-      );
-
-      return 'Email with password reset link sent successfully';
-    } catch (e) {
-      throw new HttpException(
-        'Something went wrong by sending the email. Please try again later',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    return await this.mailService.sendResetPasswordEmail(
+      email,
+      resetPasswordLink,
+    );
   }
 
   async resetPassword(req: ResetPasswordDto, res) {

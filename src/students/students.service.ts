@@ -15,7 +15,6 @@ import { UserRole } from '@enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '@mail/mail.service';
 import { DataSource } from 'typeorm';
-import { sendLinkRegistration } from '@utils/send-link-registration';
 import { StudentStatus } from '@enums/student-status.enums';
 import { searchUsersPagination } from '@utils/search-users-pagination';
 import { UserStatus } from '@enums/user-status.enums';
@@ -45,12 +44,12 @@ export class StudentsService {
       ...rest,
     });
     await newStudent.save();
-    await sendLinkRegistration(
+    await this.mailService.sendRegistrationLink(
       email,
-      newStudent,
+      newStudent.id,
       process.env.STUDENT_REGISTRATION_URL,
-      this.usersService,
-      this.mailService,
+      newStudent,
+      newStudent.user,
     );
     return newStudent;
   }
@@ -104,28 +103,19 @@ export class StudentsService {
           await this.interviewService.removeInterview(student.id, hr);
         }
       }
+
       const admins = await User.find({ where: { role: UserRole.ADMIN } });
+
       for (const admin of admins) {
-        try {
-          await this.mailService.sendMail(
-            admin.email,
-            'Powiadomienie o zatrudnieniu kursanta',
-            './admin-info',
-            {
-              studentInfo: {
-                id: student.id,
-                firstname: student.firstname,
-                lastname: student.lastname,
-              },
-            },
-          );
-        } catch (e) {
-          console.log(e);
-        }
+        await this.mailService.sendAdminNotification(admin.email, {
+          id: student.id,
+          firstname: student.firstname,
+          lastname: student.lastname,
+        });
       }
+      applyDataToEntity(student, rest);
+      return student.save();
     }
-    applyDataToEntity(student, rest);
-    return student.save();
   }
   async register(
     id: string,

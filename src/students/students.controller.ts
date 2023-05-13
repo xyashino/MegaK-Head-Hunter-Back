@@ -47,7 +47,7 @@ export class StudentsController {
     return this.studentsService.findAll(searchOptions, user);
   }
 
-  @Post('/register/:id')
+  @Post('register/:id')
   @Serialize(ResponseStudentDto)
   register(
     @Param('id', ParseUUIDPipe) id: string,

@@ -16,7 +16,6 @@ import { Hr } from './entities/hr.entity';
 import { UserRole } from '@enums/user-role.enums';
 import { applyDataToEntity } from '@utils/apply-data-to-entity';
 import { MailService } from '@mail/mail.service';
-import { sendLinkRegistration } from '@utils/send-link-registration';
 import { InterviewService } from '@interview/interview.service';
 import { Response } from 'express';
 import { AuthService } from '@auth/auth.service';
@@ -41,13 +40,7 @@ export class HrService {
       ...rest,
     });
     await newHr.save();
-    await sendLinkRegistration(
-      email,
-      newHr,
-      process.env.HR_REGISTRATION_URL,
-      this.usersService,
-      this.mailService,
-    );
+    await this.mailService.sendRegistrationLink(email, newHr.id, process.env.HR_REGISTRATION_URL , newHr, newHr.user);
     return newHr;
   }
 
