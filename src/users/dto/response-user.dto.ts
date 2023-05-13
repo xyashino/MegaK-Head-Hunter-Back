@@ -1,13 +1,12 @@
 import { Expose, Transform } from 'class-transformer';
 import { User } from '../entities/user.entity';
-import { UserRole } from '../../enums/user-role.enums';
-import { Hr } from '../../hr/entities/hr.entity';
-import { Student } from '../../students/entities/student.entity';
-import { UserStatus } from '../../enums/user-status.enums';
+import { UserRole } from '@enums/user-role.enums';
+import { UserStatus } from '@enums/user-status.enums';
+import { userRealizationMapper } from '@utils/mappers/user-relation.mapper';
 
 export class ResponseUserDto implements Partial<User> {
   @Expose()
-  id:string;
+  id: string;
   @Expose()
   email: string;
   @Expose()
@@ -16,16 +15,9 @@ export class ResponseUserDto implements Partial<User> {
   role: UserRole;
 
   @Expose()
-  @Transform(({ obj }) => {
-    const { hr, student }: { hr: Hr | null; student: Student | null } = obj;
-    if (hr) return { id: hr.id, fullName: hr.fullName };
-    if (student)
-      return {
-        id: student.id,
-        fullName: `${student.firstname} ${student.lastname}`,
-        githubUsername: student.githubUsername,
-      };
-    return null;
-  })
-  data: any;
+  @Transform(({ obj }) => userRealizationMapper(obj))
+  data:
+    | null
+    | { id: string; fullName: string }
+    | { id: string; fullName: string; githubUsername: string };
 }

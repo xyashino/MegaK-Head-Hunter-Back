@@ -16,40 +16,45 @@ export class UsersService {
     await this.checkConflictData(email);
     const newUser = new User();
     newUser.email = email;
-    if (pwd) {
-      newUser.hashedPassword = hashPwd(pwd);
-      newUser.isActive = UserStatus.ACTIVE;
-    }
+    if (pwd) await this.updatePassword(pwd, newUser);
+
     newUser.role = role;
     return await newUser.save();
   }
-
   findAll() {
     return User.find();
   }
 
   async findOne(id: string) {
+
     const user = await User.findOne({
       relations: { hr: true, student: true },
       where: { id },
     });
-    if (!user) {
-      throw new NotFoundException();
-    }
+
+    if (!user) throw new NotFoundException();
     return user;
   }
 
-  async update(id: string, { pwd, email, role ,oldPwd,newPwd}: UpdateUserDto) {
+  async update(
+    id: string,
+    { pwd, email, role, oldPwd, newPwd }: UpdateUserDto,
+  ) {
     const user = await this.findOne(id);
+
     if (email) {
       await this.checkConflictData(email);
       user.email = email;
     }
-    if (pwd) {
-      user.hashedPassword = hashPwd(pwd);
-      user.isActive = UserStatus.ACTIVE;
+
+    if (pwd) await this.updatePassword(pwd, user);
+
+    if (oldPwd && newPwd) {
+      if (hashPwd(oldPwd) !== user.hashedPassword)
+        throw new BadRequestException('Invalid credentials');
+      await this.updatePassword(newPwd, user);
     }
-    if (oldPwd && newPwd)  await this.changePassword(oldPwd, newPwd, user);
+
     user.role = role ?? user.role;
     return user.save();
   }
@@ -63,8 +68,7 @@ export class UsersService {
     if (userExist) throw new ConflictException('Email is taken');
   }
 
-  async changePassword (oldPwd:string,newPwd:string, user:User){
-    if(hashPwd(oldPwd) !== user.hashedPassword) throw new BadRequestException('Invalid credentials' );
+  async updatePassword(newPwd: string, user: User) {
     user.hashedPassword = hashPwd(newPwd);
     user.isActive = UserStatus.ACTIVE;
   }

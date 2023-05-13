@@ -30,6 +30,8 @@ export class UsersController {
   private readonly usersService: UsersService;
 
   @Post()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -40,20 +42,20 @@ export class UsersController {
   findAll() {
     return this.usersService.findAll();
   }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Get('current')
-  getCurrentUser(@UserObj() user: User) {
-    return this.usersService.findOne(user.id);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
+  @Get('current')
+  @UseGuards(AuthGuard('jwt'))
+  getCurrentUser(@UserObj() user: User) {
+    return this.usersService.findOne(user.id);
+  }
+
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -61,8 +63,8 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }
