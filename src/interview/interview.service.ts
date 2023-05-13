@@ -79,26 +79,28 @@ export class InterviewService {
       .skip(searchOptions.skip)
       .take(searchOptions.take);
 
-    if (user.role === UserRole.HR) {
-      const hr = (await this.usersService.findOne(user.id)).hr;
-      queryBuilder.where('interview.hr = :hrId', { hrId: hr.id });
+    switch (user.role) {
+      case UserRole.HR:
+        const hr = (await this.usersService.findOne(user.id)).hr;
+        queryBuilder.where('interview.hr = :hrId', { hrId: hr.id });
+        break;
+      case UserRole.STUDENT:
+        const student = (await this.usersService.findOne(user.id)).student;
+        queryBuilder.where('interview.student = :studentId', {
+          studentId: student.id,
+        });
     }
-
-    if (user.role === UserRole.STUDENT) {
-      const student = (await this.usersService.findOne(user.id)).student;
-      queryBuilder.where('interview.student = :studentId', {
-        studentId: student.id,
-      });
-    }
-
     return await searchUsersPagination(searchOptions, queryBuilder);
   }
 
-  async removeInterview(studentId, user): Promise<InterviewResponse[]> {
-    let hr;
-    user.role === UserRole.HR
-      ? (hr = (await this.usersService.findOne(user.id)).hr)
-      : (hr = user);
+  async removeInterview(
+    studentId: string,
+    user: User,
+  ): Promise<InterviewResponse[]> {
+    const hr =
+      user.role === UserRole.HR
+        ? (await this.usersService.findOne(user.id)).hr
+        : user;
 
     const student = await this.studentsService.findOne(studentId);
     const interview = await Interview.find({
@@ -119,9 +121,7 @@ export class InterviewService {
       relations: { hr: true },
       where: { id },
     });
-    if (!interview) {
-      throw new NotFoundException('Invalid interview id');
-    }
+    if (!interview) throw new NotFoundException('Invalid interview id');
     return interview;
   }
 }
