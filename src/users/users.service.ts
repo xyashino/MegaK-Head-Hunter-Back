@@ -30,7 +30,6 @@ export class UsersService {
       relations: { hr: true, student: true },
       where: { id },
     });
-    console.log(user)
     if (!user) throw new NotFoundException('asdsa');
     return user;
   }

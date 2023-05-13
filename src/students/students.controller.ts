@@ -75,8 +75,7 @@ export class StudentsController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  @UseGuards(AuthGuard('jwt'),RolesGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Serialize(ResponseStudentDto)
   update(
     @Param('id', ParseUUIDPipe) id: string,

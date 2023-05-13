@@ -1,7 +1,6 @@
-import { InterviewResponse } from './interview-response.interface';
-import {PageMeta} from "../pagination";
+import { InterviewRelationResponse, PageMeta } from '@types';
 
 export interface InterviewFindResponse {
-  data: InterviewResponse[];
+  data: InterviewRelationResponse[];
   meta: PageMeta;
 }
