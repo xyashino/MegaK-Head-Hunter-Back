@@ -22,6 +22,7 @@ import { InterviewService } from '@interview/interview.service';
 import { Response } from 'express';
 import { AuthService } from '@auth/auth.service';
 import { User } from '@users/entities/user.entity';
+import { Interview } from '@interview/entities/interview.entity';
 
 @Injectable()
 export class StudentsService {
@@ -96,16 +97,8 @@ export class StudentsService {
       const user = student.user;
       user.isActive = UserStatus.INACTIVE;
       await user.save();
-      const interviews = student.interviews;
-      if (interviews.length > 0) {
-        for (const interview of interviews) {
-          const hr = (await this.interviewService.findOne(interview.id)).hr;
-          await this.interviewService.removeInterview(student.id, hr);
-        }
-      }
-
+      await this.checkAndDeleteInterviews(student.interviews, student.id);
       const admins = await User.find({ where: { role: UserRole.ADMIN } });
-
       for (const admin of admins) {
         await this.mailService.sendAdminNotification(admin.email, {
           id: student.id,
@@ -133,6 +126,18 @@ export class StudentsService {
       await this.authService.login(authLoginDto, res);
     } catch (e) {
       return res.json({ error: e.message });
+    }
+  }
+
+  private async checkAndDeleteInterviews(
+    interviews: Interview[],
+    studentId: string,
+  ) {
+    if (interviews.length > 0) {
+      for (const interview of interviews) {
+        const hr = (await this.interviewService.findOne(interview.id)).hr;
+        await this.interviewService.removeInterview(studentId, hr);
+      }
     }
   }
 }

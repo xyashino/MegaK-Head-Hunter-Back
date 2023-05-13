@@ -25,6 +25,8 @@ import { UserObj } from '@decorators/user-obj.decorator';
 import { User } from '@users/entities/user.entity';
 import { ResponseStudentDto } from './dto/response-student.dto';
 import { Response } from 'express';
+import { Roles } from '@decorators/roles.decorator';
+import { UserRole } from '@enums/user-role.enums';
 
 @Controller('students')
 export class StudentsController {
@@ -33,13 +35,14 @@ export class StudentsController {
 
   @Post()
   @Serialize(ResponseStudentDto)
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'))
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
   }
-
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   @Serialize(ResponseFindAllStudentsDto)
+  @UseGuards(AuthGuard('jwt'))
   findAll(
     @Query() searchOptions: SearchAndPageOptionsDto,
     @UserObj() user: User,
@@ -59,17 +62,22 @@ export class StudentsController {
 
   @Get(':id')
   @Serialize(ResponseStudentDto)
+  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.findOne(id);
   }
 
   @Delete(':id')
   @Serialize(ResponseStudentDto)
+  @Roles(UserRole.ADMIN, UserRole.STUDENT)
+  @UseGuards(AuthGuard('jwt'))
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.remove(id);
   }
 
   @Patch(':id')
+  @Roles(UserRole.ADMIN, UserRole.STUDENT)
+  @UseGuards(AuthGuard('jwt'))
   @Serialize(ResponseStudentDto)
   update(
     @Param('id', ParseUUIDPipe) id: string,

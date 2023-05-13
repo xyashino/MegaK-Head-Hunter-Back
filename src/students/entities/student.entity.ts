@@ -1,7 +1,7 @@
-import { StudentContactType } from 'src/enums/student-contract-type.enums';
-import { StudentStatus } from 'src/enums/student-status.enums';
-import { StudentTypeWork } from 'src/enums/students-type-work.enums';
-import { User } from 'src/users/entities/user.entity';
+import { StudentContactType } from '@enums/student-contract-type.enums';
+import { StudentStatus } from '@enums/student-status.enums';
+import { StudentTypeWork } from '@enums/students-type-work.enums';
+import { User } from '@users/entities/user.entity';
 import {
   BaseEntity,
   Column,
@@ -11,7 +11,7 @@ import {
   OneToOne,
   OneToMany,
 } from 'typeorm';
-import { Interview } from '../../interview/entities/interview.entity';
+import { Interview } from '@interview/entities/interview.entity';
 
 @Entity()
 export class Student extends BaseEntity {

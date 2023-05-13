@@ -10,9 +10,9 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { StudentTypeWork } from '../../enums/students-type-work.enums';
-import { StudentContactType } from '../../enums/student-contract-type.enums';
-import { StudentStatus } from '../../enums/student-status.enums';
+import { StudentTypeWork } from '@enums/students-type-work.enums';
+import { StudentContactType } from '@enums/student-contract-type.enums';
+import { StudentStatus } from '@enums/student-status.enums';
 
 export class RegisterStudentDto {
   @IsNotEmpty()
