@@ -10,19 +10,20 @@ import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { applyDataToEntity } from '@utils/apply-data-to-entity';
-import { SearchAndPageOptionsDto } from '@common/dtos/page/search-and-page-options.dto';
 import { UserRole } from '@enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { MailService } from '@mail/mail.service';
 import { DataSource } from 'typeorm';
 import { StudentStatus } from '@enums/student-status.enums';
-import { searchUsersPagination } from '@utils/search-users-pagination';
 import { UserStatus } from '@enums/user-status.enums';
 import { InterviewService } from '@interview/interview.service';
 import { Response } from 'express';
 import { AuthService } from '@auth/auth.service';
 import { User } from '@users/entities/user.entity';
 import { Interview } from '@interview/entities/interview.entity';
+import {FiltrationService} from "@filtration/filtration.service";
+import {SearchOptionsDto} from "@dtos/page/search-options.dto";
+import {PageMetaDto} from "@dtos/page/page-meta.dto";
 
 @Injectable()
 export class StudentsService {
@@ -148,7 +149,7 @@ export class StudentsService {
     if (interviews.length > 0) {
       for (const interview of interviews) {
         const hr = (await this.interviewService.findOne(interview.id)).hr;
-        await this.interviewService.removeInterview(studentId, hr);
+        await this.interviewService.removeInterview(studentId, hr.user);
       }
     }
   }

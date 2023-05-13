@@ -10,8 +10,8 @@ import { AuthModule } from '@auth/auth.module';
   imports: [
     UsersModule,
     MailModule,
-    forwardRef(() => InterviewModule),
-    forwardRef(() => AuthModule),
+    InterviewModule,
+    AuthModule,
   ],
   controllers: [HrController],
   providers: [HrService],

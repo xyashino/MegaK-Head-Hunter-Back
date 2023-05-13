@@ -7,14 +7,13 @@ import {
   Delete,
   UseGuards,
   Query,
+  Inject,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { AuthGuard } from '@nestjs/passport';
-import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
-import { Serialize } from '../interceptors/serialization.interceptor';
+import { SearchOptionsDto } from '@dtos/page/search-options.dto';
 import { ResponseFindInterviewDto } from './dto/resoponse-find-interview.dto';
 import { CreateInterviewResponseDto } from './dto/create-interview-response.dto';
-import { SearchAndPageOptionsDto } from '@dtos/page/search-and-page-options.dto';
 import { Serialize } from '@interceptors/serialization.interceptor';
 import { User } from '@users/entities/user.entity';
 import { UserObj } from '@decorators/user-obj.decorator';
@@ -22,8 +21,8 @@ import { UserObj } from '@decorators/user-obj.decorator';
 @Controller('interview')
 @UseGuards(AuthGuard('jwt'))
 export class InterviewController {
-  @Inject(() => InterviewService)
-  private readonly interviewService: InterviewService;
+  constructor(private readonly interviewService: InterviewService) {}
+
   @Post()
   @Serialize(CreateInterviewResponseDto)
   create(@Body('studentId') studentId: string, @UserObj() user: User) {

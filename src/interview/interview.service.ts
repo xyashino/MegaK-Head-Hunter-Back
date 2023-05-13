@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   HttpException,
   HttpStatus,
   Inject,
@@ -9,20 +10,24 @@ import { Interview } from './entities/interview.entity';
 import { UsersService } from '@users/users.service';
 import { StudentsService } from '@students/students.service';
 import { StudentStatus } from '@enums/student-status.enums';
-import { SearchAndPageOptionsDto } from '@common/dtos/page/search-and-page-options.dto';
 import { DataSource } from 'typeorm';
-import { searchUsersPagination } from '@utils/search-users-pagination';
 import { User } from '@users/entities/user.entity';
 import { UserRole } from '@enums/user-role.enums';
 import { InterviewResponse } from '@types';
+import { FiltrationService } from '@filtration/filtration.service';
+import { PageMetaDto } from '@dtos/page/page-meta.dto';
+import { SearchOptionsDto } from '@dtos/page/search-options.dto';
 
 @Injectable()
 export class InterviewService {
-  @Inject(UsersService) usersService: UsersService;
-  @Inject(StudentsService) studentsService: StudentsService;
-  @Inject(DataSource) private dataSource: DataSource;
-  @Inject(FiltrationService) filtrationService: FiltrationService;
-
+  @Inject(forwardRef(() => UsersService))
+  private  readonly usersService: UsersService;
+  @Inject(forwardRef(() => StudentsService))
+  private readonly studentsService: StudentsService;
+  @Inject(forwardRef(() => DataSource))
+  private readonly dataSource: DataSource;
+  @Inject(forwardRef(() => FiltrationService))
+  private readonly filtrationService: FiltrationService;
 
   async createInterview(
     studentId: string,
@@ -103,7 +108,6 @@ export class InterviewService {
     const { entities } = await filterQueryBuilder.getRawAndEntities();
     const pageMetaDto = new PageMetaDto({ searchOptions, itemCount });
     return { data: entities, meta: { ...pageMetaDto } };
-    return await searchUsersPagination(searchOptions, queryBuilder);
   }
 
   async removeInterview(

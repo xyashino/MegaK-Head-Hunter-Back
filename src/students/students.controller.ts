@@ -18,7 +18,6 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { Serialize } from '@interceptors/serialization.interceptor';
-import { SearchAndPageOptionsDto } from '@dtos/page/search-and-page-options.dto';
 import { ResponseFindAllStudentsDto } from './dto/response-find-all-students.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserObj } from '@decorators/user-obj.decorator';
@@ -28,6 +27,7 @@ import { Response } from 'express';
 import { Roles } from '@decorators/roles.decorator';
 import { UserRole } from '@enums/user-role.enums';
 import {RolesGuard} from "@guards/roles.guard";
+import {SearchOptionsDto} from "@dtos/page/search-options.dto";
 
 @Controller('students')
 export class StudentsController {

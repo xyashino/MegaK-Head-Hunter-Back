@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {forwardRef, HttpException, HttpStatus, Inject, Injectable} from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { MailContext } from '@interfaces/mail-context';
 import { BaseEntity } from 'typeorm';
@@ -11,8 +11,8 @@ import {
 
 @Injectable()
 export class MailService {
-  constructor(private readonly mailerService: MailerService) {}
-
+@Inject(forwardRef(()=>MailerService))
+private readonly mailerService: MailerService
   private async sendMail(mailData: {
     to: string;
     subject: string;
