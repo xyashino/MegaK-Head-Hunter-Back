@@ -7,7 +7,6 @@ import {
   Delete,
   UseGuards,
   Query,
-  Inject,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { AuthGuard } from '@nestjs/passport';

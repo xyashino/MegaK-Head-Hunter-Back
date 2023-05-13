@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { HrService } from './hr.service';
 import { HrController } from './hr.controller';
 import { UsersModule } from '@users/users.module';
