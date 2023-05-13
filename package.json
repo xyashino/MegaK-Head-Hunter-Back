@@ -85,13 +85,9 @@
   "testEnvironment": "node",
   "moduleNameMapper": {
     "^@(.*)$": "<rootDir>/../src/$1",
-    "^@types/(.*)$": "<rootDir>/../src/types/$1",
-    "^@utils/(.*)$": "<rootDir>/../src/utils/$1",
-    "^@common/(.*)$": "<rootDir>/../src/common/$1",
     "^@guards/(.*)$": "<rootDir>/../src/common/guards/$1",
     "^@dtos/(.*)$": "<rootDir>/../src/common/dto/$1",
     "^@decorators/(.*)$": "<rootDir>/../src/common/decorators/$1",
-    "^@interceptors/(.*)$": "<rootDir>/../src/common/interceptors/$1",
-    "^@enums/(.*)$": "<rootDir>/../src/enums/$1"
+    "^@interceptors/(.*)$": "<rootDir>/../src/common/interceptors/$1"
   }
 }

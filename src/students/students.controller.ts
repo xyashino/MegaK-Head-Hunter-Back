@@ -1,31 +1,31 @@
 import {
   Body,
   Controller,
-  forwardRef,
-  Inject,
-  Post,
-  Get,
-  Param,
   Delete,
-  Patch,
+  forwardRef,
+  Get,
+  Inject,
+  Param,
   ParseUUIDPipe,
+  Patch,
+  Post,
   Query,
-  UseGuards,
   Res,
+  UseGuards,
 } from '@nestjs/common';
-import { StudentsService } from './students.service';
-import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
-import { RegisterStudentDto } from './dto/register-student.dto';
-import { Serialize } from '@interceptors/serialization.interceptor';
-import { ResponseFindAllStudentsDto } from './dto/response-find-all-students.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { UserObj } from '@decorators/user-obj.decorator';
-import { User } from '@users/entities/user.entity';
-import { ResponseStudentDto } from './dto/response-student.dto';
-import { Response } from 'express';
-import { Roles } from '@decorators/roles.decorator';
-import { UserRole } from '@enums/user-role.enums';
+import {StudentsService} from './students.service';
+import {CreateStudentDto} from './dto/create-student.dto';
+import {UpdateStudentDto} from './dto/update-student.dto';
+import {RegisterStudentDto} from './dto/register-student.dto';
+import {Serialize} from '@interceptors/serialization.interceptor';
+import {ResponseFindAllStudentsDto} from './dto/response-find-all-students.dto';
+import {AuthGuard} from '@nestjs/passport';
+import {UserObj} from '@decorators/user-obj.decorator';
+import {User} from '@users/entities/user.entity';
+import {ResponseStudentDto} from './dto/response-student.dto';
+import {Response} from 'express';
+import {Roles} from '@decorators/roles.decorator';
+import {UserRole} from '@enums/user-role.enums';
 import {RolesGuard} from "@guards/roles.guard";
 import {SearchOptionsDto} from "@dtos/page/search-options.dto";
 
@@ -42,6 +42,8 @@ export class StudentsController {
     return this.studentsService.create(createStudentDto);
   }
   @Get()
+  @Roles(UserRole.ADMIN,UserRole.HR)
+  @UseGuards(AuthGuard('jwt'),RolesGuard)
   @Serialize(ResponseFindAllStudentsDto)
   findAll(@Query() searchOptions: SearchOptionsDto, @UserObj() user: User) {
     return this.studentsService.findAll(searchOptions, user);

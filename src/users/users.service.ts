@@ -26,13 +26,12 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-
     const user = await User.findOne({
       relations: { hr: true, student: true },
       where: { id },
     });
-
-    if (!user) throw new NotFoundException();
+    console.log(user)
+    if (!user) throw new NotFoundException('asdsa');
     return user;
   }
 

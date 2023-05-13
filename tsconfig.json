@@ -19,14 +19,10 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@*": ["./src/*"],
-      "@types/*": ["./src/types/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@common/*": ["./src/common/*"],
       "@guards/*": ["./src/common/guards/*"],
       "@dtos/*": ["./src/common/dtos/*"],
       "@decorators/*": ["./src/common/decorators/*"],
       "@interceptors/*": ["./src/common/interceptors/*"],
-      "@enums/*": ["./src/enums/*"]
     }
   }
 }

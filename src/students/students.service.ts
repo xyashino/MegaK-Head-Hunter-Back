@@ -66,7 +66,7 @@ export class StudentsService {
       .innerJoinAndSelect('student.user', 'user')
       .skip(searchOptions.skip)
       .take(searchOptions.take);
-
+    console.log(user.role)
     if (user.role === UserRole.HR) {
       queryBuilder.andWhere(
         'user.isActive = :isActive AND student.status = :studentStatus',

@@ -42,16 +42,17 @@ export class UsersController {
   findAll() {
     return this.usersService.findAll();
   }
-  @Get(':id')
-  @UseGuards(AuthGuard('jwt'))
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
-  }
 
   @Get('current')
   @UseGuards(AuthGuard('jwt'))
   getCurrentUser(@UserObj() user: User) {
     return this.usersService.findOne(user.id);
+  }
+
+  @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')
@@ -65,7 +66,7 @@ export class UsersController {
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
-  @UseGuards(AuthGuard('jwt'),RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }
