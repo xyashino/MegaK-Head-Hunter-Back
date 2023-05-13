@@ -27,6 +27,7 @@ import { ResponseStudentDto } from './dto/response-student.dto';
 import { Response } from 'express';
 import { Roles } from '@decorators/roles.decorator';
 import { UserRole } from '@enums/user-role.enums';
+import {RolesGuard} from "@guards/roles.guard";
 
 @Controller('students')
 export class StudentsController {
@@ -36,7 +37,7 @@ export class StudentsController {
   @Post()
   @Serialize(ResponseStudentDto)
   @Roles(UserRole.ADMIN)
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'),RolesGuard)
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
   }
@@ -70,14 +71,14 @@ export class StudentsController {
   @Delete(':id')
   @Serialize(ResponseStudentDto)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'),RolesGuard)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.remove(id);
   }
 
   @Patch(':id')
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'),RolesGuard)
   @Serialize(ResponseStudentDto)
   update(
     @Param('id', ParseUUIDPipe) id: string,
