@@ -14,7 +14,7 @@ import { HrService } from './hr.service';
 import { CreateHrDto } from './dto/create-hr.dto';
 import { UpdateHrDto } from './dto/update-hr.dto';
 import { RegisterHrDto } from './dto/register-hr.dto';
-import { Serialize } from '../interceptors/serialization.interceptor';
+import { Serialize } from '@interceptors/serialization.interceptor';
 import { ResponseHrDto } from './dto/response-hr.dto';
 import { Response } from 'express';
 

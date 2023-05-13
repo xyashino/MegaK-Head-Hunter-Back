@@ -1,10 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Command, Console } from 'nestjs-console';
-import { UsersService } from '../users/users.service';
-import { UserRole } from '../enums/user-role.enums';
+import { UsersService } from '@users/users.service';
+import { UserRole } from '@enums/user-role.enums';
 import { createInterface } from 'node:readline/promises';
 import { plainToClass } from 'class-transformer';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { CreateUserDto } from '@users/dto/create-user.dto';
 import { validate } from 'class-validator';
 
 const ERROR_MESSAGE = '❌️ Validation failed ❌️ \n';
@@ -23,12 +23,10 @@ export class AdminCommand {
     description: 'Create a new admin account',
   })
   async createAdmin(): Promise<void> {
-    let email = '';
-    let pwd = '';
     const role = UserRole.ADMIN;
 
-    email = await this.askQuestion('❓️  What email should the admin include?');
-    pwd = await this.askQuestion('👀️ Give the admin password 👀️');
+    const email  = await this.askQuestion('❓️  What email should the admin include?');
+    const pwd = await this.askQuestion('👀️ Give the admin password 👀️');
 
     const createUserDto = plainToClass(CreateUserDto, { email, pwd, role });
     if (!(await this.validateByDto(createUserDto))) return;

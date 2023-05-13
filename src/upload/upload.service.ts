@@ -6,13 +6,13 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { parse } from 'papaparse';
-import { User } from '../users/entities/user.entity';
+import { User } from '@users/entities/user.entity';
 import { StudentImportDto } from './dto/student-import.dto';
-import { MulterMemoryUploadedFile } from '../interfaces/files';
-import { validateRequiredColumns } from '../utils/file-filters';
+import { MulterMemoryUploadedFile } from '@interfaces/files';
+import { validateRequiredColumns } from '@utils/file-filters';
 import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { StudentsService } from '../students/students.service';
+import { StudentsService } from '@students/students.service';
 
 @Injectable()
 export class UploadService {

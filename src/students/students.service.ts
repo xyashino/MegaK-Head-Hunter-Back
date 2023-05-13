@@ -5,24 +5,24 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '@users/users.service';
 import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { applyDataToEntity } from '../utils/apply-data-to-entity';
-import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
-import { UserRole } from '../enums/user-role.enums';
+import { applyDataToEntity } from '@utils/apply-data-to-entity';
+import { SearchAndPageOptionsDto } from '@common/dtos/page/search-and-page-options.dto';
+import { UserRole } from '@enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
-import { MailService } from '../mail/mail.service';
+import { MailService } from '@mail/mail.service';
 import { DataSource } from 'typeorm';
-import { sendLinkRegistration } from '../utils/send-link-registration';
-import { StudentStatus } from '../enums/student-status.enums';
-import { searchUsersPagination } from '../utils/search-users-pagination';
-import { UserStatus } from '../enums/user-status.enums';
-import { InterviewService } from '../interview/interview.service';
+import { sendLinkRegistration } from '@utils/send-link-registration';
+import { StudentStatus } from '@enums/student-status.enums';
+import { searchUsersPagination } from '@utils/search-users-pagination';
+import { UserStatus } from '@enums/user-status.enums';
+import { InterviewService } from '@interview/interview.service';
 import { Response } from 'express';
-import { AuthService } from '../auth/auth.service';
-import { User } from '../users/entities/user.entity';
+import { AuthService } from '@auth/auth.service';
+import { User } from '@users/entities/user.entity';
 
 @Injectable()
 export class StudentsService {
@@ -39,7 +39,7 @@ export class StudentsService {
   async create({ email, ...rest }: CreateStudentDto) {
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
-    newStudent.user =  await this.usersService.create({
+    newStudent.user = await this.usersService.create({
       email,
       role: UserRole.STUDENT,
       ...rest,
@@ -91,7 +91,7 @@ export class StudentsService {
     return result;
   }
 
-  async update(id: string, { email, status , ...rest }: UpdateStudentDto) {
+  async update(id: string, { email, status, ...rest }: UpdateStudentDto) {
     const student = await this.findOne(id);
     if (status === StudentStatus.HIRED) {
       const user = student.user;
@@ -134,7 +134,8 @@ export class StudentsService {
   ) {
     try {
       const student = await this.findOne(id);
-      if (student.user.isActive) throw new ConflictException('The user has been registered');
+      if (student.user.isActive)
+        throw new ConflictException('The user has been registered');
       await this.usersService.update(student.user.id, { pwd });
       applyDataToEntity(student, rest);
       await student.save();

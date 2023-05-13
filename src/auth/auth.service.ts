@@ -7,17 +7,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AuthLoginDto } from './dto/auth-login.dto';
-import { hashPwd } from '../utils/hash-pwd';
 import { Response } from 'express';
 import { JwtPayload } from './jwt.strategy';
 import { sign } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
-import { User } from '../users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
-import { MailService } from '../mail/mail.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { UserStatus } from '../enums/user-status.enums';
+import { hashPwd } from '@utils/hash-pwd';
+import { User } from '@users/entities/user.entity';
+import { MailService } from '@mail/mail.service';
+import { UserStatus } from '@enums/user-status.enums';
 
 @Injectable()
 export class AuthService {
@@ -112,8 +112,7 @@ export class AuthService {
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const hashToken = hashPwd(resetToken);
-    user.resetPasswordToken = hashToken;
+    user.resetPasswordToken = hashPwd(resetToken);
     await user.save();
 
     const resetPasswordLink = `${process.env.RESET_PASSWORD_URL}?token=${resetToken}&id=${user.id}`;

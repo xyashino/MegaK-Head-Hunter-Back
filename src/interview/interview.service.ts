@@ -6,15 +6,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Interview } from './entities/interview.entity';
-import { UsersService } from '../users/users.service';
-import { StudentsService } from '../students/students.service';
-import { StudentStatus } from '../enums/student-status.enums';
-import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
+import { UsersService } from '@users/users.service';
+import { StudentsService } from '@students/students.service';
+import { StudentStatus } from '@enums/student-status.enums';
+import { SearchAndPageOptionsDto } from '@common/dtos/page/search-and-page-options.dto';
 import { DataSource } from 'typeorm';
-import { searchUsersPagination } from '../utils/search-users-pagination';
-import { User } from '../users/entities/user.entity';
-import { UserRole } from '../enums/user-role.enums';
-import { InterviewResponse } from '../types';
+import { searchUsersPagination } from '@utils/search-users-pagination';
+import { User } from '@users/entities/user.entity';
+import { UserRole } from '@enums/user-role.enums';
+import { InterviewResponse } from '@types';
 
 @Injectable()
 export class InterviewService {

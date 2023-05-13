@@ -7,8 +7,8 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { hashPwd } from '../utils/hash-pwd';
-import { UserStatus } from '../enums/user-status.enums';
+import { hashPwd } from '@utils/hash-pwd';
+import { UserStatus } from '@enums/user-status.enums';
 
 @Injectable()
 export class UsersService {

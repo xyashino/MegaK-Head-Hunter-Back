@@ -14,14 +14,14 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Serialize } from '../interceptors/serialization.interceptor';
+import { Serialize } from '@interceptors/serialization.interceptor';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { UserObj } from '../decorators/user-obj.decorator';
+import { UserObj } from '@decorators/user-obj.decorator';
 import { User } from './entities/user.entity';
-import { RolesGuard } from '../guards/roles.guard';
-import { Roles } from '../decorators/roles.decorator';
-import { UserRole } from '../enums/user-role.enums';
+import { RolesGuard } from '@guards/roles.guard';
+import { Roles } from '@decorators/roles.decorator';
+import { UserRole } from '@enums/user-role.enums';
 
 @Controller('users')
 @Serialize(ResponseUserDto)

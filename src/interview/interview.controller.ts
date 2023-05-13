@@ -9,13 +9,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
-import { UserObj } from '../decorators/user-obj.decorator';
-import { User } from '../users/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { SearchAndPageOptionsDto } from '../common/dtos/page/search-and-page-options.dto';
-import { Serialize } from '../interceptors/serialization.interceptor';
 import { ResponseFindInterviewDto } from './dto/resoponse-find-interview.dto';
 import { CreateInterviewResponseDto } from './dto/create-interview-response.dto';
+import {SearchAndPageOptionsDto} from "@dtos/page/search-and-page-options.dto";
+import {Serialize} from "@interceptors/serialization.interceptor";
+import {User} from "@users/entities/user.entity";
+import {UserObj} from "@decorators/user-obj.decorator";
 
 @Controller('interview')
 export class InterviewController {

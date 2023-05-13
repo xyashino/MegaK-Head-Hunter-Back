@@ -10,11 +10,11 @@ import {
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { UserObj } from '../decorators/user-obj.decorator';
 import { Response } from 'express';
-import { User } from '../users/entities/user.entity';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { SendResetEmailDto } from './dto/send-reset-email.dto';
+import { User } from '@users/entities/user.entity';
+import {UserObj} from "@decorators/user-obj.decorator";
 
 @Controller('auth')
 export class AuthController {
