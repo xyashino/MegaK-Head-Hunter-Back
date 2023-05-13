@@ -37,7 +37,7 @@ export class UsersController {
   }
 
   @Get()
-  @Roles(UserRole.HR)
+  @Roles(UserRole.ADMIN)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   findAll() {
     return this.usersService.findAll();
@@ -64,6 +64,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN)
   @UseGuards(AuthGuard('jwt'))
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
