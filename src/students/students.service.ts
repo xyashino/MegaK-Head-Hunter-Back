@@ -19,7 +19,6 @@ import { UserStatus } from '@enums/user-status.enums';
 import { InterviewService } from '@interview/interview.service';
 import { Response } from 'express';
 import { AuthService } from '@auth/auth.service';
-import { User } from '@users/entities/user.entity';
 import { Interview } from '@interview/entities/interview.entity';
 import {FiltrationService} from "@filtration/filtration.service";
 import {SearchOptionsDto} from "@dtos/page/search-options.dto";
@@ -110,17 +109,9 @@ export class StudentsService {
       user.isActive = UserStatus.INACTIVE;
       await user.save();
       await this.checkAndDeleteInterviews(student.interviews, student.id);
-      const admins = await User.find({ where: { role: UserRole.ADMIN } });
-      for (const admin of admins) {
-        await this.mailService.sendAdminNotification(admin.email, {
-          id: student.id,
-          firstname: student.firstname,
-          lastname: student.lastname,
-        });
-      }
-      applyDataToEntity(student, rest);
-      return student.save();
     }
+    applyDataToEntity(student, rest);
+    return student.save();
   }
   async register(
     id: string,
@@ -141,6 +132,8 @@ export class StudentsService {
     }
   }
 
+
+
   private async checkAndDeleteInterviews(
     interviews: Interview[],
     studentId: string,
@@ -148,7 +141,7 @@ export class StudentsService {
     if (interviews.length > 0) {
       for (const interview of interviews) {
         const hr = (await this.interviewService.findOne(interview.id)).hr;
-        await this.interviewService.removeInterview(studentId, hr.user);
+        await this.interviewService.removeInterview(studentId, hr);
       }
     }
   }

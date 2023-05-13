@@ -112,12 +112,12 @@ export class InterviewService {
 
   async removeInterview(
     studentId: string,
-    user: User,
+    user: any,
   ): Promise<InterviewResponse[]> {
-    const hr =
-      user.role === UserRole.HR
-        ? (await this.usersService.findOne(user.id)).hr
-        : user;
+    let hr;
+    user.role === UserRole.HR
+        ? (hr = (await this.usersService.findOne(user.id)).hr)
+        : (hr = user);
 
     const student = await this.studentsService.findOne(studentId);
     const interview = await Interview.find({
