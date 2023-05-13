@@ -23,6 +23,7 @@ import { Interview } from '@interview/entities/interview.entity';
 import {FiltrationService} from "@filtration/filtration.service";
 import {SearchOptionsDto} from "@dtos/page/search-options.dto";
 import {PageMetaDto} from "@dtos/page/page-meta.dto";
+import {User} from "@users/entities/user.entity";
 
 @Injectable()
 export class StudentsService {
@@ -106,9 +107,11 @@ export class StudentsService {
     const student = await this.findOne(id);
     if (status === StudentStatus.HIRED) {
       const user = student.user;
+      student.status = StudentStatus.HIRED;
       user.isActive = UserStatus.INACTIVE;
       await user.save();
       await this.checkAndDeleteInterviews(student.interviews, student.id);
+      await this.sendNotificationToAdmins(student);
     }
     applyDataToEntity(student, rest);
     return student.save();
@@ -143,6 +146,17 @@ export class StudentsService {
         const hr = (await this.interviewService.findOne(interview.id)).hr;
         await this.interviewService.removeInterview(studentId, hr);
       }
+    }
+  }
+
+  private async sendNotificationToAdmins (student:Student) {
+    const admins = await User.find({ where: { role: UserRole.ADMIN } });
+    for (const admin of admins) {
+      await this.mailService.sendAdminNotification(admin.email, {
+        id: student.id,
+        firstname: student.firstname,
+        lastname: student.lastname,
+      });
     }
   }
 }

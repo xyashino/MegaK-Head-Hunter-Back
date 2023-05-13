@@ -3,7 +3,6 @@ import {StudentStatus} from '@enums/student-status.enums';
 import {StudentTypeWork} from '@enums/students-type-work.enums';
 import {User} from '@users/entities/user.entity';
 import {
-  AfterUpdate,
   BaseEntity,
   Column,
   Entity,
@@ -13,7 +12,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import {Interview} from '@interview/entities/interview.entity';
-import {UserRole} from "@enums/user-role.enums";
 import {Inject} from "@nestjs/common";
 import {MailService} from "@mail/mail.service";
 
@@ -166,17 +164,4 @@ export class Student extends BaseEntity {
 
   @OneToMany(() => Interview, (interview) => interview.student)
   interviews: Interview[];
-
-  @AfterUpdate()
-  private async sendNotificationToAdmins (student:Student) {
-    if (this.status !== StudentStatus.HIRED) return;
-    const admins = await User.find({ where: { role: UserRole.ADMIN } });
-    for (const admin of admins) {
-      await this.mailService.sendAdminNotification(admin.email, {
-        id: student.id,
-        firstname: student.firstname,
-        lastname: student.lastname,
-      });
-    }
-  }
 }
