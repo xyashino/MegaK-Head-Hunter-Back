@@ -12,6 +12,7 @@ import { StudentsModule } from './students/students.module';
 import { UploadModule } from './upload/upload.module';
 import { InterviewModule } from './interview/interview.module';
 import { CronModule } from './cron/cron.module';
+import { FiltrationModule } from './filtration/filtration.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CronModule } from './cron/cron.module';
     ConsoleModule,
     StudentsModule,
     UploadModule,
+    FiltrationModule,
     InterviewModule,
     CronModule,
   ],

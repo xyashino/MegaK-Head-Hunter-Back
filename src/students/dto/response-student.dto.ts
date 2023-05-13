@@ -3,6 +3,7 @@ import { Student } from '../entities/student.entity';
 import { StudentStatus } from '@enums/student-status.enums';
 import { StudentContactType } from '@enums/student-contract-type.enums';
 
+
 export class ResponseStudentDto implements Partial<Student> {
   @Expose()
   id: string;
@@ -79,4 +80,7 @@ export class ResponseStudentDto implements Partial<Student> {
 
   @Expose()
   canTakeApprenticeship: boolean;
+
+  @Expose()
+  monthsOfCommercialExp: number;
 }

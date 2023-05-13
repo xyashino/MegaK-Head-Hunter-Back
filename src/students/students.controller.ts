@@ -43,11 +43,7 @@ export class StudentsController {
   }
   @Get()
   @Serialize(ResponseFindAllStudentsDto)
-  @UseGuards(AuthGuard('jwt'))
-  findAll(
-    @Query() searchOptions: SearchAndPageOptionsDto,
-    @UserObj() user: User,
-  ) {
+  findAll(@Query() searchOptions: SearchOptionsDto, @UserObj() user: User) {
     return this.studentsService.findAll(searchOptions, user);
   }
 

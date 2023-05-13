@@ -34,6 +34,8 @@ export class StudentsService {
   interviewService: InterviewService;
   @Inject(forwardRef(() => AuthService))
   authService: AuthService;
+  @Inject(forwardRef(() => FiltrationService))
+  filtrationService: FiltrationService;
   @Inject(DataSource) private dataSource: DataSource;
 
   async create({ email, ...rest }: CreateStudentDto) {
@@ -55,16 +57,17 @@ export class StudentsService {
     return newStudent;
   }
 
-  async findAll(searchOptions: SearchAndPageOptionsDto, user) {
+  async findAll(searchOptions: SearchOptionsDto, user) {
     const queryBuilder = await this.dataSource
-      .getRepository(Student)
-      .createQueryBuilder('student')
+      .createQueryBuilder()
+      .select('student')
+      .from(Student, 'student')
       .innerJoinAndSelect('student.user', 'user')
       .skip(searchOptions.skip)
       .take(searchOptions.take);
 
     if (user.role === UserRole.HR) {
-      queryBuilder.where(
+      queryBuilder.andWhere(
         'user.isActive = :isActive AND student.status = :studentStatus',
         {
           isActive: UserStatus.ACTIVE,
@@ -72,7 +75,16 @@ export class StudentsService {
         },
       );
     }
-    return await searchUsersPagination(searchOptions, queryBuilder);
+
+    const filterQueryBuilder =
+      await this.filtrationService.filterStudentPreferences(
+        searchOptions,
+        queryBuilder,
+      );
+    const itemCount = await filterQueryBuilder.getCount();
+    const { entities } = await filterQueryBuilder.getRawAndEntities();
+    const pageMetaDto = new PageMetaDto({ searchOptions, itemCount });
+    return { data: entities, meta: { ...pageMetaDto } };
   }
 
   async findOne(id: string) {

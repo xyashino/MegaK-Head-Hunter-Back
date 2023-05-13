@@ -7,10 +7,11 @@ import {
   Delete,
   UseGuards,
   Query,
-  Inject,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { AuthGuard } from '@nestjs/passport';
+import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
+import { Serialize } from '../interceptors/serialization.interceptor';
 import { ResponseFindInterviewDto } from './dto/resoponse-find-interview.dto';
 import { CreateInterviewResponseDto } from './dto/create-interview-response.dto';
 import { SearchAndPageOptionsDto } from '@dtos/page/search-and-page-options.dto';
@@ -32,7 +33,7 @@ export class InterviewController {
   @Get()
   @Serialize(ResponseFindInterviewDto)
   findAllInterview(
-    @Query() searchOptions: SearchAndPageOptionsDto,
+    @Query() searchOptions: SearchOptionsDto,
     @UserObj() user: User,
   ) {
     return this.interviewService.findAllInterview(searchOptions, user);
