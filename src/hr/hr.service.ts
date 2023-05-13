@@ -79,7 +79,7 @@ export class HrService {
 
   async remove(id: string) {
     const hr = await this.findOne(id);
-    const interviews = await this.interviewService.findInterview(id);
+    const interviews = hr.interviews;
 
     if (interviews.length > 0) {
       throw new HttpException(
