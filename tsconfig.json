@@ -16,6 +16,13 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@*": ["./src/*"],
+      "@guards/*": ["./src/common/guards/*"],
+      "@dtos/*": ["./src/common/dtos/*"],
+      "@decorators/*": ["./src/common/decorators/*"],
+      "@interceptors/*": ["./src/common/interceptors/*"],
+    }
   }
 }

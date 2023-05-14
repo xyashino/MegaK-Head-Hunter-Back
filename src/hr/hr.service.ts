@@ -1,0 +1,94 @@
+import {
+  ConflictException,
+  ForbiddenException,
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateHrDto } from './dto/create-hr.dto';
+import { UpdateHrDto } from './dto/update-hr.dto';
+import { RegisterHrDto } from './dto/register-hr.dto';
+import { UsersService } from '@users/users.service';
+import { Hr } from './entities/hr.entity';
+import { UserRole } from '@enums/user-role.enums';
+import { applyDataToEntity } from '@utils/apply-data-to-entity';
+import { MailService } from '@mail/mail.service';
+import { InterviewService } from '@interview/interview.service';
+import { Response } from 'express';
+import { AuthService } from '@auth/auth.service';
+
+@Injectable()
+export class HrService {
+  @Inject(forwardRef(() => UsersService))
+  usersService: UsersService;
+  @Inject(forwardRef(() => MailService))
+  mailService: MailService;
+  @Inject(forwardRef(() => InterviewService))
+  interviewService: InterviewService;
+  @Inject(forwardRef(() => AuthService))
+  authService: AuthService;
+
+  async create({ email, ...rest }: CreateHrDto) {
+    const newHr = new Hr();
+    applyDataToEntity(newHr, rest);
+    newHr.user = await this.usersService.create({
+      email,
+      role: UserRole.HR,
+      ...rest,
+    });
+    await newHr.save();
+    await this.mailService.sendRegistrationLink(email, newHr.id, process.env.HR_REGISTRATION_URL , newHr, newHr.user);
+    return newHr;
+  }
+
+  findAll() {
+    return Hr.find({ relations: { user: true } });
+  }
+  async findOne(id: string) {
+    const hr = await Hr.findOne({ where: { id }, relations: { user: true } });
+    if (!hr) throw new NotFoundException('Invalid id');
+    return hr;
+  }
+
+  async register({ pwd }: RegisterHrDto, id, res: Response) {
+    try {
+      const { user } = await this.findOne(id);
+      if (user.isActive)
+        throw new ConflictException('The user has been registered');
+      await this.usersService.update(user.id, { pwd });
+      const authLoginDto = { email: user.email, pwd };
+      await this.authService.login(authLoginDto, res);
+    } catch (e) {
+      return res.json({ error: e.message });
+    }
+  }
+
+  async update(id: string, { pwd, ...rest }: UpdateHrDto) {
+    const hr = await this.findOne(id);
+    const { user } = hr;
+    if (!user.isActive) throw new ForbiddenException();
+    await this.usersService.update(user.id, {
+      pwd,
+    });
+    applyDataToEntity(hr, rest);
+    return hr.save();
+  }
+
+  async remove(id: string) {
+    const hr = await this.findOne(id);
+    const interviews = hr.interviews;
+
+    if (interviews.length > 0) {
+      throw new HttpException(
+        'Cannot be remove hr because he have many than one interview',
+        HttpStatus.CONFLICT,
+      );
+    }
+    const result = await hr.remove();
+    await this.usersService.remove(hr.user.id);
+    return result;
+  }
+}
