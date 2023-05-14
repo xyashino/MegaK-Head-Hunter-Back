@@ -11,15 +11,14 @@ import {
 import { CreateHrDto } from './dto/create-hr.dto';
 import { UpdateHrDto } from './dto/update-hr.dto';
 import { RegisterHrDto } from './dto/register-hr.dto';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '@users/users.service';
 import { Hr } from './entities/hr.entity';
-import { UserRole } from '../enums/user-role.enums';
-import { applyDataToEntity } from '../utils/apply-data-to-entity';
-import { MailService } from '../mail/mail.service';
-import { sendLinkRegistration } from '../utils/send-link-registration';
-import { InterviewService } from '../interview/interview.service';
+import { UserRole } from '@enums/user-role.enums';
+import { applyDataToEntity } from '@utils/apply-data-to-entity';
+import { MailService } from '@mail/mail.service';
+import { InterviewService } from '@interview/interview.service';
 import { Response } from 'express';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '@auth/auth.service';
 
 @Injectable()
 export class HrService {
@@ -35,20 +34,13 @@ export class HrService {
   async create({ email, ...rest }: CreateHrDto) {
     const newHr = new Hr();
     applyDataToEntity(newHr, rest);
-    const newUser = await this.usersService.create({
+    newHr.user = await this.usersService.create({
       email,
       role: UserRole.HR,
       ...rest,
     });
-    newHr.user = newUser;
     await newHr.save();
-    await sendLinkRegistration(
-      email,
-      newHr,
-      process.env.HR_REGISTRATION_URL,
-      this.usersService,
-      this.mailService,
-    );
+    await this.mailService.sendRegistrationLink(email, newHr.id, process.env.HR_REGISTRATION_URL , newHr, newHr.user);
     return newHr;
   }
 
@@ -87,7 +79,7 @@ export class HrService {
 
   async remove(id: string) {
     const hr = await this.findOne(id);
-    const interviews = await this.interviewService.findInterview(id);
+    const interviews = hr.interviews;
 
     if (interviews.length > 0) {
       throw new HttpException(

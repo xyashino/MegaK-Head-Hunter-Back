@@ -7,8 +7,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Hr } from '../../hr/entities/hr.entity';
-import { Student } from '../../students/entities/student.entity';
+import { Hr } from '@hr/entities/hr.entity';
+import { Student } from '@students/entities/student.entity';
 
 @Entity()
 export class Interview extends BaseEntity {

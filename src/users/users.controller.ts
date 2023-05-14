@@ -14,14 +14,14 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Serialize } from '../interceptors/serialization.interceptor';
+import { Serialize } from '@interceptors/serialization.interceptor';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { UserObj } from '../decorators/user-obj.decorator';
+import { UserObj } from '@decorators/user-obj.decorator';
 import { User } from './entities/user.entity';
-import { RolesGuard } from '../guards/roles.guard';
-import { Roles } from '../decorators/roles.decorator';
-import { UserRole } from '../enums/user-role.enums';
+import { RolesGuard } from '@guards/roles.guard';
+import { Roles } from '@decorators/roles.decorator';
+import { UserRole } from '@enums/user-role.enums';
 
 @Controller('users')
 @Serialize(ResponseUserDto)
@@ -30,30 +30,33 @@ export class UsersController {
   private readonly usersService: UsersService;
 
   @Post()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
-  @Roles(UserRole.HR)
+  @Roles(UserRole.ADMIN)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   findAll() {
     return this.usersService.findAll();
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('current')
+  @UseGuards(AuthGuard('jwt'))
   getCurrentUser(@UserObj() user: User) {
     return this.usersService.findOne(user.id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -61,8 +64,9 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }

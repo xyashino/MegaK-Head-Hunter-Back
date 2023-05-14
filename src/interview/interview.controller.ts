@@ -9,27 +9,27 @@ import {
   Query,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
-import { UserObj } from '../decorators/user-obj.decorator';
-import { User } from '../users/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
-import { Serialize } from '../interceptors/serialization.interceptor';
+import { SearchOptionsDto } from '@dtos/page/search-options.dto';
 import { ResponseFindInterviewDto } from './dto/resoponse-find-interview.dto';
 import { CreateInterviewResponseDto } from './dto/create-interview-response.dto';
+import { Serialize } from '@interceptors/serialization.interceptor';
+import { User } from '@users/entities/user.entity';
+import { UserObj } from '@decorators/user-obj.decorator';
 
 @Controller('interview')
 export class InterviewController {
   constructor(private readonly interviewService: InterviewService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   @Serialize(CreateInterviewResponseDto)
   create(@Body('studentId') studentId: string, @UserObj() user: User) {
     return this.interviewService.createInterview(studentId, user);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   @Serialize(ResponseFindInterviewDto)
   findAllInterview(
     @Query() searchOptions: SearchOptionsDto,
@@ -39,13 +39,14 @@ export class InterviewController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   @Serialize(CreateInterviewResponseDto)
   findOne(@Param('id') id: string) {
     return this.interviewService.findOne(id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   @Serialize(CreateInterviewResponseDto)
   remove(@Param('id') studentId: string, @UserObj() user: User) {
     return this.interviewService.removeInterview(studentId, user);

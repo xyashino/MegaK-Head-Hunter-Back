@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { StudentsService } from '../students/students.service';
-import { Interview } from '../interview/entities/interview.entity';
+import { StudentsService } from '@students/students.service';
+import { Interview } from '@interview/entities/interview.entity';
 import { DataSource } from 'typeorm';
-import { StudentStatus } from '../enums/student-status.enums';
+import { StudentStatus } from '@enums/student-status.enums';
 
 @Injectable()
 export class CronService {

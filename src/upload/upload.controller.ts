@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { fileFilter, fileLimits } from '../utils/file-filters';
-import { MulterMemoryUploadedFile } from '../interfaces/files';
+import { fileFilter, fileLimits } from '@utils/file-filters';
+import { MulterMemoryUploadedFile } from '@interfaces/files';
 
 @Controller('upload')
 export class UploadController {

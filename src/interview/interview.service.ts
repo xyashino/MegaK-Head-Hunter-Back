@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   HttpException,
   HttpStatus,
   Inject,
@@ -6,24 +7,27 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Interview } from './entities/interview.entity';
-import { UsersService } from '../users/users.service';
-import { StudentsService } from '../students/students.service';
-import { StudentStatus } from '../enums/student-status.enums';
+import { UsersService } from '@users/users.service';
+import { StudentsService } from '@students/students.service';
+import { StudentStatus } from '@enums/student-status.enums';
 import { DataSource } from 'typeorm';
-import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
-import { User } from '../users/entities/user.entity';
-import { UserRole } from '../enums/user-role.enums';
-import { InterviewResponse } from '../types';
-import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
-import { FiltrationService } from '../filtration/filtration.service';
+import { User } from '@users/entities/user.entity';
+import { UserRole } from '@enums/user-role.enums';
+import { InterviewResponse } from '@types';
+import { FiltrationService } from '@filtration/filtration.service';
+import { PageMetaDto } from '@dtos/page/page-meta.dto';
+import { SearchOptionsDto } from '@dtos/page/search-options.dto';
 
 @Injectable()
 export class InterviewService {
-  @Inject(UsersService) usersService: UsersService;
-  @Inject(StudentsService) studentsService: StudentsService;
-  @Inject(DataSource) private dataSource: DataSource;
-  @Inject(FiltrationService) filtrationService: FiltrationService;
-
+  @Inject(forwardRef(() => UsersService))
+  private  readonly usersService: UsersService;
+  @Inject(forwardRef(() => StudentsService))
+  private readonly studentsService: StudentsService;
+  @Inject(forwardRef(() => DataSource))
+  private readonly dataSource: DataSource;
+  @Inject(forwardRef(() => FiltrationService))
+  private readonly filtrationService: FiltrationService;
 
   async createInterview(
     studentId: string,
@@ -82,16 +86,16 @@ export class InterviewService {
       .skip(searchOptions.skip)
       .take(searchOptions.take);
 
-    if (user.role === UserRole.HR) {
-      const hr = (await this.usersService.findOne(user.id)).hr;
-      queryBuilder.andWhere('interview.hr = :hrId', { hrId: hr.id });
-    }
-
-    if (user.role === UserRole.STUDENT) {
-      const student = (await this.usersService.findOne(user.id)).student;
-      queryBuilder.andWhere('interview.student = :studentId', {
-        studentId: student.id,
-      });
+    switch (user.role) {
+      case UserRole.HR:
+        const hr = (await this.usersService.findOne(user.id)).hr;
+        queryBuilder.andWhere('interview.hr = :hrId', { hrId: hr.id });
+        break;
+      case UserRole.STUDENT:
+        const student = (await this.usersService.findOne(user.id)).student;
+        queryBuilder.andWhere('interview.student = :studentId', {
+          studentId: student.id,
+        });
     }
 
     const filterQueryBuilder =
@@ -106,11 +110,14 @@ export class InterviewService {
     return { data: entities, meta: { ...pageMetaDto } };
   }
 
-  async removeInterview(studentId, user): Promise<InterviewResponse[]> {
+  async removeInterview(
+    studentId: string,
+    user: any,
+  ): Promise<InterviewResponse[]> {
     let hr;
     user.role === UserRole.HR
-      ? (hr = (await this.usersService.findOne(user.id)).hr)
-      : (hr = user);
+        ? (hr = (await this.usersService.findOne(user.id)).hr)
+        : (hr = user);
 
     const student = await this.studentsService.findOne(studentId);
     const interview = await Interview.find({
@@ -131,9 +138,7 @@ export class InterviewService {
       relations: { hr: true },
       where: { id },
     });
-    if (!interview) {
-      throw new NotFoundException('Invalid interview id');
-    }
+    if (!interview) throw new NotFoundException('Invalid interview id');
     return interview;
   }
 }

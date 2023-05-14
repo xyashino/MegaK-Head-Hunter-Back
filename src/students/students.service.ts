@@ -5,25 +5,25 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '@users/users.service';
 import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { applyDataToEntity } from '../utils/apply-data-to-entity';
-import { SearchOptionsDto } from '../common/dtos/page/search-options.dto';
-import { UserRole } from '../enums/user-role.enums';
+import { applyDataToEntity } from '@utils/apply-data-to-entity';
+import { UserRole } from '@enums/user-role.enums';
 import { RegisterStudentDto } from './dto/register-student.dto';
-import { MailService } from '../mail/mail.service';
+import { MailService } from '@mail/mail.service';
 import { DataSource } from 'typeorm';
-import { sendLinkRegistration } from '../utils/send-link-registration';
-import { StudentStatus } from '../enums/student-status.enums';
-import { UserStatus } from '../enums/user-status.enums';
-import { InterviewService } from '../interview/interview.service';
+import { StudentStatus } from '@enums/student-status.enums';
+import { UserStatus } from '@enums/user-status.enums';
+import { InterviewService } from '@interview/interview.service';
 import { Response } from 'express';
-import { AuthService } from '../auth/auth.service';
-import { User } from '../users/entities/user.entity';
-import { FiltrationService } from 'src/filtration/filtration.service';
-import { PageMetaDto } from '../common/dtos/page/page-meta.dto';
+import { AuthService } from '@auth/auth.service';
+import { Interview } from '@interview/entities/interview.entity';
+import {FiltrationService} from "@filtration/filtration.service";
+import {SearchOptionsDto} from "@dtos/page/search-options.dto";
+import {PageMetaDto} from "@dtos/page/page-meta.dto";
+import {User} from "@users/entities/user.entity";
 
 @Injectable()
 export class StudentsService {
@@ -42,18 +42,18 @@ export class StudentsService {
   async create({ email, ...rest }: CreateStudentDto) {
     const newStudent = new Student();
     applyDataToEntity(newStudent, rest);
-    newStudent.user =  await this.usersService.create({
+    newStudent.user = await this.usersService.create({
       email,
       role: UserRole.STUDENT,
       ...rest,
     });
     await newStudent.save();
-    await sendLinkRegistration(
+    await this.mailService.sendRegistrationLink(
       email,
-      newStudent,
+      newStudent.id,
       process.env.STUDENT_REGISTRATION_URL,
-      this.usersService,
-      this.mailService,
+      newStudent,
+      newStudent.user,
     );
     return newStudent;
   }
@@ -66,7 +66,6 @@ export class StudentsService {
       .innerJoinAndSelect('student.user', 'user')
       .skip(searchOptions.skip)
       .take(searchOptions.take);
-
     if (user.role === UserRole.HR) {
       queryBuilder.andWhere(
         'user.isActive = :isActive AND student.status = :studentStatus',
@@ -104,38 +103,15 @@ export class StudentsService {
     return result;
   }
 
-  async update(id: string, { email, status , ...rest }: UpdateStudentDto) {
+  async update(id: string, { email, status, ...rest }: UpdateStudentDto) {
     const student = await this.findOne(id);
     if (status === StudentStatus.HIRED) {
       const user = student.user;
+      student.status = StudentStatus.HIRED;
       user.isActive = UserStatus.INACTIVE;
       await user.save();
-      const interviews = student.interviews;
-      if (interviews.length > 0) {
-        for (const interview of interviews) {
-          const hr = (await this.interviewService.findOne(interview.id)).hr;
-          await this.interviewService.removeInterview(student.id, hr);
-        }
-      }
-      const admins = await User.find({ where: { role: UserRole.ADMIN } });
-      for (const admin of admins) {
-        try {
-          await this.mailService.sendMail(
-            admin.email,
-            'Powiadomienie o zatrudnieniu kursanta',
-            './admin-info',
-            {
-              studentInfo: {
-                id: student.id,
-                firstname: student.firstname,
-                lastname: student.lastname,
-              },
-            },
-          );
-        } catch (e) {
-          console.log(e);
-        }
-      }
+      await this.checkAndDeleteInterviews(student.interviews, student.id);
+      await this.sendNotificationToAdmins(student);
     }
     applyDataToEntity(student, rest);
     return student.save();
@@ -147,7 +123,8 @@ export class StudentsService {
   ) {
     try {
       const student = await this.findOne(id);
-      if (student.user.isActive) throw new ConflictException('The user has been registered');
+      if (student.user.isActive)
+        throw new ConflictException('The user has been registered');
       await this.usersService.update(student.user.id, { pwd });
       applyDataToEntity(student, rest);
       await student.save();
@@ -155,6 +132,31 @@ export class StudentsService {
       await this.authService.login(authLoginDto, res);
     } catch (e) {
       return res.json({ error: e.message });
+    }
+  }
+
+
+
+  private async checkAndDeleteInterviews(
+    interviews: Interview[],
+    studentId: string,
+  ) {
+    if (interviews.length > 0) {
+      for (const interview of interviews) {
+        const hr = (await this.interviewService.findOne(interview.id)).hr;
+        await this.interviewService.removeInterview(studentId, hr);
+      }
+    }
+  }
+
+  private async sendNotificationToAdmins (student:Student) {
+    const admins = await User.find({ where: { role: UserRole.ADMIN } });
+    for (const admin of admins) {
+      await this.mailService.sendAdminNotification(admin.email, {
+        id: student.id,
+        firstname: student.firstname,
+        lastname: student.lastname,
+      });
     }
   }
 }

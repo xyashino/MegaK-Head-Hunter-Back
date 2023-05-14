@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from '@users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeormConfigAsync } from './config/typeorm.config';
-import { AuthModule } from './auth/auth.module';
-import { HrModule } from './hr/hr.module';
-import { MailModule } from './mail/mail.module';
-import { AdminCommand } from './commands/admin.command';
+import { typeormConfigAsync } from '@config/typeorm.config';
+import { AuthModule } from '@auth/auth.module';
+import { HrModule } from '@hr/hr.module';
+import { MailModule } from '@mail/mail.module';
+import { AdminCommand } from '@commands/admin.command';
 import { ConsoleModule } from 'nestjs-console';
-import { StudentsModule } from './students/students.module';
-import { UploadModule } from './upload/upload.module';
-import { InterviewModule } from './interview/interview.module';
-import { CronModule } from './cron/cron.module';
-import { FiltrationModule } from './filtration/filtration.module';
+import { StudentsModule } from '@students/students.module';
+import { UploadModule } from '@upload/upload.module';
+import { InterviewModule } from '@interview/interview.module';
+import { CronModule } from '@cron/cron.module';
+import { FiltrationModule } from '@filtration/filtration.module';
 
 @Module({
   imports: [
@@ -31,7 +31,6 @@ import { FiltrationModule } from './filtration/filtration.module';
     InterviewModule,
     CronModule,
   ],
-  controllers: [],
   providers: [AdminCommand],
 })
 export class AppModule {}

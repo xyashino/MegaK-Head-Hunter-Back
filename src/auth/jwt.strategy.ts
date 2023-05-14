@@ -6,7 +6,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from '../users/entities/user.entity';
+import { User } from '@users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 
 export interface JwtPayload {

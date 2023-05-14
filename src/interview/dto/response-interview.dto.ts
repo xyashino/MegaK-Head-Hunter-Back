@@ -1,6 +1,6 @@
-import { Expose, plainToClass, Transform } from 'class-transformer';
-import { ResponseBaseStudentDto } from '../../students/dto/student-base-response.dto';
-import { ResponseInterviewHrDto } from '../../hr/dto/response-interview-hr.dto';
+import {Expose, plainToInstance, Transform} from 'class-transformer';
+import { ResponseBaseStudentDto } from '@students/dto/student-base-response.dto';
+import { ResponseInterviewHrDto } from '@hr/dto/response-interview-hr.dto';
 
 export class ResponseInterviewDto {
   @Expose()
@@ -14,13 +14,13 @@ export class ResponseInterviewDto {
 
   @Expose()
   @Transform((obj) => {
-    return plainToClass(ResponseBaseStudentDto, obj.value);
+    return plainToInstance(ResponseBaseStudentDto, obj.value);
   })
   student: ResponseBaseStudentDto;
 
   @Expose()
   @Transform(({ obj }) => {
-    return plainToClass(ResponseInterviewHrDto, obj.hr);
+    return plainToInstance(ResponseInterviewHrDto, obj.hr);
   })
   hr: ResponseInterviewHrDto;
 }
