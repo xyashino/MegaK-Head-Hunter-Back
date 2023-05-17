@@ -37,7 +37,7 @@ export class UpdateUserDto implements Partial<CreateUserDto> {
   @IsString()
   @MinLength(8)
   @IsNotEmpty({
-    message: 'Old password is required when new password is present',
+    message: 'Wymagane jest podanie starego hasła',
   })
   oldPwd?: string;
 
@@ -46,7 +46,7 @@ export class UpdateUserDto implements Partial<CreateUserDto> {
   @IsString()
   @MinLength(8)
   @IsNotEmpty({
-    message: 'New password is required when old password is present',
+    message: 'Wymagane jest podanie nowego hasła',
   })
   newPwd?: string;
 }

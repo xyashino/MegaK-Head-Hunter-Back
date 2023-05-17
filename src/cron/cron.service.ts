@@ -34,7 +34,7 @@ export class CronService {
         await student.save();
 
         console.log(
-          `Today removed interview ${interviewId}  and student ${student.firstname} ${student.lastname} is available`,
+          `Dzisiaj usunięto rozmowę o id: ${interviewId}, od teraz student: ${student.firstname} ${student.lastname} ma ponownie ustawiony status na: dostępny do rozmowy`,
         );
       }
     }

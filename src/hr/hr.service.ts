@@ -65,7 +65,9 @@ export class HrService {
     try {
       const { user } = await this.findOne(id);
       if (user.isActive)
-        throw new ConflictException('The user has been registered');
+        throw new ConflictException(
+          'Użytkownik został już wcześniej zarejestrowany',
+        );
       await this.usersService.update(user.id, { pwd });
       const authLoginDto = { email: user.email, pwd };
       await this.authService.login(authLoginDto, res);
@@ -91,7 +93,7 @@ export class HrService {
 
     if (interviews.length > 0) {
       throw new HttpException(
-        'Cannot be remove hr because he have many than one interview',
+        'Nie można usunąć HR, ponieważ ma przypisaną conajmniej jedną rozmowę kwalifikacyjną',
         HttpStatus.CONFLICT,
       );
     }

@@ -20,7 +20,7 @@ export const sendLinkRegistration = async (
     await newUser.remove();
     await usersService.remove(newUser.user.id);
     throw new HttpException(
-      'Something went wrong by sending the email. User has not been added',
+      'Coś poszło nie tak podczas wysyłania wiadomości e-mail. Użytkownik nie został dodany',
       HttpStatus.BAD_REQUEST,
     );
   }

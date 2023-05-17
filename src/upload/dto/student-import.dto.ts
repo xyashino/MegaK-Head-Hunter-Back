@@ -10,7 +10,7 @@ import {
 import { Transform } from 'class-transformer';
 
 const decimalMessageValidation =
-  'Given data must be a number and have a maximum of two decimal';
+  'Podane dane muszą być liczbą i mieć maksymalnie dwa miejsca po przecinku';
 
 export class StudentImportDto {
   @IsString()

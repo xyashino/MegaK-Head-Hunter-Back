@@ -24,7 +24,6 @@ export class InterviewService {
   @Inject(DataSource) private dataSource: DataSource;
   @Inject(FiltrationService) filtrationService: FiltrationService;
 
-
   async createInterview(
     studentId: string,
     user: User,
@@ -35,20 +34,20 @@ export class InterviewService {
 
     if ((await this.getCountInterview(hr)) >= hr.maxReservedStudents) {
       throw new HttpException(
-        'The maximum number of interview bookings has been reached',
+        'Osiągnięto maksymalną liczbę rezerwacji na rozmowy kwalifikacyjne',
         HttpStatus.CONFLICT,
       );
     }
 
     if (student.status === StudentStatus.HIRED) {
       throw new HttpException(
-        'The student was hired. Cannot be added to the interview',
+        'Student został już zatrudniony. Nie można dodać go do rozmowy kwalifikacyjnej',
         HttpStatus.CONFLICT,
       );
     }
     if (student.status === StudentStatus.CONVERSATION) {
       throw new HttpException(
-        'The student is currently on the conversation. Cannot be added to the interview',
+        'Student jest w trakcie rozmowy. Nie można dodać go do rozmowy kwalifikacyjnej',
         HttpStatus.CONFLICT,
       );
     }
@@ -132,7 +131,7 @@ export class InterviewService {
       where: { id },
     });
     if (!interview) {
-      throw new NotFoundException('Invalid interview id');
+      throw new NotFoundException('Nieprawidłowy id rozmowy kwalifikacyjnej');
     }
     return interview;
   }
