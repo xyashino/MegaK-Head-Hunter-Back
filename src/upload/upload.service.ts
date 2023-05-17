@@ -24,7 +24,7 @@ export class UploadService {
   async uploadStudents(file: MulterMemoryUploadedFile) {
     const uploadStudents = file ?? null;
     if (!uploadStudents) {
-      throw new HttpException('Not found file', HttpStatus.NOT_FOUND);
+      throw new HttpException('Nie znaleziono pliku', HttpStatus.NOT_FOUND);
     }
 
     const csvData = uploadStudents.buffer.toString();
@@ -36,7 +36,10 @@ export class UploadService {
     });
 
     if (errors.length > 0) {
-      throw new HttpException('CSV parsing errors', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Wystąpił błąd podczas analizy pliku CSV',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     for (const student of data) {
@@ -65,7 +68,7 @@ export class UploadService {
       }
     }
     return {
-      message: `New students added: ${count}`,
+      message: `Dodano nowych studentów w ilości: ${count}`,
     };
   }
 
@@ -80,7 +83,10 @@ export class UploadService {
         return acc;
       }, {});
       throw new HttpException(
-        { message: 'Validation failed', errors: validationErrors },
+        {
+          message: 'Wystąpił błąd podczas walidacji danych w pliku',
+          errors: validationErrors,
+        },
         HttpStatus.BAD_REQUEST,
       );
     }

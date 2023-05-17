@@ -21,7 +21,7 @@ import { SearchOptionsDto } from '@dtos/page/search-options.dto';
 @Injectable()
 export class InterviewService {
   @Inject(forwardRef(() => UsersService))
-  private  readonly usersService: UsersService;
+  private readonly usersService: UsersService;
   @Inject(forwardRef(() => StudentsService))
   private readonly studentsService: StudentsService;
   @Inject(forwardRef(() => DataSource))
@@ -39,20 +39,20 @@ export class InterviewService {
 
     if ((await this.getCountInterview(hr)) >= hr.maxReservedStudents) {
       throw new HttpException(
-        'The maximum number of interview bookings has been reached',
+        'Osiągnięto maksymalną liczbę rezerwacji na rozmowy kwalifikacyjne',
         HttpStatus.CONFLICT,
       );
     }
 
     if (student.status === StudentStatus.HIRED) {
       throw new HttpException(
-        'The student was hired. Cannot be added to the interview',
+        'Student został już zatrudniony. Nie można dodać go do rozmowy kwalifikacyjnej',
         HttpStatus.CONFLICT,
       );
     }
     if (student.status === StudentStatus.CONVERSATION) {
       throw new HttpException(
-        'The student is currently on the conversation. Cannot be added to the interview',
+        'Student jest w trakcie rozmowy. Nie można dodać go do rozmowy kwalifikacyjnej',
         HttpStatus.CONFLICT,
       );
     }
@@ -116,8 +116,8 @@ export class InterviewService {
   ): Promise<InterviewResponse[]> {
     let hr;
     user.role === UserRole.HR
-        ? (hr = (await this.usersService.findOne(user.id)).hr)
-        : (hr = user);
+      ? (hr = (await this.usersService.findOne(user.id)).hr)
+      : (hr = user);
 
     const student = await this.studentsService.findOne(studentId);
     const interview = await Interview.find({
@@ -138,7 +138,8 @@ export class InterviewService {
       relations: { hr: true },
       where: { id },
     });
-    if (!interview) throw new NotFoundException('Invalid interview id');
+    if (!interview)
+      throw new NotFoundException('Nieprawidłowy id rozmowy kwalifikacyjnej');
     return interview;
   }
 }
