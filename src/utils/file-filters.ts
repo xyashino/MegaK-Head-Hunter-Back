@@ -13,7 +13,10 @@ export const fileFilter = (_, file, cb) => {
     cb(null, true);
   } else {
     cb(
-      new HttpException('Invalid file type', HttpStatus.UNSUPPORTED_MEDIA_TYPE),
+      new HttpException(
+        'Nieprawidłowy format pliku',
+        HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+      ),
       false,
     );
   }
@@ -34,7 +37,7 @@ export const validateRequiredColumns = (results) => {
   );
   if (missingColumns.length > 0) {
     throw new HttpException(
-      'Columns are missing in the imported file',
+      'W importowanym pliku brakuje wymaganych kolumn',
       HttpStatus.BAD_REQUEST,
     );
   }

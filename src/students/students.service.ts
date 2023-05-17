@@ -20,10 +20,10 @@ import { InterviewService } from '@interview/interview.service';
 import { Response } from 'express';
 import { AuthService } from '@auth/auth.service';
 import { Interview } from '@interview/entities/interview.entity';
-import {FiltrationService} from "@filtration/filtration.service";
-import {SearchOptionsDto} from "@dtos/page/search-options.dto";
-import {PageMetaDto} from "@dtos/page/page-meta.dto";
-import {User} from "@users/entities/user.entity";
+import { FiltrationService } from '@filtration/filtration.service';
+import { SearchOptionsDto } from '@dtos/page/search-options.dto';
+import { PageMetaDto } from '@dtos/page/page-meta.dto';
+import { User } from '@users/entities/user.entity';
 
 @Injectable()
 export class StudentsService {
@@ -92,7 +92,7 @@ export class StudentsService {
       where: { id },
       relations: { user: true, interviews: true },
     });
-    if (!student) throw new NotFoundException('Invalid student Id');
+    if (!student) throw new NotFoundException('Nieprawidłowy id studenta');
     return student;
   }
 
@@ -124,7 +124,9 @@ export class StudentsService {
     try {
       const student = await this.findOne(id);
       if (student.user.isActive)
-        throw new ConflictException('The user has been registered');
+        throw new ConflictException(
+          'Użytkownik został już wcześniej zarejestrowany',
+        );
       await this.usersService.update(student.user.id, { pwd });
       applyDataToEntity(student, rest);
       await student.save();
@@ -134,8 +136,6 @@ export class StudentsService {
       return res.json({ error: e.message });
     }
   }
-
-
 
   private async checkAndDeleteInterviews(
     interviews: Interview[],
@@ -149,7 +149,7 @@ export class StudentsService {
     }
   }
 
-  private async sendNotificationToAdmins (student:Student) {
+  private async sendNotificationToAdmins(student: Student) {
     const admins = await User.find({ where: { role: UserRole.ADMIN } });
     for (const admin of admins) {
       await this.mailService.sendAdminNotification(admin.email, {

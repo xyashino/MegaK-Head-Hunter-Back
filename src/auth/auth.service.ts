@@ -64,12 +64,16 @@ export class AuthService {
       });
 
       if (!user || !user.isActive) {
-        return res.status(401).json({ error: 'Invalid credentials' });
+        return res
+          .status(401)
+          .json({ error: 'Nieprawidłowe dane uwierzytelniające' });
       }
 
       const hashedPwd = hashPwd(req.pwd);
       if (hashedPwd !== user.hashedPassword) {
-        return res.status(401).json({ error: 'Invalid credentials' });
+        return res
+          .status(401)
+          .json({ error: 'Nieprawidłowe dane uwierzytelniające' });
       }
 
       const token = await this.createToken(await this.generateToken(user));
@@ -108,7 +112,7 @@ export class AuthService {
   async sendResetEmail(email): Promise<string> {
     const user = await User.findOneBy({ email });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Nie znaleziono użytkownika');
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
@@ -128,14 +132,14 @@ export class AuthService {
         isActive: UserStatus.ACTIVE,
       });
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException('Nie znaleziono użytkownika');
       }
 
       const hashedToken = hashPwd(req.resetPasswordToken);
 
       if (hashedToken !== user.resetPasswordToken) {
         throw new HttpException(
-          'Invalid password reset token',
+          'Nieprawidłowy token resetowania hasła',
           HttpStatus.CONFLICT,
         );
       }
@@ -143,7 +147,7 @@ export class AuthService {
       const hashedPassword = hashPwd(req.newPassword);
       if (hashedPassword === user.hashedPassword) {
         throw new HttpException(
-          'New password must be different',
+          'Nowe hasło musi być inne od ustawionego poprzednio',
           HttpStatus.CONFLICT,
         );
       }
@@ -162,7 +166,7 @@ export class AuthService {
       } else {
         console.error(e);
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-          message: 'Something went wrong by reset password',
+          message: 'Coś poszło nie tak podczas resetowania hasła',
         });
       }
     }

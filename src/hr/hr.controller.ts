@@ -37,7 +37,6 @@ export class HrController {
     return this.hrService.register(createHrDto, id, res);
   }
   @Get(':id')
-  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.hrService.findOne(id);
   }

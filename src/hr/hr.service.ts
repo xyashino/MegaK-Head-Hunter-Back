@@ -40,7 +40,13 @@ export class HrService {
       ...rest,
     });
     await newHr.save();
-    await this.mailService.sendRegistrationLink(email, newHr.id, process.env.HR_REGISTRATION_URL , newHr, newHr.user);
+    await this.mailService.sendRegistrationLink(
+      email,
+      newHr.id,
+      process.env.HR_REGISTRATION_URL,
+      newHr,
+      newHr.user,
+    );
     return newHr;
   }
 
@@ -49,7 +55,7 @@ export class HrService {
   }
   async findOne(id: string) {
     const hr = await Hr.findOne({ where: { id }, relations: { user: true } });
-    if (!hr) throw new NotFoundException('Invalid id');
+    if (!hr) throw new NotFoundException('Nieprawidłowy id');
     return hr;
   }
 
@@ -57,7 +63,9 @@ export class HrService {
     try {
       const { user } = await this.findOne(id);
       if (user.isActive)
-        throw new ConflictException('The user has been registered');
+        throw new ConflictException(
+          'Użytkownik został już wcześniej zarejestrowany',
+        );
       await this.usersService.update(user.id, { pwd });
       const authLoginDto = { email: user.email, pwd };
       await this.authService.login(authLoginDto, res);
@@ -83,7 +91,7 @@ export class HrService {
 
     if (interviews.length > 0) {
       throw new HttpException(
-        'Cannot be remove hr because he have many than one interview',
+        'Nie można usunąć HR, ponieważ ma przypisaną conajmniej jedną rozmowę kwalifikacyjną',
         HttpStatus.CONFLICT,
       );
     }

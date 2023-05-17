@@ -61,7 +61,6 @@ export class StudentsController {
 
   @Get(':id')
   @Serialize(ResponseStudentDto)
-  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.findOne(id);
   }
