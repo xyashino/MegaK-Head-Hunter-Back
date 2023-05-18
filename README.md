@@ -40,7 +40,11 @@ Each user can:
 You are currently browsing the **BACKEND REPOSITORY**.
 
 **MegaK-Head-Hunter-Back** -
-The application was created using the **NestJS** framework. It utilizes **TypeOrm** as the Object-Relational Mapping (ORM) tool for working with a **MySQL** database. The application implements **authorization** and **authentication** functionalities, with data serialization performed using **DTOs** (Data Transfer Objects). Additionally, it includes features such as **pagination** and data **filtration**. Furthermore, the application incorporates a logic for **sending emails**.
+The application was created using the **NestJS** framework. 
+It utilizes **TypeOrm** as the Object-Relational Mapping (ORM) tool for working with a **MySQL** database.
+The application implements **authorization** and **authentication** functionalities, with data serialization performed using **DTOs** (Data Transfer Objects).
+Additionally, it includes features such as **pagination** and data **filtration**. 
+Furthermore, the application incorporates a logic for **sending emails**.
 
 ## You can test the entire application here : [HERE](https://megak.yashino.live/)
 
@@ -65,7 +69,9 @@ The application was created using the **NestJS** framework. It utilizes **TypeOr
 
 ## Environment Variables
 
-The application uses environment variables for configuration. You can set these variables by creating a `.env` file in the root directory of the project and populating it with the following values. You have a base `.env.example` file in the root directory of the project that you can use as a template to create your own `.env` file.
+The application uses environment variables for configuration. 
+You can set these variables by creating a `.env` file in the root directory of the project and populating it with the following values. 
+You have a base `.env.example` file in the root directory of the project that you can use as a template to create your own `.env` file.
 
 ## Clone
 
