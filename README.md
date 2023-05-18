@@ -1,30 +1,83 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# MegaK-Head-Hunter-Back
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+**MegaK-Head-Hunter** - It is a full-stack web application that allows headhunters to browse student profiles, add them to conversations, and hire them. The application was created as part of the MegaK course.
 
-## Description
+The application is divided into three roles: Admin, Student, and HeadHunter. Each of these roles has access to different functionalities.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+**Admin** can:
+
+- Add new users,
+  - Students through importing the appropriate CSV file,
+  - Headhunters through a form.
+
+**Student** can:
+
+- View their data,
+- Change their data,
+- Mark themselves as hired.
+
+**HeadHunter** can:
+
+- Browse student profiles,
+- Add students to conversations,
+- Hire students.
+
+Each user can:
+
+- Change their password,
+- Reset their password (they receive an email with a password reset link).
+
+### Repositories
+
+- [FRONTEND](https://github.com/xyashino/MegaK-Head-Hunter-Front)
+- [BACKEND](https://github.com/xyashino/MegaK-Head-Hunter-BACK)
+
+You are currently browsing the **BACKEND REPOSITORY**.
+
+**MegaK-Head-Hunter-Back** -
+The application was created using the **NestJS** framework. 
+It utilizes **TypeOrm** as the Object-Relational Mapping (ORM) tool for working with a **MySQL** database.
+The application implements **authorization** and **authentication** functionalities, with data serialization performed using **DTOs** (Data Transfer Objects).
+Additionally, it includes features such as **pagination** and data **filtration**. 
+Furthermore, the application incorporates a logic for **sending emails**.
+
+## You can test the entire application here : [HERE](https://megak.yashino.live/)
+
+## API Endpoints
+
+<p>- <code>/hr</code> | <span style="color: #e02635;">POST, GET</span></p>
+<p>- <code>/hr/register/:id</code> | <span style="color: #e02635;">POST</span></p>
+<p>- <code>/hr/:id</code> | <span style="color: #e02635;">GET, DELETE, PATCH</span></p>
+<p>- <code>/users</code> | <span style="color: #e02635;">POST, GET</span></p>
+<p>- <code>/users/current</code> | <span style="color: #e02635;">GET</span></p>
+<p>- <code>/users/:id</code> | <span style="color: #e02635;">GET, PATCH, DELETE</span></p>
+<p>- <code>/interview</code> | <span style="color: #e02635;">POST, GET</span></p>
+<p>- <code>/interview/:id</code> | <span style="color: #e02635;">GET, DELETE</span></p>
+<p>- <code>/students</code> | <span style="color: #e02635;">POST, GET</span></p>
+<p>- <code>/students/register/:id</code> | <span style="color: #e02635;">POST</span></p>
+<p>- <code>/students/:id</code> | <span style="color: #e02635;">GET, DELETE, PATCH</span></p>
+<p>- <code>/auth/login</code> | <span style="color: #e02635;">POST</span></p>
+<p>- <code>/auth/password/reset</code> | <span style="color: #e02635;">POST</span></p>
+<p>- <code>/auth/password/reset/request</code> | <span style="color: #e02635;">POST</span></p>
+<p>- <code>/auth/logout</code> | <span style="color: #e02635;">DELETE</span></p>
+<p>- <code>/upload/file</code> | <span style="color: #e02635;">POST</span></p>
+
+## Environment Variables
+
+The application uses environment variables for configuration. 
+You can set these variables by creating a `.env` file in the root directory of the project and populating it with the following values. 
+You have a base `.env.example` file in the root directory of the project that you can use as a template to create your own `.env` file.
+
+## Clone
+
+```bash
+$ git clone https://github.com/xyashino/MegaK-Head-Hunter-Back.git
+```
 
 ## Installation
 
@@ -40,34 +93,4 @@ $ yarn run start
 
 # watch mode
 $ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
 ```
-
-## Test
-
-```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
