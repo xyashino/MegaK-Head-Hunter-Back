@@ -1,18 +1,26 @@
-import {forwardRef, HttpException, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { MailContext } from '@interfaces/mail-context';
 import { BaseEntity } from 'typeorm';
 import {
-  ADMIN_NOTIFICATION_SUBJECT, ADMIN_NOTIFICATION_TEMPLATE,
-  REGISTRATION_SUBJECT, REGISTRATION_TEMPLATE,
+  ADMIN_NOTIFICATION_SUBJECT,
+  ADMIN_NOTIFICATION_TEMPLATE,
+  REGISTRATION_SUBJECT,
+  REGISTRATION_TEMPLATE,
   RESET_PASSWORD_SUBJECT,
   RESET_PASSWORD_TEMPLATE,
 } from '@constants/mail.constants';
 
 @Injectable()
 export class MailService {
-@Inject(forwardRef(()=>MailerService))
-private readonly mailerService: MailerService
+  @Inject(forwardRef(() => MailerService))
+  private readonly mailerService: MailerService;
   private async sendMail(mailData: {
     to: string;
     subject: string;
@@ -37,10 +45,10 @@ private readonly mailerService: MailerService
         template: RESET_PASSWORD_TEMPLATE,
         context: { resetPasswordLink },
       });
-      return 'Email with password reset link sent successfully';
+      return 'E-mail z linkiem do resetowania hasła został pomyślnie wysłany';
     } catch (e) {
       throw new HttpException(
-        `Something went wrong by sending the email. Please try again later`,
+        `Coś poszło nie tak podczas wysyłania wiadomości e-mail. Spróbuj ponownie później`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -64,7 +72,7 @@ private readonly mailerService: MailerService
       await registerEntity.remove();
       await userEntity.remove();
       throw new HttpException(
-        'Something went wrong by sending the email. User has not been added',
+        'Coś poszło nie tak podczas wysyłania wiadomości e-mail. Użytkownik nie został dodany',
         HttpStatus.BAD_REQUEST,
       );
     }

@@ -30,7 +30,7 @@ export class UsersService {
       relations: { hr: true, student: true },
       where: { id },
     });
-    if (!user) throw new NotFoundException('asdsa');
+    if (!user) throw new NotFoundException('Nieprawidłowy id użytkownika');
     return user;
   }
 
@@ -49,7 +49,7 @@ export class UsersService {
 
     if (oldPwd && newPwd) {
       if (hashPwd(oldPwd) !== user.hashedPassword)
-        throw new BadRequestException('Invalid credentials');
+        throw new BadRequestException('Nieprawidłowe dane uwierzytelniające');
       await this.updatePassword(newPwd, user);
     }
 
@@ -63,7 +63,7 @@ export class UsersService {
 
   async checkConflictData(email: string): Promise<void> {
     const userExist = await User.findOneBy({ email });
-    if (userExist) throw new ConflictException('Email is taken');
+    if (userExist) throw new ConflictException('Email jest zajęty');
   }
 
   async updatePassword(newPwd: string, user: User) {
