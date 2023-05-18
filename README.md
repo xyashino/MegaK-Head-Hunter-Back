@@ -48,6 +48,18 @@ Furthermore, the application incorporates a logic for **sending emails**.
 
 ## You can test the entire application here : [HERE](https://megak.yashino.live/)
 
+Login credentials:
+- Admin:
+    - **email:** `test@wp.pl`
+    - **password:** `12345678`
+- HeadHunter:
+    - **email:** `hr@yashino.usermd.net`
+    - **password:** `12345678`
+- Student:
+    - **email:** `user@yashino.usermd.net`
+    - **password:** `12345678`
+
+
 ## API Endpoints
 
 <p>- <code>/hr</code> | <span style="color: #e02635;">POST, GET</span></p>
