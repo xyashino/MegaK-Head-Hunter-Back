@@ -17,8 +17,6 @@ import {MailService} from "@mail/mail.service";
 
 @Entity()
 export class Student extends BaseEntity {
-  @Inject(()=>MailService)
-  private readonly mailService;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
